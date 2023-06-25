@@ -53,8 +53,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
         }
 
-        List<String> role = new ArrayList<>();
-        role.add(user.getRole().name());
+        String role = user.getRole().name();
 
         return jwtTokenProvider.createToken(user.getUsername(), role);
     }
