@@ -20,6 +20,12 @@ spring:
     username: root
     password: 1234
 
+  security:
+    jwt:
+      header: Authorization
+      secret: 8hx1Jdb49QoO917vjPWI8MJLtNIyduCtVFbKwtY6mxSx5oxVlaYNfZjwHETpi6vbdZTaIu0KC8eoYV5v6T1WGam9yHrL0Uyt0VeD
+      token-validity-in-seconds: 86400
+
   jpa:
     open-in-view: true
     hibernate:
