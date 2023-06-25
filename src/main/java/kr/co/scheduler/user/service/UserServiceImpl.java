@@ -1,9 +1,9 @@
-package kr.co.scheduler.service.user;
+package kr.co.scheduler.user.service;
 
-import kr.co.scheduler.dto.UserReqDTO;
-import kr.co.scheduler.entity.User;
-import kr.co.scheduler.repository.UserRepository;
-import kr.co.scheduler.setting.jwt.JwtTokenProvider;
+import kr.co.scheduler.user.dtos.UserReqDTO;
+import kr.co.scheduler.user.entity.User;
+import kr.co.scheduler.user.repository.UserRepository;
+import kr.co.scheduler.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;

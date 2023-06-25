@@ -1,6 +1,6 @@
-package kr.co.scheduler.repository;
+package kr.co.scheduler.user.repository;
 
-import kr.co.scheduler.entity.User;
+import kr.co.scheduler.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

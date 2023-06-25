@@ -1,6 +1,6 @@
-package kr.co.scheduler.setting.security;
+package kr.co.scheduler.global.security;
 
-import kr.co.scheduler.repository.UserRepository;
+import kr.co.scheduler.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

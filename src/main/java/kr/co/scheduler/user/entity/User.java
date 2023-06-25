@@ -1,7 +1,8 @@
-package kr.co.scheduler.entity;
+package kr.co.scheduler.user.entity;
 
 import jakarta.persistence.*;
-import kr.co.scheduler.enums.Role;
+import kr.co.scheduler.user.enums.Role;
+import kr.co.scheduler.global.entity.BaseTimeEntity;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,4 +1,4 @@
-package kr.co.scheduler.setting.jwt;
+package kr.co.scheduler.global.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

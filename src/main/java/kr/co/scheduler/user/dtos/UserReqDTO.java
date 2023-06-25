@@ -1,12 +1,12 @@
-package kr.co.scheduler.dto;
+package kr.co.scheduler.user.dtos;
 
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import kr.co.scheduler.entity.User;
-import kr.co.scheduler.enums.Role;
+import kr.co.scheduler.user.entity.User;
+import kr.co.scheduler.user.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

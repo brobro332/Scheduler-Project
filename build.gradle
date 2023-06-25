@@ -23,17 +23,39 @@ repositories {
 }
 
 dependencies {
+
+	// JPA
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	// Spring boot Security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// Spring boot Web
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// JWT
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+	// Validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// JWT: initialize class javax.xml.bind.DatatypeConverterImpl
 	implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+
+	// Lombok
 	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// Spring boot Devtools
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// MariaDB Connector
+	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+
+	// Tomcat
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+
+	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 }

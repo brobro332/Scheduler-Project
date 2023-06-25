@@ -1,4 +1,4 @@
-package kr.co.scheduler.setting.security;
+package kr.co.scheduler.global.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

@@ -1,6 +1,6 @@
-package kr.co.scheduler.service.user;
+package kr.co.scheduler.user.service;
 
-import kr.co.scheduler.dto.UserReqDTO;
+import kr.co.scheduler.user.dtos.UserReqDTO;
 
 import java.util.Map;
 

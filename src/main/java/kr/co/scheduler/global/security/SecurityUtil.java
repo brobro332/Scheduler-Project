@@ -1,4 +1,4 @@
-package kr.co.scheduler.setting.security;
+package kr.co.scheduler.global.security;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;

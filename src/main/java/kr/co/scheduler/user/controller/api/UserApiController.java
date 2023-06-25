@@ -1,9 +1,9 @@
-package kr.co.scheduler.controller.api;
+package kr.co.scheduler.user.controller.api;
 
 import jakarta.validation.Valid;
-import kr.co.scheduler.dto.UserReqDTO;
-import kr.co.scheduler.repository.UserRepository;
-import kr.co.scheduler.service.user.UserService;
+import kr.co.scheduler.user.dtos.UserReqDTO;
+import kr.co.scheduler.user.repository.UserRepository;
+import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
