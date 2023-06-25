@@ -43,19 +43,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String login(Map<String, String> users) {
+    public String login(UserReqDTO userReqDTO) {
 
-        User user = userRepository.findByEmail(users.get("email"))
+        User user = userRepository.findByEmail(userReqDTO.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 Email 입니다."));
 
-        String password = users.get("password");
+        String password = userReqDTO.getPassword();
         if (!user.matchPassword(passwordEncoder, password)) {
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
         }
 
-        List<String> roles = new ArrayList<>();
-        roles.add(user.getRole().name());
+        List<String> role = new ArrayList<>();
+        role.add(user.getRole().name());
 
-        return jwtTokenProvider.createToken(user.getUsername(), roles);
+        return jwtTokenProvider.createToken(user.getUsername(), role);
     }
 }

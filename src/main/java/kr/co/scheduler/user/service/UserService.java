@@ -14,5 +14,5 @@ public interface UserService {
     /**
      * login : 로그인
      */
-    String login(Map<String, String> users);
+    String login(UserReqDTO userReqDTO);
 }

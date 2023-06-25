@@ -32,7 +32,7 @@ public class UserApiController {
      * login : 로그인
      */
     @PostMapping("/login")
-    public String login(@RequestBody Map<String, String> users) {
-        return userService.login(users);
+    public String login(@RequestBody UserReqDTO userReqDTO) {
+        return userService.login(userReqDTO);
     }
 }
