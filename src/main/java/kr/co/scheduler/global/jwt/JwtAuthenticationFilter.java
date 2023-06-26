@@ -10,11 +10,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtAuthenticationProvider;
 
     public JwtAuthenticationFilter(JwtTokenProvider provider) {
+
         jwtAuthenticationProvider = provider;
     }
 
@@ -29,6 +31,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-
     }
 }

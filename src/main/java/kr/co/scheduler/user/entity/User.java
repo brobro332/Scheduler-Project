@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collection;
 
+
 @Entity
 @Table(name = "tbl_user")
 @Getter
