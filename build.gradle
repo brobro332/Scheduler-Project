@@ -55,6 +55,9 @@ dependencies {
 	// Tomcat
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
+	// Mustache
+	implementation 'org.springframework.boot:spring-boot-starter-mustache'
+
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
