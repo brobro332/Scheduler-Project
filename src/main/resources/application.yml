@@ -11,15 +11,8 @@ spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://localhost:3306/scheduler?serverTimezone=Asia/Seoul
-
     username: root
     password: 1234
-
-  security:
-    jwt:
-      header: Authorization
-      secret: 8hx1Jdb49QoO917vjPWI8MJLtNIyduCtVFbKwtY6mxSx5oxVlaYNfZjwHETpi6vbdZTaIu0KC8eoYV5v6T1WGam9yHrL0Uyt0VeD
-      token-validity-in-seconds: 86400
 
   jpa:
     open-in-view: true
@@ -28,3 +21,12 @@ spring:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: true
+
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
