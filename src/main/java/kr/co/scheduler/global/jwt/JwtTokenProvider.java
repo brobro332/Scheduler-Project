@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
+
 
 @RequiredArgsConstructor
 @Component
@@ -28,16 +28,16 @@ public class JwtTokenProvider {
     private long tokenValidTime = 1440 * 60 * 7 * 1000L;
     private final UserDetailsService userDetailsService;
 
-    // 객체 초기화, secretKey 를 Base64로 인코딩합니다.
+    // 객체 초기화, secretKey 를 Base64로 인코딩
     @PostConstruct
     protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
     // JWT 토큰 생성
-    public String createToken(String userPk, String role) {
-        Claims claims = Jwts.claims().setSubject(userPk); // JWT payload 에 저장되는 정보단위
-        claims.put("role", role); // 정보는 key/value 쌍으로 저장됩니다.
+    public String createToken(String email, String role) {
+        Claims claims = Jwts.claims().setSubject(email); // JWT payload 에 저장되는 정보단위
+        claims.put("role", role); // 정보는 key/value 쌍으로 저장
         Date now = new Date();
         return Jwts.builder()
                 .setClaims(claims) // 정보 저장
@@ -50,16 +50,16 @@ public class JwtTokenProvider {
 
     // JWT 토큰에서 인증 정보 조회
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserPk(token));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getEmail(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
     // 토큰에서 회원 정보 추출
-    public String getUserPk(String token) {
+    public String getEmail(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
-    // Request의 Header에서 token 값을 가져옵니다. "X-AUTH-TOKEN" : "TOKEN값'
+    // Request 의 Header 에서 token 값을 가져옴 "X-AUTH-TOKEN" : "TOKEN값'
     public String resolveToken(HttpServletRequest request) {
         return request.getHeader("X-AUTH-TOKEN");
     }
@@ -68,6 +68,8 @@ public class JwtTokenProvider {
     public boolean validateToken(String jwtToken) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
+            
+            // 현재 시간이 토큰 만료 시간을 넘겼는지 검증
             return !claims.getBody().getExpiration().before(new Date());
         } catch (Exception e) {
             return false;

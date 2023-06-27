@@ -17,7 +17,12 @@ public class UserApiController {
      * login : 로그인
      */
     @PostMapping("/login")
+<<<<<<< HEAD
     public String login(UserReqDTO userReqDTO) {
+=======
+    public String login(@RequestBody UserReqDTO userReqDTO) {
+
+>>>>>>> 3098ee8adbdaece15e98ec95d1296e495deeaa8e
         return userService.login(userReqDTO);
     }
 }
