@@ -2,15 +2,15 @@
 
 <%@ include file="layout/user/header.jsp"%>
 
-<div class="container-fluid" style="height: 300px;">
+<div class="container" style="height: 300px; min-height: 360px;">
 <div>
-    <div style="display: inline-block; position: absolute; left: 20%; top: 13%;">
+    <div style="display: inline-block; position: absolute; left: 20%; top: 15%;">
         <div style="width:470px; height:300px;">
         <p style="color: gray;"><small>Welcome to SAPP<small></p>
         <h1>당신의 일주일을 <kbd id="kbd">가치있게,</kbd><br/>
         저희가 도와드릴게요!</h1>
         <br/>
-        <button id="loginForm" class="btn btn-lg" style="background-color: #c1aef5; color: white;"><b>둘러보기</b></button>
+        <button id="loginForm" class="btn btn-lg" style="background-color: #956be8; color: white;"><b>둘러보기</b></button>
         </div>
     </div>
 </div>

@@ -8,7 +8,7 @@
 
 <!DOCTYPE html>
 
-<html lang="ko">
+<html lang="en">
 <head>
   <title>SAPP</title>
 
@@ -16,7 +16,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -26,7 +25,7 @@
 
 <body>
 <nav class="navbar navbar-expand-md bg navbar" style="background-color: #956be8;">
-<div class="container-fluid">
+<div class="container">
     <a class="navbar-brand" href="/">
       <img src="image/navbar_sapp.png" style="width:100px;">
     </a>
@@ -35,7 +34,7 @@
           <a class="nav-link" href="#" style="color: white;"><b>로그인</b></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#" style="color: white;"><b>회원가입</b></a>
+          <a class="nav-link" href="/signUpForm" style="color: white;"><b>회원가입</b></a>
         </li>
     </ul>
   </div>

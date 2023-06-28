@@ -11,4 +11,10 @@ public class IndexController {
 
         return "index";
     }
+
+    @GetMapping("/signUpForm")
+    public String signUpForm() {
+
+        return "signUpForm";
+    }
 }
