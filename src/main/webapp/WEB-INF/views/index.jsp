@@ -10,7 +10,7 @@
         <h1>당신의 일주일을 <kbd id="kbd">가치있게,</kbd><br/>
         저희가 도와드릴게요!</h1>
         <br/>
-        <button id="loginForm" class="btn btn-lg" style="background-color: #c1aef5; color: white;"><b>회원가입</b></button>
+        <button id="loginForm" class="btn btn-lg" style="background-color: #c1aef5; color: white;"><b>둘러보기</b></button>
         </div>
     </div>
 </div>
@@ -20,7 +20,7 @@
 </div>
 </div>
 
-<div class="container-fluid" style="display: inline-block; position: relative; left: 20%;">
+<div class="container" style="display: inline-block; position: relative; left: 15%; width: 70%;">
     <b>이 영역에 내용 추가하기<br/>
     어떤 서비스를 제공하는지<br/>
     기능명, 간단한 설명, 클릭하면 해당 메뉴로 들어가게끔(로그인한 사람에 한해서)</b>
