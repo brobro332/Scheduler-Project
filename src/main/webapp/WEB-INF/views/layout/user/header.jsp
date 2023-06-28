@@ -28,7 +28,7 @@
 <nav class="navbar navbar-expand-md bg navbar" style="background-color: #956be8;">
 <div class="container-fluid">
     <a class="navbar-brand" href="/">
-      <img src="images/navbar_sapp.png" style="width:100px;">
+      <img src="image/navbar_sapp.png" style="width:100px;">
     </a>
     <ul class="navbar-nav">
         <li class="nav-item">
