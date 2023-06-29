@@ -29,14 +29,38 @@
     <a class="navbar-brand" href="/">
       <img src="image/navbar_sapp.png" style="width:100px;">
     </a>
+    <c:choose>
+    <c:when test="${empty principal}" >
     <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" href="#" style="color: white;"><b>로그인</b></a>
+          <a class="nav-link" href="/signInForm" style="color: white;"><b>로그인</b></a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/signUpForm" style="color: white;"><b>회원가입</b></a>
         </li>
     </ul>
+    </c:when>
+    <c:otherwise>
+    <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="#" style="color: white;"><b>To Do List</b></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" style="color: white;"><b>주간일정</b></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" style="color: white;"><b>내프로필</b></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" style="color: white;"><b>고객센터</b></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/logout" style="color: white;"><b>로그아웃</b></a>
+        </li>
+    </ul>
+
+    </c:otherwise>
+    </c:choose>
   </div>
 </nav>
 <br />

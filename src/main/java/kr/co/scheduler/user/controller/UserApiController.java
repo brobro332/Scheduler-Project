@@ -27,6 +27,7 @@ public class UserApiController {
     public ResponseDto<Object> signUp(@Valid @RequestBody UserReqDTO userReqDTO, BindingResult bindingResult) {
 
         if(bindingResult.hasErrors()) {
+
             Map<String, String> validateResult = userService.validateHandling(bindingResult);
 
             return ResponseDto.ofFailData(HttpStatus.BAD_REQUEST.value(), "회원정보 등록에 실패했습니다.", validateResult);

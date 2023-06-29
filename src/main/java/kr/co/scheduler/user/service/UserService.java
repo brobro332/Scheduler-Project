@@ -25,7 +25,7 @@ public class UserService {
     /**
      * signUp: 회원가입
      *
-     * 1. 컨트롤러에서 Dto 를 받아 User 객체로 빌드하여 저장
+     * 컨트롤러에서 Dto 를 받아 User 객체로 빌드하여 저장
      */
     @Transactional
     public void signUp(UserReqDTO userReqDTO) {
@@ -42,7 +42,7 @@ public class UserService {
     }
 
     /**
-     * validateDuplication: 이미 가입된 계정인지 검증
+     * validateDuplication: 이미 가입된 계정인지 검증하여 boolean 타입 반환
      */
     public boolean validateDuplication(UserReqDTO userReqDTO) {
 
@@ -65,9 +65,11 @@ public class UserService {
      * 3. bindingResult 의 모든 error 에 validKey 와 error.getDefaultMessage 를 붙여 리턴함
      */
     public Map<String, String> validateHandling(BindingResult bindingResult) {
+
         Map<String, String> validateResult = new HashMap<>();
 
         for(FieldError error : bindingResult.getFieldErrors()) {
+
             String validKey = String.format("valid_%s", error.getField());
             validateResult.put(validKey, error.getDefaultMessage());
         }

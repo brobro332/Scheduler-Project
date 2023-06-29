@@ -2,6 +2,10 @@
 
 <%@ include file="layout/user/header.jsp"%>
 
+<img src="image/signin-sapp.png" style="display: block; position: relative; width: 200px; left: 42%">
+
+<br/>
+
 <div class="container" style="display: inline-block; position: relative; left: 35%; width: 70%;">
     <form>
         <div class="form-group">
@@ -30,6 +34,9 @@
             <p id="valid_phone"></p>
         </div>
     </form>
+
+    <br/>
+
     <button class="btn btn" id="btn-save" style="background-color: #956be8; color: white; width: 402px;">회원가입</button>
     <br/><br/><br/>
 </div>
