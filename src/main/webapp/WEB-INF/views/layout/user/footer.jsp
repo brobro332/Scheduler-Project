@@ -2,7 +2,7 @@
 
 <br/>
 <div class="jumbotron text-center" style="margin-bottom: 0; background-color: #c1aef5">
-    <p style="color: white;"><b>🍇 SAPP Seven-days Assistant Planning Page</b></p>
+    <p style="color: white;"><b>🍇 SPAP Seven-days Planning Assistant Project.</b></p>
     <p style="color: white;"><b>© 2023. Jin bro. Co. All rights reserved.</b></p>
 </div>
 </body>

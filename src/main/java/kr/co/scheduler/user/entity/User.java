@@ -4,12 +4,6 @@ import jakarta.persistence.*;
 import kr.co.scheduler.user.enums.Role;
 import kr.co.scheduler.global.entity.BaseTimeEntity;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.Collection;
-
 
 @Entity
 @Table(name = "tbl_user")
@@ -36,10 +30,6 @@ public class User extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    public void addUserAuthority() {
-        this.role = Role.USER;
-    }
 
     @Builder
     public User(String email, String password, String name, String phone, Role role) {

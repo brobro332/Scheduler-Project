@@ -29,7 +29,7 @@ let index = {
                     contentType: "application/json; charset=utf-8",
                     dataType: "json"
                 }).done(function(resp) {
-                    if(resp.status == 400 || resp.status == 500){
+                    if(resp.statusCode == 400 || resp.statusCode == 500){
                         alert("회원가입에 실패하였습니다.");
 
                         if(resp.data.hasOwnProperty('valid_email')){
