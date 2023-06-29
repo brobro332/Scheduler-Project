@@ -1,0 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbit&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap');
+
+* {
+    font-family: 'Orbit', sans-serif;
+}
+
+#kbd {
+    font-family: 'Orbit', sans-serif;
+}
+
