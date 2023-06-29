@@ -17,6 +17,9 @@ import java.net.URLEncoder;
 @Component
 public class CustomAuthFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
+    /**
+     * onAuthenticationFailure: 스프링 시큐리티 로그인 검증
+     */
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 
