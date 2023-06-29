@@ -3,16 +3,10 @@
 ### **Outline**
 일정관리를 위한 웹사이트
 
-<br/>
-
-⏱ **Period**
----
+### ⏱ **Period**
 - 2023-06-24 ~
 
-<br/>
-
-🛠 **Environment**
----
+### 🛠 **Environment**
 - Language: Java 17
 - Framework : Spring boot 3.0.8
 - IDE: IntelliJ
@@ -20,10 +14,7 @@
 - DB: MariaDB
 - Template Engine: JSP
 
-<br/>
-
-📄 **Key Features**
----
+### 📄 **Key Features**
 - To Do List 관리
 - 주간일정관리
 - 등등
