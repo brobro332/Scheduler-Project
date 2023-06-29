@@ -1,7 +1,7 @@
-package kr.co.scheduler.user.controller.api;
+package kr.co.scheduler.user.controller;
 
 import jakarta.validation.Valid;
-import kr.co.scheduler.global.dtos.response.ResponseDto;
+import kr.co.scheduler.global.dtos.ResponseDto;
 import kr.co.scheduler.user.dtos.UserReqDTO;
 import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,14 +26,16 @@ public class UserApiController {
     @PostMapping("/signUp")
     public ResponseDto<Object> signUp(@Valid @RequestBody UserReqDTO userReqDTO, BindingResult bindingResult) {
 
-        Boolean duplication = userService.validateDuplication(userReqDTO);
-
         if(bindingResult.hasErrors()) {
             Map<String, String> validateResult = userService.validateHandling(bindingResult);
 
             return ResponseDto.ofFailData(HttpStatus.BAD_REQUEST.value(), "회원정보 등록에 실패했습니다.", validateResult);
-        } else if (duplication) {
-            
+        }
+
+        Boolean duplication = userService.validateDuplication(userReqDTO);
+
+        if (duplication) {
+
             return ResponseDto.ofFailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(), "이미 가입된 회원입니다.");
         }
 

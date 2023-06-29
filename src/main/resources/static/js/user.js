@@ -30,7 +30,7 @@ let index = {
                     dataType: "json"
                 }).done(function(resp) {
                     if(resp.statusCode == 400 || resp.statusCode == 500){
-                        alert("회원가입에 실패하였습니다.");
+                        alert(resp.message);
 
                         if(resp.data.hasOwnProperty('valid_email')){
                             $('#valid_email').text(resp.data.valid_email);
@@ -53,7 +53,7 @@ let index = {
                         } else $('#valid_phone').text('');
 
                         } else {
-                        alert("회원가입이 완료되었습니다.");
+                        alert(resp.message);
                         location.href = "/";
                     }
                 }).fail(function(error) {

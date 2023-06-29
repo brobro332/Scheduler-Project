@@ -1,4 +1,4 @@
-package kr.co.scheduler.global.dtos.response;
+package kr.co.scheduler.global.dtos;
 
 import lombok.*;
 import org.springframework.http.HttpStatus;
