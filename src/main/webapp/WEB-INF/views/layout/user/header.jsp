@@ -20,14 +20,14 @@
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
-  <link href="css/style.css" rel="stylesheet">
+  <link href="/css/style.css" type="text/css" rel="stylesheet">
 </head>
 
 <body>
 <nav class="navbar navbar-expand-md bg navbar" style="background-color: #956be8;">
 <div class="container">
     <a class="navbar-brand" href="/">
-      <img src="image/navbar_sapp.png" style="width:100px;">
+      <img src="/image/navbar_spap.png" style="width:100px;">
     </a>
     <c:choose>
     <c:when test="${empty principal}" >
@@ -49,10 +49,13 @@
           <a class="nav-link" href="#" style="color: white;"><b>주간일정</b></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#" style="color: white;"><b>내프로필</b></a>
+          <a class="nav-link" href="#" style="color: white;"><b>커뮤니티</b></a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#" style="color: white;"><b>고객센터</b></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/user/info" style="color: white;"><b>내프로필</b></a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/logout" style="color: white;"><b>로그아웃</b></a>

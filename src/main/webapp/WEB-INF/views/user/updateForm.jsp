@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
-<%@ include file="layout/user/header.jsp"%>
+<%@ include file="../layout/user/header.jsp"%>
 
 <img src="/image/signin-spap.png" style="display: block; position: relative; width: 200px; left: 42%">
 
@@ -10,7 +10,7 @@
     <form>
         <div class="form-group">
             <label>이메일</label>
-            <input type="email" class="form-control" placeholder="이메일" id="email" style="width:402px;">
+            <input type="email" class="form-control" placeholder="이메일" id="email" value="${principal.user.email}" style="width:402px;" readOnly>
             <p id="valid_email"></p>
         </div>
 
@@ -38,9 +38,9 @@
 
     <br/>
 
-    <button class="btn btn" id="btn-save" style="background-color: #956be8; color: white; width: 402px;">회원가입</button>
+    <button class="btn btn" id="btn-update" style="background-color: #956be8; color: white; width: 402px;">등록</button>
     <br/><br/><br/>
 </div>
 
 <script src="/js/user.js"></script>
-<%@ include file="layout/user/footer.jsp"%>
+<%@ include file="../layout/user/footer.jsp"%>

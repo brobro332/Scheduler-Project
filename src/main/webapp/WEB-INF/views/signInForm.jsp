@@ -2,7 +2,7 @@
 
 <%@ include file="layout/user/header.jsp"%>
 
-<img src="image/signin-sapp.png" style="display: block; position: relative; width: 200px; left: 42%">
+<img src="/image/signin-spap.png" style="display: block; position: relative; width: 200px; left: 42%">
 
 <br/>
 
