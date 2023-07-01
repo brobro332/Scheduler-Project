@@ -3,12 +3,20 @@ package kr.co.scheduler.user.controller;
 import jakarta.validation.Valid;
 import kr.co.scheduler.global.dtos.ResponseDto;
 import kr.co.scheduler.user.dtos.UserReqDTO;
+import kr.co.scheduler.user.entity.User;
+import kr.co.scheduler.user.repository.UserRepository;
 import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
 import java.util.Map;
 
@@ -17,6 +25,7 @@ import java.util.Map;
 public class UserApiController {
 
     private final UserService userService;
+    private final UserRepository userRepository;
 
     /**
      * signUp: 회원가입
@@ -81,9 +90,14 @@ public class UserApiController {
      * 2. 요청한 이메일이 이미 가입된 계정인지 검증
      */
     @PutMapping("/api/user/update")
-    public ResponseDto<Object> updateInfo(@Valid @RequestBody UserReqDTO.UPDATE update,
+    public ResponseDto<Object> updateInfo(@RequestPart("update") @Valid UserReqDTO.UPDATE update,
                                           BindingResult bindingResult,
-                                          Principal principal) {
+                                          Principal principal,
+                                          @RequestPart(value = "uploadImg", required = false) MultipartFile uploadImg) throws IOException {
+
+        if(uploadImg != null) {
+            userService.updateInfoWithImg(update, principal.getName(), uploadImg);
+        }
 
         if(bindingResult.hasErrors()) {
 
@@ -113,4 +127,24 @@ public class UserApiController {
                 null);
     }
 
+    /**
+     * getProfileImg: 프로필 이미지를 뷰로 전송
+     * 뷰에서 바이트 단위의 데이터를 받기 위해서는
+     * HttpStatus, HttpHeaders, HttpBody 를 모두 포함해야하기 때문에
+     * ResponseDTO 가 아닌 ResponseEntity 를 응답한다.
+     */
+    @GetMapping("/user/info/profileImg")
+    public ResponseEntity<?> getProfileImg(Principal principal) throws IOException {
+
+        User user = userRepository.findOptionalByEmail(principal.getName())
+                .orElseThrow(()->{
+                    return new IllegalArgumentException("가입되지 않은 회원입니다.");
+                });
+
+        InputStream inputStream = new FileInputStream(user.getProfileImgPath());
+        byte[] imageByteArray = IOUtils.toByteArray(inputStream);
+        inputStream.close();
+
+        return new ResponseEntity<>(imageByteArray, HttpStatus.OK);
+    }
 }

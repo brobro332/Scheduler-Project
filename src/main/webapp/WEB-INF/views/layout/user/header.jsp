@@ -60,6 +60,23 @@
         <li class="nav-item">
           <a class="nav-link" href="/logout" style="color: white;"><b>로그아웃</b></a>
         </li>
+
+        <c:choose>
+          <c:when test="${empty principal.user.profileImgName}" >
+          <li class="nav-item">
+          <div id="navbar_image_wrapper" style="position: relative; width: 40px; height: 40px; left: 20px; border-radius: 70%; overflow: hidden; border: 3px solid white;">
+          <img class="card-img-top" src="/image/profile-spap.png" alt="Card image" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          </li>
+          </c:when>
+          <c:otherwise>
+            <li class="nav-item">
+              <div id="navbar_image_wrapper" style="position: relative; width: 40px; height: 40px; left: 20px; border-radius: 70%; overflow: hidden; border: 3px solid white;">
+                <img id="profileImg" src="/user/info/profileImg" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
+              </div>
+            </li>
+          </c:otherwise>
+        </c:choose>
     </ul>
 
     </c:otherwise>

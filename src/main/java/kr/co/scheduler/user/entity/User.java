@@ -11,6 +11,9 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity {
 
+    @Setter private String profileImgName;
+    @Setter private String profileImgPath;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")

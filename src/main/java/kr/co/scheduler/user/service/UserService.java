@@ -11,9 +11,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -125,5 +130,44 @@ public class UserService {
                 });
 
         user.update(passwordEncoder.encode(update.getPassword()), update.getName(), update.getPhone());
+    }
+
+    @Transactional
+    public void updateInfoWithImg(UserReqDTO.UPDATE update, String email, MultipartFile uploadImg) {
+
+        String uploadFolder = "C:\\upload";
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        String str = sdf.format(date);
+        String datePath = str.replace("-", File.separator);
+
+        File uploadPath = new File(uploadFolder, datePath);
+
+        if(uploadPath.exists() == false) {
+            uploadPath.mkdirs();
+        }
+
+        String uploadFileName = uploadImg.getOriginalFilename();
+        String uuid = UUID.randomUUID().toString();
+
+        uploadFileName = uuid + "_" + uploadFileName;
+
+        File saveFile = new File(uploadPath, uploadFileName);
+
+        try {
+            uploadImg.transferTo(saveFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        User user = userRepository.findOptionalByEmail(email)
+                .orElseThrow(()->{
+                    return new IllegalArgumentException("가입된 회원이 아닙니다.");
+                });
+
+        user.update(passwordEncoder.encode(update.getPassword()), update.getName(), update.getPhone());
+        user.setProfileImgName(uploadFileName);
+        user.setProfileImgPath(uploadPath+"\\"+uploadFileName);
     }
 }

@@ -7,12 +7,21 @@
   <h2 style="display: inline-block;">내프로필</h2><span class="badge bg-secondary" style="color: white;">Info</span>
 
   <div class="card" style="width:400px">
+  <c:choose>
+  <c:when test="${empty principal.user.profileImgName}" >
   <img class="card-img-top" src="/image/profile-spap.png" alt="Card image" style="position:relative; width: 200px; left: 100px;">
+  </c:when>
+  <c:otherwise>
+  <br>
+  <div id="image_wrapper" style="position: relative; width: 200px; height: 200px; left: 100px; border-radius: 70%; overflow: hidden;">
+    <img id="profileImg" src="/user/info/profileImg" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
+  </div>
+  </c:otherwise>
+  </c:choose>
     <div class="card-body">
       <h4 class="card-title">${info.name}</h4>
 
       <br/>
-
       <p class="card-text"><b>이메일</b> | ${info.email}</p>
       <p class="card-text"><b>휴대전화번호</b> | ${info.phone}</p>
       <p class="card-text"><b>가입일자</b> | ${info.createdAt}</p>

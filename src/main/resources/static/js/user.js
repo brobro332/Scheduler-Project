@@ -67,6 +67,24 @@ let index = {
             },
 
             update: function() {
+
+                var formData = new FormData();
+                formData.append("uploadImg", $("input[name='uploadImg']")[0].files[0]);
+
+                var data = {
+                    info: {
+                        password: $("#password").val(),
+                        checkedPassword: $("#checkedPassword").val(),
+                        name: $("#name").val(),
+                        phone: $("#phone").val()
+                    }
+                }
+
+                formData.append(
+                    "update",
+                    new Blob([JSON.stringify(data.info)], { type: "application/json" })
+                );
+
                 var password = $("#password").val();
                 var checkedPassword = $("#checkedPassword").val();
 
@@ -77,18 +95,12 @@ let index = {
                 return false;
                 }
 
-                let data = {
-                        password: $("#password").val(),
-                        checkedPassword: $("#checkedPassword").val(),
-                        name: $("#name").val(),
-                        phone: $("#phone").val()
-                };
-
                 $.ajax({
                     type: "PUT",
                     url: "/api/user/update",
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
+                    processData : false,
+                    contentType : false,
+                    data : formData,
                     dataType: "json"
                 }).done(function(resp) {
                     if(resp.statusCode == 400 || resp.statusCode == 500){

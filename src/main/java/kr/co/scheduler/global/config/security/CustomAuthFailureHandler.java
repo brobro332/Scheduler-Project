@@ -1,4 +1,4 @@
-package kr.co.scheduler.global.security;
+package kr.co.scheduler.global.config.security;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
