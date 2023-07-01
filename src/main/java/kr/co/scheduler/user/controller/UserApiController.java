@@ -95,10 +95,6 @@ public class UserApiController {
                                           Principal principal,
                                           @RequestPart(value = "uploadImg", required = false) MultipartFile uploadImg) throws IOException {
 
-        if(uploadImg != null) {
-            userService.updateInfoWithImg(update, principal.getName(), uploadImg);
-        }
-
         if(bindingResult.hasErrors()) {
 
             Map<String, String> validateResult
@@ -119,8 +115,13 @@ public class UserApiController {
                     HttpStatus.BAD_REQUEST.value(),
                     "확인용 비밀번호가 일치하지 않습니다.");
         }
+        if(uploadImg != null) {
 
-        userService.updateInfo(update, principal.getName());
+            userService.updateInfoWithImg(update, principal.getName(), uploadImg);
+        } else {
+
+            userService.updateInfo(update, principal.getName());
+        }
 
         return ResponseDto.ofSuccessData(
                 "회원정보를 성공적으로 수정하였습니다.",
