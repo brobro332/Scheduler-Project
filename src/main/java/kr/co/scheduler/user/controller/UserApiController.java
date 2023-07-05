@@ -186,21 +186,24 @@ public class UserApiController {
         return new ResponseEntity<>(imageByteArray, HttpStatus.OK);
     }
 
+    /**
+     * deleteProfileImg: 프로필이미지를 삭제
+     * 1. 업로드된 프로필이미지 파일을 삭제
+     * 2. DB 에서 프로필이미지에 대한 데이터에 null 값을 넣음
+     */
     @PostMapping("/api/user/info/profileImg/delete")
     public ResponseDto<?> deleteProfileImg(Principal principal) {
 
         User user = userRepository.findByEmail(principal.getName());
 
         File file = null;
-
         try {
 
             file = new File(URLDecoder.decode(user.getProfileImgPath(), StandardCharsets.UTF_8));
 
             file.delete();
 
-            userService.deleteImgInDataBase(principal.getName());
-
+            userService.deleteImgData(principal.getName());
         } catch(Exception e) {
 
             log.error("fail to delete profileImg", e);

@@ -176,8 +176,11 @@ public class UserService {
         user.setProfileImgPath(uploadPath+"\\"+uploadFileName);
     }
 
+    /**
+     * deleteImgData: DB 에서 프로필이미지에 대한 데이터에 null 값을 넣음
+     */
     @Transactional
-    public void deleteImgInDataBase(String email) {
+    public void deleteImgData(String email) {
 
         User user = userRepository.findByEmail(email);
 
