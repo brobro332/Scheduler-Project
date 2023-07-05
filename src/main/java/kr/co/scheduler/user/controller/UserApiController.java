@@ -14,9 +14,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.Map;
 
@@ -30,7 +33,9 @@ public class UserApiController {
     /**
      * signUp: 회원가입
      * 1. 입력 데이터 검증
-     * 2. 요청한 이메일이 이미 가입된 계정인지 검증
+     * 2. 비밀번호와 확인용 비밀번호 일치 검증
+     * 3. 이미 가입된 회원인지 검증
+     * 4. 데이터 저장
      */
     @PostMapping("/signUp")
     public ResponseDto<Object> signUp(@Valid @RequestBody UserReqDTO.CREATE create, BindingResult bindingResult) {
@@ -87,7 +92,10 @@ public class UserApiController {
     /**
      * updateInfo: 회원정보 수정
      * 1. 입력 데이터 검증
-     * 2. 요청한 이메일이 이미 가입된 계정인지 검증
+     * 2. 비밀번호와 확인용 비밀번호 일치 검증
+     * 3. 프로필 이미지를 등록하는지 검사
+     *   3-1. 이미 등록된 이미지가 있다면 기존 이미지를 삭제, 없다면 그대로 등록
+     *   3-2. 업로드된 이미지가 없다면 나머지 정보만 수정
      */
     @PutMapping("/api/user/update")
     public ResponseDto<Object> updateInfo(@RequestPart("update") @Valid UserReqDTO.UPDATE update,
@@ -95,6 +103,7 @@ public class UserApiController {
                                           Principal principal,
                                           @RequestPart(value = "uploadImg", required = false) MultipartFile uploadImg) throws IOException {
 
+        // 입력 데이터 검증
         if(bindingResult.hasErrors()) {
 
             Map<String, String> validateResult
@@ -106,6 +115,7 @@ public class UserApiController {
                     validateResult);
         }
 
+        // 비밀번호와 확인용 비밀번호 일치 검증
         boolean incorrectCheckedPassword
                 = userService.validateCheckedPassword(update.getPassword(), update.getCheckedPassword());
 
@@ -115,11 +125,36 @@ public class UserApiController {
                     HttpStatus.BAD_REQUEST.value(),
                     "확인용 비밀번호가 일치하지 않습니다.");
         }
+
+        // 프로필 이미지를 등록하는지 검사
         if(uploadImg != null) {
 
+            String filePath = userRepository.findByEmail(principal.getName()).getProfileImgPath();
+
+            // 이미 등록된 이미지가 있다면 기존 이미지를 삭제
+            if(filePath != null) {
+
+                File file = null;
+
+                try {
+
+                    file = new File(URLDecoder.decode(filePath, StandardCharsets.UTF_8));
+
+                    file.delete();
+
+                } catch (Exception e) {
+
+                    e.printStackTrace();
+
+                    return ResponseDto.ofFailMessage(HttpStatus.NOT_IMPLEMENTED.value(), "기존 이미지 삭제에 실패하였습니다.");
+                }
+            }
+
+            // 이미 등록된 이미지가 없다면 그대로 등록
             userService.updateInfoWithImg(update, principal.getName(), uploadImg);
         } else {
 
+            // 업로드된 이미지가 없다면 나머지 정보만 수정
             userService.updateInfo(update, principal.getName());
         }
 
