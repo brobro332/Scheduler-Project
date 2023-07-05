@@ -7,6 +7,7 @@ import kr.co.scheduler.user.entity.User;
 import kr.co.scheduler.user.repository.UserRepository;
 import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class UserApiController {
@@ -40,7 +42,7 @@ public class UserApiController {
     @PostMapping("/signUp")
     public ResponseDto<Object> signUp(@Valid @RequestBody UserReqDTO.CREATE create, BindingResult bindingResult) {
 
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
 
             Map<String, String> validateResult = userService.validateHandling(bindingResult);
 
@@ -93,9 +95,9 @@ public class UserApiController {
      * updateInfo: 회원정보 수정
      * 1. 입력 데이터 검증
      * 2. 비밀번호와 확인용 비밀번호 일치 검증
-     * 3. 프로필 이미지를 등록하는지 검사
-     *   3-1. 이미 등록된 이미지가 있다면 기존 이미지를 삭제, 없다면 그대로 등록
-     *   3-2. 업로드된 이미지가 없다면 나머지 정보만 수정
+     * 3. 프로필이미지를 등록하는지 검사
+     * 3-1. 이미 등록된 이미지가 있다면 기존 이미지를 삭제, 없다면 그대로 등록
+     * 3-2. 업로드된 이미지가 없다면 나머지 정보만 수정
      */
     @PutMapping("/api/user/update")
     public ResponseDto<Object> updateInfo(@RequestPart("update") @Valid UserReqDTO.UPDATE update,
@@ -104,7 +106,7 @@ public class UserApiController {
                                           @RequestPart(value = "uploadImg", required = false) MultipartFile uploadImg) throws IOException {
 
         // 입력 데이터 검증
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
 
             Map<String, String> validateResult
                     = userService.validateHandling(bindingResult);
@@ -127,12 +129,12 @@ public class UserApiController {
         }
 
         // 프로필 이미지를 등록하는지 검사
-        if(uploadImg != null) {
+        if (uploadImg != null) {
 
             String filePath = userRepository.findByEmail(principal.getName()).getProfileImgPath();
 
             // 이미 등록된 이미지가 있다면 기존 이미지를 삭제
-            if(filePath != null) {
+            if (filePath != null) {
 
                 File file = null;
 
@@ -144,9 +146,9 @@ public class UserApiController {
 
                 } catch (Exception e) {
 
-                    e.printStackTrace();
+                    log.error("fail to delete profileImg", e);
 
-                    return ResponseDto.ofFailMessage(HttpStatus.NOT_IMPLEMENTED.value(), "기존 이미지 삭제에 실패하였습니다.");
+                    return ResponseDto.ofFailMessage(HttpStatus.NOT_IMPLEMENTED.value(), "기존 프로필이미지 삭제에 실패하였습니다.");
                 }
             }
 
@@ -164,7 +166,7 @@ public class UserApiController {
     }
 
     /**
-     * getProfileImg: 프로필 이미지를 뷰로 전송
+     * getProfileImg: 프로필이미지를 뷰로 전송
      * 뷰에서 바이트 단위의 데이터를 받기 위해서는
      * HttpStatus, HttpHeaders, HttpBody 를 모두 포함해야하기 때문에
      * ResponseDTO 가 아닌 ResponseEntity 를 응답한다.
@@ -173,7 +175,7 @@ public class UserApiController {
     public ResponseEntity<?> getProfileImg(Principal principal) throws IOException {
 
         User user = userRepository.findOptionalByEmail(principal.getName())
-                .orElseThrow(()->{
+                .orElseThrow(() -> {
                     return new IllegalArgumentException("가입되지 않은 회원입니다.");
                 });
 
@@ -182,5 +184,32 @@ public class UserApiController {
         inputStream.close();
 
         return new ResponseEntity<>(imageByteArray, HttpStatus.OK);
+    }
+
+    @PostMapping("/api/user/info/profileImg/delete")
+    public ResponseDto<?> deleteProfileImg(Principal principal) {
+
+        User user = userRepository.findByEmail(principal.getName());
+
+        File file = null;
+
+        try {
+
+            file = new File(URLDecoder.decode(user.getProfileImgPath(), StandardCharsets.UTF_8));
+
+            file.delete();
+
+            userService.deleteImgInDataBase(principal.getName());
+
+        } catch(Exception e) {
+
+            log.error("fail to delete profileImg", e);
+
+            return ResponseDto.ofFailMessage(HttpStatus.NOT_IMPLEMENTED.value(), "프로필이미지 삭제에 실패하였습니다.");
+        }
+
+        return ResponseDto.ofSuccessData(
+                "프로필이미지를 성공적으로 삭제하였습니다.",
+                null);
     }
 }

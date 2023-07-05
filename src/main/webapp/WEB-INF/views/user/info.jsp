@@ -5,7 +5,7 @@
 <div>
 <div class="container" style="display: inline-block; position: relative; left: 35%; width: 70%; min-height: 360px;">
   <h2 style="display: inline-block;">내프로필</h2><span class="badge bg-secondary" style="color: white;">Info</span>
-
+  <button type="button" id="btn-deleteProfileImg" class="btn btn" style="position: absolute; left: 215px; top: 0; background-color: gray; color: white; width: 200px;">프로필이미지 삭제</button>
   <div class="card" style="width:400px">
   <c:choose>
   <c:when test="${empty principal.user.profileImgName}" >
@@ -19,7 +19,7 @@
   </c:otherwise>
   </c:choose>
     <div class="card-body">
-      <h4 class="card-title">${info.name}</h4>
+      <h4 class="card-title" style="display: inline-block;">${info.name}</h4>
 
       <br/>
       <p class="card-text"><b>이메일</b> | ${info.email}</p>
@@ -38,6 +38,9 @@
                 window.addEventListener("load", ()=>{
                     this.searchInfo();
                 });
+                $("#btn-deleteProfileImg").on("click", ()=>{
+                    this.deleteProfileImg();
+                });
             },
 
             searchInfo: function() {
@@ -53,7 +56,24 @@
             }).fail(function(error) {
                 alert(JSON.stringify(error));
             });
-        }
+        },
+
+        deleteProfileImg: function() {
+
+         $.ajax({
+                 type: "POST",
+                 url: "/api/user/info/profileImg/delete",
+                 dataType: "json"
+            }).done(function(resp) {
+            if(resp.statusCode == 400 || resp.statusCode == 500){
+                alert(resp.message);
+            } else {
+                alert(resp.message);
+            }
+            }).fail(function(error) {
+                alert(JSON.stringify(error));
+            });
+         }
     }
 
     index.init();
