@@ -1,6 +1,8 @@
 package kr.co.scheduler.user.controller;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import kr.co.scheduler.global.config.security.PrincipalDetails;
 import kr.co.scheduler.global.dtos.ResponseDto;
 import kr.co.scheduler.user.dtos.UserReqDTO;
 import kr.co.scheduler.user.entity.User;
@@ -11,6 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +39,7 @@ public class UserApiController {
 
     private final UserService userService;
     private final UserRepository userRepository;
+    private final AuthenticationManager authenticationManager;
 
     /**
      * signUp: 회원가입
@@ -160,6 +169,11 @@ public class UserApiController {
             userService.updateInfo(update, principal.getName());
         }
 
+        // 프로필이미지를 즉각 반영하기 위한 세션 갱신
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(principal.getName(), update.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
         return ResponseDto.ofSuccessData(
                 "회원정보를 성공적으로 수정하였습니다.",
                 null);
@@ -171,7 +185,7 @@ public class UserApiController {
      * HttpStatus, HttpHeaders, HttpBody 를 모두 포함해야하기 때문에
      * ResponseDTO 가 아닌 ResponseEntity 를 응답한다.
      */
-    @GetMapping("/user/info/profileImg")
+    @GetMapping("/api/user/info/profileImg")
     public ResponseEntity<?> getProfileImg(Principal principal) throws IOException {
 
         User user = userRepository.findOptionalByEmail(principal.getName())
@@ -192,18 +206,19 @@ public class UserApiController {
      * 2. DB 에서 프로필이미지에 대한 데이터에 null 값을 넣음
      */
     @PostMapping("/api/user/info/profileImg/delete")
-    public ResponseDto<?> deleteProfileImg(Principal principal) {
+    public ResponseDto<?> deleteProfileImg(Principal principal, HttpSession session) {
 
         User user = userRepository.findByEmail(principal.getName());
 
         File file = null;
+
         try {
 
             file = new File(URLDecoder.decode(user.getProfileImgPath(), StandardCharsets.UTF_8));
 
             file.delete();
 
-            userService.deleteImgData(principal.getName());
+            userService.deleteImgData(principal.getName(), session);
         } catch(Exception e) {
 
             log.error("fail to delete profileImg", e);

@@ -11,9 +11,6 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity {
 
-    @Setter private String profileImgName;
-    @Setter private String profileImgPath;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -33,6 +30,12 @@ public class User extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Setter
+    private String profileImgName;
+
+    @Setter
+    private String profileImgPath;
 
     @Builder
     public User(String email, String password, String name, String phone, Role role) {

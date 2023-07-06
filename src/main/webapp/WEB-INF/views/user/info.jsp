@@ -8,13 +8,13 @@
   <button type="button" id="btn-deleteProfileImg" class="btn btn" style="position: absolute; left: 215px; top: 0; background-color: gray; color: white; width: 200px;">프로필이미지 삭제</button>
   <div class="card" style="width:400px">
   <c:choose>
-  <c:when test="${empty principal.user.profileImgName}" >
+  <c:when test="${empty img.profileImgName}" >
   <img class="card-img-top" src="/image/profile-spap.png" alt="Card image" style="position:relative; width: 200px; left: 100px;">
   </c:when>
   <c:otherwise>
   <br>
   <div id="image_wrapper" style="position: relative; width: 200px; height: 200px; left: 100px; border-radius: 70%; overflow: hidden;">
-    <img id="profileImg" src="/user/info/profileImg" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
+    <img id="profileImg" src="/api/user/info/profileImg" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
   </div>
   </c:otherwise>
   </c:choose>
@@ -69,6 +69,7 @@
                 alert(resp.message);
             } else {
                 alert(resp.message);
+                location.href="/user/info";
             }
             }).fail(function(error) {
                 alert(JSON.stringify(error));

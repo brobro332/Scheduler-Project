@@ -6,6 +6,9 @@ let index = {
                 $("#btn-update").on("click", ()=>{
                     this.update();
                 });
+                window.addEventListener("load", ()=>{
+                    this.profileImg();
+                });
             },
 
             save: function() {
@@ -128,7 +131,16 @@ let index = {
                 }).fail(function(error) {
                     alert(JSON.stringify(error));
                 });
-            }
+            },
+
+            profileImg: function() {
+                $.ajax({
+                    type: "GET",
+                    url: "/user/info"
+                }).done(function(resp) {
+                    $("#navbar-interceptor").load(location.href+" #navbar-interceptor");
+                });
+            },
 }
 
 index.init();

@@ -41,7 +41,7 @@
     </ul>
     </c:when>
     <c:otherwise>
-    <ul class="navbar-nav">
+    <ul id="navbar-interceptor" class="navbar-nav">
         <li class="nav-item">
           <a class="nav-link" href="#" style="color: white;"><b>To Do List</b></a>
         </li>
@@ -62,17 +62,17 @@
         </li>
 
         <c:choose>
-          <c:when test="${empty principal.user.profileImgName}" >
+          <c:when test="${empty img.profileImgName}" >
           <li class="nav-item">
           <div id="navbar_image_wrapper" style="position: relative; width: 40px; height: 40px; left: 20px; border-radius: 70%; overflow: hidden; border: 3px solid white;">
-          <img class="card-img-top" src="/image/profile-spap.png" alt="Card image" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
+          <img id="profileImg" class="card-img-top" src="/image/profile-spap.png" alt="Card image" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
           </div>
           </li>
           </c:when>
           <c:otherwise>
             <li class="nav-item">
               <div id="navbar_image_wrapper" style="position: relative; width: 40px; height: 40px; left: 20px; border-radius: 70%; overflow: hidden; border: 3px solid white;">
-                <img id="profileImg" src="/user/info/profileImg" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
+                <img id="profileImg" src="/api/user/info/profileImg" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
               </div>
             </li>
           </c:otherwise>

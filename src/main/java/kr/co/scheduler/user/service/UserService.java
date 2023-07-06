@@ -1,5 +1,6 @@
 package kr.co.scheduler.user.service;
 
+import jakarta.servlet.http.HttpSession;
 import kr.co.scheduler.global.dtos.ResponseDto;
 import kr.co.scheduler.user.dtos.UserReqDTO;
 import kr.co.scheduler.user.dtos.UserResDTO;
@@ -180,7 +181,7 @@ public class UserService {
      * deleteImgData: DB 에서 프로필이미지에 대한 데이터에 null 값을 넣음
      */
     @Transactional
-    public void deleteImgData(String email) {
+    public void deleteImgData(String email, HttpSession session) {
 
         User user = userRepository.findByEmail(email);
 
