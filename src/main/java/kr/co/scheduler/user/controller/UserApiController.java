@@ -232,7 +232,7 @@ public class UserApiController {
                 null);
     }
 
-    @PostMapping("/api/user/mailConfirm")
+    @PostMapping("/api/user/mailCertify")
     @ResponseBody
     String mailConfirm(@RequestParam("email") String email) throws Exception {
 

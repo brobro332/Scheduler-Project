@@ -18,8 +18,8 @@
         </div>
 
         <div class="form-group last mb-4 check_input">
-            <label for="emailconfirm" id="emailconfirmTxt">인증번호를 입력해주세요</label>
-            <input type="text" class="form-control" id="emailconfirm" style="width:402px;">
+            <label for="emailCertify" id="emailCertifyTxt">인증번호를 입력해주세요</label>
+            <input type="text" class="form-control" id="emailCertify" style="width:402px;">
         </div>
         <div class="form-group">
             <label>비밀번호</label>

@@ -20,8 +20,6 @@ public class MailConfig {
     @Bean
     public JavaMailSender javaMailService() {
 
-        System.out.println("여기?");
-
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
 
         javaMailSender.setHost("smtp.naver.com");
