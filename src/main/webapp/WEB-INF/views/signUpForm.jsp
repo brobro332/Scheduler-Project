@@ -8,13 +8,19 @@
 
 <div class="container" style="display: inline-block; position: relative; left: 35%; width: 70%;">
     <form>
-        <div class="form-group">
+        <div class="form-group last mb-4 email_input">
             <label>이메일</label>
-            <input type="email" class="form-control" placeholder="이메일" id="email" style="width:402px;">
+            <div>
+            <input type="email" class="form-control" placeholder="이메일" id="email" style="width:302px; display:inline-block;">
+            <button class="form-control" type="button" id="checkEmail" style="width:90px; display:inline-block;">인증번호</button>
             <p id="valid_email"></p>
+            </div>
         </div>
 
-
+        <div class="form-group last mb-4 check_input">
+            <label for="emailconfirm" id="emailconfirmTxt">인증번호를 입력해주세요</label>
+            <input type="text" class="form-control" id="emailconfirm" style="width:402px;">
+        </div>
         <div class="form-group">
             <label>비밀번호</label>
             <input type="password" class="form-control" placeholder="비밀번호" id="password" style="width:402px;">

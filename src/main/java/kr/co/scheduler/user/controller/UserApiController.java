@@ -2,6 +2,7 @@ package kr.co.scheduler.user.controller;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import kr.co.scheduler.global.config.mail.RegisterMail;
 import kr.co.scheduler.global.config.security.PrincipalDetails;
 import kr.co.scheduler.global.dtos.ResponseDto;
 import kr.co.scheduler.user.dtos.UserReqDTO;
@@ -16,9 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,6 +39,8 @@ public class UserApiController {
     private final UserService userService;
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
+
+    private final RegisterMail registerMail;
 
     /**
      * signUp: 회원가입
@@ -229,5 +230,14 @@ public class UserApiController {
         return ResponseDto.ofSuccessData(
                 "프로필이미지를 성공적으로 삭제하였습니다.",
                 null);
+    }
+
+    @PostMapping("/api/user/mailConfirm")
+    @ResponseBody
+    String mailConfirm(@RequestParam("email") String email) throws Exception {
+
+        String code = registerMail.sendSimpleMessage(email);
+        System.out.println("인증코드 : " + code);
+        return code;
     }
 }
