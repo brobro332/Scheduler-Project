@@ -1,3 +1,5 @@
+let emailCertifyChk = false;
+
 let index = {
 		    init: function() {
                 $("#btn-save").on("click", ()=>{
@@ -23,6 +25,10 @@ let index = {
                 $('#valid_checkedPassword').text("패스워드가 일치하지 않습니다.");
                 $('#valid_checkedPassword').css('color', 'red');
                 return false;
+                }
+
+                if (emailCertifyChk == false) {
+                return false
                 }
 
                 let data = {
@@ -147,8 +153,8 @@ let index = {
 
             checkEmail: function() {
 
-                let $emailCertify = $("#emailCertify").val();
-                let $emailCertifyTxt = $("#emailCertifyTxt").val();
+                alert("해당 이메일로 인증번호가 발송되었습니다.")
+                let emailCertify = $("#emailCertify").val();
 
                 $.ajax({
                       type : "POST",
@@ -157,38 +163,25 @@ let index = {
                          "email" : $("#email").val()
                       },
                       success : function(data){
-                         alert("해당 이메일로 인증번호가 발송되었습니다.")
                          console.log("data : "+data);
-                         chkEmailCertify(data, $emailCertify, $emailCertifyTxt);
+                         chkEmailCertify(data, emailCertify);
                       }
                    });
 
-                    function chkEmailCertify(data, $emailCertify, $emailCertifyTxt){
-                        $emailCertify.on("keyup", function(){
-                            if (data != $emailCertify.val()) { //
-                                emailCertifyChk = false;
-                                $emailCertifyTxt.html("<span id='emailCertifyChk'>인증번호가 잘못되었습니다</span>")
-                                $("#emailCertifychk").css({
-                                    "color" : "#FA3E3E",
-                                    "font-weight" : "bold",
-                                    "font-size" : "10px"
-
-                                })
-                                //console.log("중복아이디");
-                            } else { // 아니면 중복아님
-                                emailCertifyChk = true;
-                                $emailCertifyTxt.html("<span id='emailCertifyChk'>인증번호 확인 완료</span>")
-
-                                $("#emailCertifychk").css({
-                                    "color" : "#0D6EFD",
-                                    "font-weight" : "bold",
-                                    "font-size" : "10px"
-
-                                })
-                            }
-                        })
-                    }
+                    function chkEmailCertify(data, emailCertify){
+                        $('#emailCertify').on("keyup", function() {
+                        if (data != $('#emailCertify').val()) {
+                            emailCertifyChk = false;
+                            $('#emailCertifyTxt').text("인증번호가 일치하지 않습니다.");
+                            $('#emailCertifyTxt').css('color', 'red');
+                        } else {
+                            emailCertifyChk = true;
+                            $('#emailCertifyTxt').text('인증번호 확인 완료');
+                            $('#emailCertifyTxt').css('color', 'red');
+                        }
+                    })
                 }
+            }
 }
 
 index.init();
