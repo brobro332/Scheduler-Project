@@ -3,7 +3,6 @@ package kr.co.scheduler.user.controller;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import kr.co.scheduler.global.config.mail.RegisterMail;
-import kr.co.scheduler.global.config.security.PrincipalDetails;
 import kr.co.scheduler.global.dtos.ResponseDto;
 import kr.co.scheduler.user.dtos.UserReqDTO;
 import kr.co.scheduler.user.entity.User;
@@ -15,9 +14,6 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -105,15 +101,12 @@ public class UserApiController {
      * updateInfo: 회원정보 수정
      * 1. 입력 데이터 검증
      * 2. 비밀번호와 확인용 비밀번호 일치 검증
-     * 3. 프로필이미지를 등록하는지 검사
-     * 3-1. 이미 등록된 이미지가 있다면 기존 이미지를 삭제, 없다면 그대로 등록
-     * 3-2. 업로드된 이미지가 없다면 나머지 정보만 수정
+     * 3. 입력된 정보 등록
      */
     @PutMapping("/api/user/update")
-    public ResponseDto<Object> updateInfo(@RequestPart("update") @Valid UserReqDTO.UPDATE update,
+    public ResponseDto<Object> updateInfo(@Valid @RequestBody UserReqDTO.UPDATE update,
                                           BindingResult bindingResult,
-                                          Principal principal,
-                                          @RequestPart(value = "uploadImg", required = false) MultipartFile uploadImg) throws IOException {
+                                          Principal principal) {
 
         // 입력 데이터 검증
         if (bindingResult.hasErrors()) {
@@ -137,44 +130,10 @@ public class UserApiController {
                     HttpStatus.BAD_REQUEST.value(),
                     "확인용 비밀번호가 일치하지 않습니다.");
         }
-
-        // 프로필 이미지를 등록하는지 검사
-        if (uploadImg != null) {
-
-            String filePath = userRepository.findByEmail(principal.getName()).getProfileImgPath();
-
-            // 이미 등록된 이미지가 있다면 기존 이미지를 삭제
-            if (filePath != null) {
-
-                File file = null;
-
-                try {
-
-                    file = new File(URLDecoder.decode(filePath, StandardCharsets.UTF_8));
-
-                    file.delete();
-
-                } catch (Exception e) {
-
-                    log.error("fail to delete profileImg", e);
-
-                    return ResponseDto.ofFailMessage(HttpStatus.NOT_IMPLEMENTED.value(), "기존 프로필이미지 삭제에 실패하였습니다.");
-                }
-            }
-
-            // 이미 등록된 이미지가 없다면 그대로 등록
-            userService.updateInfoWithImg(update, principal.getName(), uploadImg);
-        } else {
-
-            // 업로드된 이미지가 없다면 나머지 정보만 수정
-            userService.updateInfo(update, principal.getName());
-        }
-
-        // 프로필이미지를 즉각 반영하기 위한 세션 갱신
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(principal.getName(), update.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
+        
+        // 회원정보 수정
+        userService.updateInfo(update, principal.getName());
+        
         return ResponseDto.ofSuccessData(
                 "회원정보를 성공적으로 수정하였습니다.",
                 null);
@@ -199,6 +158,52 @@ public class UserApiController {
         inputStream.close();
 
         return new ResponseEntity<>(imageByteArray, HttpStatus.OK);
+    }
+
+    /**
+     * uploadProfileImg: 프로필이미지를 등록 및 수정
+     * 1. 파일이 업로드 되었는지 확인
+     * 2. 파일이 업로드 되어있지 않다면 실패 메세지 출력
+     * 3. 이미 등록된 프로필이미지가 있다면 삭제
+     * 4. 업로드 된 프로필 이미지 등록
+     */
+    @PutMapping("/api/user/info/profileImg/update")
+    public ResponseDto<?> uploadProfileImg(Principal principal,
+                                           @RequestPart(value = "uploadImg", required = false) MultipartFile uploadImg) throws IOException {
+
+        // 프로필 이미지가 업로드 되었는지 검사
+        if (uploadImg != null) {
+
+            String filePath = userRepository.findByEmail(principal.getName()).getProfileImgPath();
+
+            // 이미 등록된 이미지가 있다면 기존 이미지를 삭제
+            if (filePath != null) {
+
+                File file = null;
+
+                try {
+
+                    file = new File(URLDecoder.decode(filePath, StandardCharsets.UTF_8));
+
+                    file.delete();
+
+                } catch (Exception e) {
+
+                    log.error("fail to delete profileImg", e);
+
+                    return ResponseDto.ofFailMessage(HttpStatus.NOT_IMPLEMENTED.value(), "기존 프로필이미지 삭제에 실패하였습니다.");
+                }
+            }
+        } else {
+
+            return ResponseDto.ofFailMessage(HttpStatus.NOT_IMPLEMENTED.value(), "기존 프로필이미지 삭제에 실패하였습니다.");
+        }
+        // 업로드된 이미지 등록
+        userService.uploadProfileImg(principal.getName(), uploadImg);
+        
+        return ResponseDto.ofSuccessData(
+                "회원정보를 성공적으로 수정하였습니다.",
+                null);
     }
 
     /**

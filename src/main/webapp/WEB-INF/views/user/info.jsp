@@ -5,7 +5,7 @@
 <div>
 <div class="container" style="display: inline-block; position: relative; left: 35%; width: 70%; min-height: 360px;">
   <h2 style="display: inline-block;">내프로필</h2><span class="badge bg-secondary" style="color: white;">Info</span>
-  <button type="button" id="btn-deleteProfileImg" class="btn btn" style="position: absolute; left: 215px; top: 0; background-color: gray; color: white; width: 200px;">프로필이미지 삭제</button>
+  <button type="button" onclick="location.href='/user/info/profileImgForm'" class="btn btn" style="position: absolute; left: 215px; top: 0; background-color: gray; color: white; width: 200px;">프로필이미지 변경</button>
   <div class="card" style="width:400px">
   <c:choose>
   <c:when test="${empty img.profileImgName}" >
@@ -28,7 +28,7 @@
       <p class="card-text"><b>수정일자</b> | ${info.updatedAt}</p>
     </div>
   </div>
-  <button type="button" onclick="location.href='/user/info/updateForm'" class="btn btn" style="background-color: #956be8; color: white; width: 400px;">수정</button>
+  <button type="button" onclick="location.href='/user/info/updateForm'" class="btn btn" style="display: block; background-color: #956be8; color: white; width: 400px;">수정</button>
 </div>
 </div>
 

@@ -1,6 +1,5 @@
 package kr.co.scheduler.user.controller;
 
-import kr.co.scheduler.global.dtos.ResponseDto;
 import kr.co.scheduler.user.repository.UserRepository;
 import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +29,11 @@ public class UserController {
     public String updateForm() {
 
         return "user/updateForm";
+    }
+
+    @GetMapping("/user/info/profileImgForm")
+    public String profileImgForm() {
+
+        return "user/profileImgForm";
     }
 }

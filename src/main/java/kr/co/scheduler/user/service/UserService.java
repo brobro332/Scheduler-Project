@@ -1,14 +1,12 @@
 package kr.co.scheduler.user.service;
 
 import jakarta.servlet.http.HttpSession;
-import kr.co.scheduler.global.dtos.ResponseDto;
 import kr.co.scheduler.user.dtos.UserReqDTO;
 import kr.co.scheduler.user.dtos.UserResDTO;
 import kr.co.scheduler.user.entity.User;
 import kr.co.scheduler.user.enums.Role;
 import kr.co.scheduler.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,9 +15,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -138,8 +133,11 @@ public class UserService {
         user.update(passwordEncoder.encode(update.getPassword()), update.getName(), update.getPhone());
     }
 
+    /**
+     * uploadProfileImg : 프로필이미지 등록 및 수정
+     */
     @Transactional
-    public void updateInfoWithImg(UserReqDTO.UPDATE update, String email, MultipartFile uploadImg) {
+    public void uploadProfileImg(String email, MultipartFile uploadImg) {
 
         String uploadFolder = "C:\\upload";
 
@@ -172,7 +170,6 @@ public class UserService {
                     return new IllegalArgumentException("가입된 회원이 아닙니다.");
                 });
 
-        user.update(passwordEncoder.encode(update.getPassword()), update.getName(), update.getPhone());
         user.setProfileImgName(uploadFileName);
         user.setProfileImgPath(uploadPath+"\\"+uploadFileName);
     }
