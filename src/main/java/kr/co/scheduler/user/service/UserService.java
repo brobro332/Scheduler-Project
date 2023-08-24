@@ -77,6 +77,24 @@ public class UserService {
     }
 
     /**
+     * validatePrevPassword : 비밀번호 변경 시 현재 비밀번호 검증하여 boolean 타입 반환
+     */
+    public boolean validatePrevPassword(String email, String prevPassword) {
+
+        User user = userRepository.findOptionalByEmail(email)
+                .orElseThrow(()->{
+                    return new IllegalArgumentException("가입된 회원이 아닙니다.");
+                });
+
+        if (passwordEncoder.matches(prevPassword, user.getPassword())){
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * validateHandling: 회원가입에 Validation 적용
      *
      * 1. BindingResult 를 파라미터로 받음
@@ -118,19 +136,35 @@ public class UserService {
     }
 
     /**
-     * updateInfo: 회원정보 수정
+     * updatePassword: 회원 비밀번호 수정
      * 1. 가입된 회원인지 검증
-     * 2. UserReqDTO 를 통해 비밀번호, 이름, 휴대전화번호를 넘겨 수정함
+     * 2. UserReqDTO 를 통해 비밀번호를 넘겨 수정함
      */
     @Transactional
-    public void updateInfo(UserReqDTO.UPDATE update, String email) {
+    public void updatePassword(UserReqDTO.UPDATE_PASSWORD update, String email) {
 
         User user = userRepository.findOptionalByEmail(email)
                 .orElseThrow(()->{
                     return new IllegalArgumentException("가입된 회원이 아닙니다.");
                 });
 
-        user.update(passwordEncoder.encode(update.getPassword()), update.getName(), update.getPhone());
+        user.updatePassword(passwordEncoder.encode(update.getPassword()));
+    }
+
+    /**
+     * updateInfo: 회원정보 수정
+     * 1. 가입된 회원인지 검증
+     * 2. UserReqDTO 를 통해 정보를 넘겨 수정함
+     */
+    @Transactional
+    public void updateInfo(UserReqDTO.UPDATE_INFO update, String email) {
+
+        User user = userRepository.findOptionalByEmail(email)
+                .orElseThrow(()->{
+                    return new IllegalArgumentException("가입된 회원이 아닙니다.");
+                });
+
+        user.updateInfo(update.getName(), update.getPhone());
     }
 
     /**

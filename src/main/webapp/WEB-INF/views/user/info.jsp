@@ -28,7 +28,7 @@
       <p class="card-text"><b>수정일자</b> | ${info.updatedAt}</p>
     </div>
   </div>
-  <button type="button" onclick="location.href='/user/info/updateForm'" class="btn btn" style="display: block; background-color: #956be8; color: white; width: 400px;">수정</button>
+  <button type="button" onclick="location.href='/user/info/updateList'" class="btn btn" style="display: block; background-color: #956be8; color: white; width: 400px;">수정</button>
 </div>
 </div>
 
@@ -56,25 +56,7 @@
             }).fail(function(error) {
                 alert(JSON.stringify(error));
             });
-        },
-
-        deleteProfileImg: function() {
-
-         $.ajax({
-                 type: "POST",
-                 url: "/api/user/info/profileImg/delete",
-                 dataType: "json"
-            }).done(function(resp) {
-            if(resp.statusCode == 400 || resp.statusCode == 500){
-                alert(resp.message);
-            } else {
-                alert(resp.message);
-                location.href="/user/info";
-            }
-            }).fail(function(error) {
-                alert(JSON.stringify(error));
-            });
-         }
+        }
     }
 
     index.init();

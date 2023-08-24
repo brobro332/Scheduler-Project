@@ -46,8 +46,11 @@ public class User extends BaseTimeEntity {
         this.role = role;
     }
 
-    public void update(String password, String name, String phone) {
+    public void updatePassword(String password) {
         this.password = password;
+    }
+
+    public void updateInfo(String name, String phone) {
         this.name = name;
         this.phone = phone;
     }

@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,8 +34,7 @@ public class UserApiController {
 
     private final UserService userService;
     private final UserRepository userRepository;
-    private final AuthenticationManager authenticationManager;
-
+    private final PasswordEncoder passwordEncoder;
     private final RegisterMail registerMail;
 
     /**
@@ -98,13 +97,14 @@ public class UserApiController {
     }
 
     /**
-     * updateInfo: 회원정보 수정
+     * updatePassword: 회원 비밀번호 수정
      * 1. 입력 데이터 검증
-     * 2. 비밀번호와 확인용 비밀번호 일치 검증
-     * 3. 입력된 정보 등록
+     * 2. 현재 비밀번호 검증
+     * 3. 비밀번호와 확인용 비밀번호 일치 검증
+     * 4. 입력된 정보 등록
      */
-    @PutMapping("/api/user/update")
-    public ResponseDto<Object> updateInfo(@Valid @RequestBody UserReqDTO.UPDATE update,
+    @PutMapping("/api/user/update/password")
+    public ResponseDto<Object> updatePassword(@Valid @RequestBody UserReqDTO.UPDATE_PASSWORD update,
                                           BindingResult bindingResult,
                                           Principal principal) {
 
@@ -120,6 +120,17 @@ public class UserApiController {
                     validateResult);
         }
 
+        // 현재 비밀번호 일치 검증
+        boolean incorrectPrevPassword
+                = userService.validatePrevPassword(principal.getName(), update.getPrevPassword());
+
+        if (incorrectPrevPassword) {
+
+            return ResponseDto.ofFailMessage(
+                    HttpStatus.BAD_REQUEST.value(),
+                    "현재 비밀번호가 일치하지 않습니다.");
+        }
+
         // 비밀번호와 확인용 비밀번호 일치 검증
         boolean incorrectCheckedPassword
                 = userService.validateCheckedPassword(update.getPassword(), update.getCheckedPassword());
@@ -130,12 +141,42 @@ public class UserApiController {
                     HttpStatus.BAD_REQUEST.value(),
                     "확인용 비밀번호가 일치하지 않습니다.");
         }
-        
+
         // 회원정보 수정
-        userService.updateInfo(update, principal.getName());
+        userService.updatePassword(update, principal.getName());
         
         return ResponseDto.ofSuccessData(
-                "회원정보를 성공적으로 수정하였습니다.",
+                "패스워드를 성공적으로 수정하였습니다.",
+                null);
+    }
+
+    /**
+     * updateInfo: 회원정보 수정
+     * 1. 입력 데이터 검증
+     * 2. 입력된 정보 등록
+     */
+    @PutMapping("/api/user/update/info")
+    public ResponseDto<Object> updateInfo(@Valid @RequestBody UserReqDTO.UPDATE_INFO update,
+                                              BindingResult bindingResult,
+                                              Principal principal) {
+
+        // 입력 데이터 검증
+        if (bindingResult.hasErrors()) {
+
+            Map<String, String> validateResult
+                    = userService.validateHandling(bindingResult);
+
+            return ResponseDto.ofFailData(
+                    HttpStatus.BAD_REQUEST.value(),
+                    "회원정보 수정에 실패했습니다.",
+                    validateResult);
+        }
+
+        // 회원정보 수정
+        userService.updateInfo(update, principal.getName());
+
+        return ResponseDto.ofSuccessData(
+                "패스워드를 성공적으로 수정하였습니다.",
                 null);
     }
 

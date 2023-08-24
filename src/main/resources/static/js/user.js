@@ -5,8 +5,11 @@ let index = {
                 $("#btn-save").on("click", ()=>{
                     this.save();
                 });
-                $("#btn-update").on("click", ()=>{
-                    this.update();
+                $("#btn-updatePassword").on("click", ()=>{
+                    this.updatePassword();
+                });
+                $("#btn-updateInfo").on("click", ()=>{
+                    this.updateInfo();
                 });
                 window.addEventListener("load", ()=>{
                     this.profileImg();
@@ -78,28 +81,27 @@ let index = {
                 });
             },
 
-            update: function() {
+            updatePassword: function() {
 
                 var data = {
+                        prevPassword: $('#prevPassword').val(),
                         password: $("#password").val(),
                         checkedPassword: $("#checkedPassword").val(),
-                        name: $("#name").val(),
-                        phone: $("#phone").val()
                 }
 
                 var password = $("#password").val();
                 var checkedPassword = $("#checkedPassword").val();
 
                 if (password != checkedPassword) {
-                alert("패스워드가 일치하지 않습니다.");
-                $('#valid_checkedPassword').text("패스워드가 일치하지 않습니다.");
+                alert("비밀번호가 일치하지 않습니다.");
+                $('#valid_checkedPassword').text("비밀번호가 일치하지 않습니다.");
                 $('#valid_checkedPassword').css('color', 'red');
                 return false;
                 }
 
                 $.ajax({
                     type: "PUT",
-                    url: "/api/user/update",
+                    url: "/api/user/update/password",
                     data: JSON.stringify(data),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json"
@@ -111,6 +113,32 @@ let index = {
                             $('#valid_password').text(resp.data.valid_password);
                             $('#valid_password').css('color', 'red');
                         } else $('#valid_password').text('');
+
+                        } else {
+                        alert(resp.message);
+                        location.href = "/";
+                    }
+                }).fail(function(error) {
+                    alert(JSON.stringify(error));
+                });
+            },
+
+            updateInfo: function() {
+
+                var data = {
+                        name: $("#name").val(),
+                        phone: $("#phone").val()
+                }
+
+                $.ajax({
+                    type: "PUT",
+                    url: "/api/user/update/info",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                }).done(function(resp) {
+                    if(resp.statusCode == 400 || resp.statusCode == 500){
+                        alert(resp.message);
 
                         if(resp.data.hasOwnProperty('valid_name')){
                             $('#valid_name').text(resp.data.valid_name);

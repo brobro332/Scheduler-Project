@@ -25,10 +25,22 @@ public class UserController {
         return "user/info";
     }
 
-    @GetMapping("/user/info/updateForm")
-    public String updateForm() {
+    @GetMapping("/user/info/updateList")
+    public String updateSelect() {
 
-        return "user/updateForm";
+        return "user/updateList";
+    }
+
+    @GetMapping("/user/info/updatePasswordForm")
+    public String updatePasswordForm() {
+
+        return "user/updatePasswordForm";
+    }
+
+    @GetMapping("/user/info/updateInfoForm")
+    public String updateInfoForm() {
+
+        return "user/updateInfoForm";
     }
 
     @GetMapping("/user/info/profileImgForm")
