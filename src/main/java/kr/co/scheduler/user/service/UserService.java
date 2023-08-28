@@ -52,6 +52,8 @@ public class UserService {
 
     @Value("${oauth.key}")
     private String key;
+    @Value("${oauth.naver.key}")
+    private String client_secret;
 
     /**
      * signUp: 회원가입
@@ -205,7 +207,7 @@ public class UserService {
         params.add("client_id", "X7QHnxHieBySSOROJ7m8");
         params.add("code", code);
         params.add("state", state);
-        params.add("client_secret", "2_aSjGYMPF");
+        params.add("client_secret", client_secret);
 
         // 3. HttpHeader + HttpBody를 하나의 오브젝트에 담기
         HttpEntity<MultiValueMap<String, String>> naverTokenRequest = new HttpEntity<>(params, headers1);
