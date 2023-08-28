@@ -21,11 +21,14 @@
         <button class="btn btn" style="background-color: #956be8; color: white; width: 402px;">로그인</button>
     </form>
 
-    <br/><br/>
+    <br/>
     <span style="position: relative; left: 4%;">
     <a href="#" style="color: gray;">이메일 찾기</a> | <a href="#" style="color: gray;">비밀번호 찾기</a> | <a href="/signUpForm" style="color: gray;">회원가입</a>
     </span>
-    <br/>
+    <br/><br/>
+    <span style="position: relative; left: 4%;">
+    <a href="https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=262c86c00bbc08f8657b2bc0851efa0d&redirect_uri=http://localhost:8080/kakao/callback"><img src="/image/kakao_login_medium_wide.png"></a>
+    </span>
 </div>
 
 <%@ include file="layout/user/footer.jsp"%>

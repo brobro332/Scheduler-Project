@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,7 +33,6 @@ public class UserApiController {
 
     private final UserService userService;
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final RegisterMail registerMail;
 
     /**
@@ -176,7 +174,7 @@ public class UserApiController {
         userService.updateInfo(update, principal.getName());
 
         return ResponseDto.ofSuccessData(
-                "패스워드를 성공적으로 수정하였습니다.",
+                "회원정보를 성공적으로 수정하였습니다.",
                 null);
     }
 

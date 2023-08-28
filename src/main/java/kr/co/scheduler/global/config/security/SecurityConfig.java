@@ -18,9 +18,8 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 public class SecurityConfig {
 
     private final PrincipalDetailsService principalDetailsService;
-    private final AuthenticationFailureHandler customFailureHandler;
     private static final String[] AUTH_WHITELIST = {
-            "/", "/js/**", "/css/**", "/image/**", "/api/**"
+            "/", "/js/**", "/css/**", "/image/**", "/api/**", "/kakao/**"
     };
 
     @Bean
@@ -40,7 +39,6 @@ public class SecurityConfig {
                                 .loginProcessingUrl("/signIn")
                                 .usernameParameter("email")
                                 .passwordParameter("password")
-                                .failureHandler(customFailureHandler)
                                 .defaultSuccessUrl("/", false)
                                 .permitAll())
                             .logout()

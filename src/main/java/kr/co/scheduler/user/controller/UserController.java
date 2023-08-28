@@ -1,5 +1,6 @@
 package kr.co.scheduler.user.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kr.co.scheduler.user.repository.UserRepository;
 import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,17 @@ public class UserController {
         model.addAttribute("img", userRepository.findByEmail(principal.getName()));
 
         return "user/info";
+    }
+
+    /**
+     * kakaoCallback : 카카오 로그인 요청 및 콜백 응답받음
+     */
+    @GetMapping("/kakao/callback")
+    public String kakaoCallback(HttpServletRequest request, String code) {
+
+        userService.kakaoLogin(request, code);
+
+        return "redirect:/";
     }
 
     @GetMapping("/user/info/updateList")
