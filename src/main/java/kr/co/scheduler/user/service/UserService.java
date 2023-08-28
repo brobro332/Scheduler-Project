@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import kr.co.scheduler.global.entity.KakaoProfile;
-import kr.co.scheduler.global.entity.OAuthToken;
+import kr.co.scheduler.global.entity.kakao.KaKaoOAuthToken;
+import kr.co.scheduler.global.entity.kakao.KakaoProfile;
+import kr.co.scheduler.global.entity.naver.NaverProfile;
+import kr.co.scheduler.global.entity.naver.NaverOAuthToken;
 import kr.co.scheduler.user.dtos.UserReqDTO;
 import kr.co.scheduler.user.dtos.UserResDTO;
 import kr.co.scheduler.user.entity.User;
@@ -118,10 +120,10 @@ public class UserService {
 
         // 5. oauthToken 에 저장
         ObjectMapper objectMapper1 = new ObjectMapper();
-        OAuthToken oauthToken = null;
+        KaKaoOAuthToken oauthToken = null;
 
         try {
-            oauthToken = objectMapper1.readValue(response1.getBody(), OAuthToken.class);
+            oauthToken = objectMapper1.readValue(response1.getBody(), KaKaoOAuthToken.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -176,6 +178,106 @@ public class UserService {
 
         // 세션 등록
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(kakaoUser.getEmail(), key, collectors));
+        SecurityContext sc = SecurityContextHolder.getContext();
+        sc.setAuthentication(authentication);
+
+        HttpSession session = request.getSession(true);
+        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, sc);
+    }
+
+    /**
+     * naverLogin: 네이버 OAuth2.0 회원가입 및 로그인
+     * 1. AccessToken 요청
+     * 2. 사용자정보 요청
+     * 3. 초기 로그인 시 회원가입
+     * 4. 기존 회원일 경우 로그인
+     */
+    public void naverLogin(HttpServletRequest request, String code, String state) {
+
+        // AccessToken 요청
+        RestTemplate rt1 = new RestTemplate();
+        HttpHeaders headers1 = new HttpHeaders();
+        headers1.add("Content-type", "application/x-www-form-urlencoded");
+
+        // 2. HttpBody 오브젝트 생성
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", "X7QHnxHieBySSOROJ7m8");
+        params.add("code", code);
+        params.add("state", state);
+        params.add("client_secret", "2_aSjGYMPF");
+
+        // 3. HttpHeader + HttpBody를 하나의 오브젝트에 담기
+        HttpEntity<MultiValueMap<String, String>> naverTokenRequest = new HttpEntity<>(params, headers1);
+
+        // 4. Http 요청 : exchange 함수는 HttpEntity 오브젝트를 넣게 되어있다.
+        ResponseEntity<String> response1 = rt1.exchange(
+                "https://nid.naver.com/oauth2.0/token",
+                HttpMethod.POST,
+                naverTokenRequest,
+                String.class
+        );
+
+        // 5. oauthToken 에 저장
+        ObjectMapper objectMapper1 = new ObjectMapper();
+        NaverOAuthToken oauthToken = null;
+
+        try {
+            oauthToken = objectMapper1.readValue(response1.getBody(), NaverOAuthToken.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        // 사용자정보 요청
+        // 1. HttpHeader 오브젝트 생성
+        RestTemplate rt2 = new RestTemplate();
+        HttpHeaders headers2 = new HttpHeaders();
+        headers2.add("Authorization", "Bearer "+ oauthToken.getAccess_token());
+        headers1.add("Content-type", "application/x-www-form-urlencoded");
+
+        // 2. HttpHeader 를 오브젝트에 담기
+        HttpEntity<MultiValueMap<String, String>> naverProfileRequest = new HttpEntity<>(headers2);
+
+        // 3. Http 요청
+        ResponseEntity<String> response2 = rt2.exchange(
+                "https://openapi.naver.com/v1/nid/me",
+                HttpMethod.POST,
+                naverProfileRequest,
+                String.class
+        );
+
+        // 4. NaverProfile 에 저장
+        ObjectMapper objectMapper2 = new ObjectMapper();
+        NaverProfile naverProfile = null;
+
+        try {
+            naverProfile = objectMapper2.readValue(response2.getBody(), NaverProfile.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        User naverUser = User.builder()
+                .email(naverProfile.getResponse().getEmail())
+                .password(key)
+                .phone("00000000000")
+                .name("naverLogin")
+                .oauth("naver")
+                .build();
+
+        // 가입 및 비가입 체크
+        User originUser = userRepository.findByEmail(naverUser.getEmail());
+
+        if (originUser == null) {
+            System.out.println("기존 회원이 아닙니다.");
+            oauthSignUp(naverUser);
+        }
+
+        // 로그인 처리
+        List<GrantedAuthority> collectors = new ArrayList<GrantedAuthority>();
+        collectors.add(new SimpleGrantedAuthority("ROLE_USER"));
+
+        // 세션 등록
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(naverUser.getEmail(), key, collectors));
         SecurityContext sc = SecurityContextHolder.getContext();
         sc.setAuthentication(authentication);
 

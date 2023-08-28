@@ -35,9 +35,6 @@
         <li class="nav-item">
           <a class="nav-link" href="/signInForm" style="color: white;"><b>로그인</b></a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/signUpForm" style="color: white;"><b>회원가입</b></a>
-        </li>
     </ul>
     </c:when>
     <c:otherwise>

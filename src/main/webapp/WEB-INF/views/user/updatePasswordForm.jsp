@@ -8,6 +8,8 @@
 
 <div class="container" style="display: inline-block; position: relative; left: 35%; width: 70%;">
 <form>
+    <c:choose>
+    <c:when test="${empty principal.user.oauth}" >
         <div class="form-group">
             <label>비밀번호 변경</label>
             <input type="password" class="form-control" placeholder="현재 비밀번호" id="prevPassword" style="width:402px;">
@@ -17,6 +19,26 @@
             <input type="password" class="form-control" placeholder="새 비밀번호 확인" id="checkedPassword" style="width:402px;">
             <p id="valid_checkedPassword"></p>
         </div>
+    </c:when>
+    <c:otherwise>
+        <div class="form-group">
+            <label>비밀번호 변경</label>
+            <input type="password" class="form-control" placeholder="현재 비밀번호" id="prevPassword" style="width:402px;" readonly>
+            <p></p>
+            <input type="password" class="form-control" placeholder="새 비밀번호" id="password" style="width:402px;" readonly>
+            <p id="valid_password"></p>
+            <input type="password" class="form-control" placeholder="새 비밀번호 확인" id="checkedPassword" style="width:402px;" readonly>
+            <p id="valid_checkedPassword"></p>
+        </div>
+    </c:otherwise>
+    </c:choose>
+
+
+
+
+
+
+
 
     <br/>
     </form>

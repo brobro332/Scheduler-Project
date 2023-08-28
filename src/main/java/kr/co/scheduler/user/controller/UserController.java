@@ -27,12 +27,23 @@ public class UserController {
     }
 
     /**
-     * kakaoCallback : 카카오 로그인 요청 및 콜백 응답받음
+     * kakaoCallback: 카카오 로그인 요청 및 콜백 응답받음
      */
     @GetMapping("/kakao/callback")
     public String kakaoCallback(HttpServletRequest request, String code) {
 
         userService.kakaoLogin(request, code);
+
+        return "redirect:/";
+    }
+
+    /**
+     * NaverCallback: 네이버 로그인 요청 및 콜백 응답받음
+     */
+    @GetMapping("/naver/callback")
+    public String naverCallback(HttpServletRequest request, String code, String state) {
+
+        userService.naverLogin(request, code, state);
 
         return "redirect:/";
     }

@@ -26,9 +26,11 @@
     <a href="#" style="color: gray;">이메일 찾기</a> | <a href="#" style="color: gray;">비밀번호 찾기</a> | <a href="/signUpForm" style="color: gray;">회원가입</a>
     </span>
     <br/><br/>
-    <span style="position: relative; left: 4%;">
-    <a href="https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=262c86c00bbc08f8657b2bc0851efa0d&redirect_uri=http://localhost:8080/kakao/callback"><img src="/image/kakao_login_medium_wide.png"></a>
+    <span style="position: relative; left: 9%;">
+    <a href="https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=262c86c00bbc08f8657b2bc0851efa0d&redirect_uri=http://localhost:8080/kakao/callback"><img src="/image/kakao_login_medium_narrow.png"></a> <br/><p></p>
+    <a href="https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=X7QHnxHieBySSOROJ7m8&state=STATE_STRING&redirect_uri=http://localhost:8080/naver/callback"><img src="/image/naver_login_medium_narrow.png" style="width:183px; height:45px;"></a>
     </span>
+    <br/><br/>
 </div>
 
 <%@ include file="layout/user/footer.jsp"%>
