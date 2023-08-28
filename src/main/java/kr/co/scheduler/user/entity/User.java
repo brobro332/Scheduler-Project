@@ -8,6 +8,7 @@ import lombok.*;
 @Entity
 @Table(name = "tbl_user")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity {
 
@@ -31,12 +32,30 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Setter
+    private String profileImgName;
+
+    @Setter
+    private String profileImgPath;
+
+    private String oauth;
+
     @Builder
-    public User(String email, String password, String name, String phone, Role role) {
+    public User(String email, String password, String name, String phone, Role role, String oauth) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.phone = phone;
         this.role = role;
+        this.oauth = oauth;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+    public void updateInfo(String name, String phone) {
+        this.name = name;
+        this.phone = phone;
     }
 }

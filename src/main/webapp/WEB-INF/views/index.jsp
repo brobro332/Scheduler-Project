@@ -4,7 +4,7 @@
 
 <div class="container" style="height: 300px; min-height: 360px;">
 <div>
-    <div style="display: inline-block; position: absolute; left: 20%; top: 15%;">
+    <div style="display: inline-block; position: absolute; left: 20%; top: 11%;">
         <div style="width:470px; height:300px;">
         <p style="color: gray;"><small>Welcome to SPAP<small></p>
         <h1>일주일을 <kbd id="kbd">"가치있게"</kbd><br/>
@@ -17,7 +17,7 @@
 </div>
 
 <div style="display: inline-block; position: absolute; left: 60%; top: 10%;">
-<img src="image/banner-right-sapp.png" style="width:300px;">
+<img src="/image/banner-right-spap.png" style="width:300px;">
 </div>
 </div>
 

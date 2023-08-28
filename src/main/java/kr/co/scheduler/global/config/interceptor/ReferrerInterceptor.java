@@ -1,4 +1,4 @@
-package kr.co.scheduler.global.interceptor;
+package kr.co.scheduler.global.config.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

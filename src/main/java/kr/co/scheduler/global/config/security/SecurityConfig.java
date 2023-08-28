@@ -1,7 +1,6 @@
-package kr.co.scheduler.global.security;
+package kr.co.scheduler.global.config.security;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,11 +18,8 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 public class SecurityConfig {
 
     private final PrincipalDetailsService principalDetailsService;
-
-    private final AuthenticationFailureHandler customFailureHandler;
-
     private static final String[] AUTH_WHITELIST = {
-            "/", "/js/**", "/css/**", "/image/**"
+            "/", "/js/**", "/css/**", "/image/**", "/api/**", "/kakao/**", "/naver/**"
     };
 
     @Bean
@@ -43,12 +39,11 @@ public class SecurityConfig {
                                 .loginProcessingUrl("/signIn")
                                 .usernameParameter("email")
                                 .passwordParameter("password")
-                                .failureHandler(customFailureHandler)
                                 .defaultSuccessUrl("/", false)
                                 .permitAll())
                             .logout()
                                 .logoutSuccessUrl("/")
-                                .invalidateHttpSession(true).deleteCookies("JSESSIONID");;
+                                .invalidateHttpSession(true).deleteCookies("JSESSIONID");
 
         return http.build();
     }
@@ -68,8 +63,4 @@ public class SecurityConfig {
 
         return authenticationConfiguration.getAuthenticationManager();
     }
-
-
-
-
 }

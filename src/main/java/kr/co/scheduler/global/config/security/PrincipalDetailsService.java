@@ -1,4 +1,4 @@
-package kr.co.scheduler.global.security;
+package kr.co.scheduler.global.config.security;
 
 import kr.co.scheduler.user.entity.User;
 import kr.co.scheduler.user.repository.UserRepository;
