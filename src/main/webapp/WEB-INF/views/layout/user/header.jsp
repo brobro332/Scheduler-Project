@@ -15,6 +15,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+
+  <link rel="stylesheet" href="/js/summernote/summernote-lite.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
@@ -46,7 +48,7 @@
           <a class="nav-link" href="#" style="color: white;"><b>주간일정</b></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#" style="color: white;"><b>커뮤니티</b></a>
+          <a class="nav-link" href="/community/view" style="color: white;"><b>커뮤니티</b></a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#" style="color: white;"><b>고객센터</b></a>

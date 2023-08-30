@@ -412,7 +412,7 @@ public class UserService {
     @Transactional
     public void uploadProfileImg(String email, MultipartFile uploadImg) {
 
-        String uploadFolder = "C:\\upload";
+        String uploadFolder = "C:\\upload\\profile";
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date();
@@ -457,5 +457,15 @@ public class UserService {
 
             user.setProfileImgName(null);
             user.setProfileImgPath(null);
+    }
+
+    public User findUser(String email) {
+
+        User user = userRepository.findOptionalByEmail(email)
+                .orElseThrow(()->{
+                    return new IllegalArgumentException("가입된 회원이 아닙니다.");
+                });
+
+        return user;
     }
 }

@@ -19,7 +19,7 @@ public class SecurityConfig {
 
     private final PrincipalDetailsService principalDetailsService;
     private static final String[] AUTH_WHITELIST = {
-            "/", "/js/**", "/css/**", "/image/**", "/api/**", "/kakao/**", "/naver/**"
+            "/", "/js/**", "/css/**", "/image/**", "/api/**", "/kakao/**", "/naver/**", "/community/**"
     };
 
     @Bean
