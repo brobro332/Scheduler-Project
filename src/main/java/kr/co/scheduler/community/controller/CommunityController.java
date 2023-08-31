@@ -8,6 +8,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,12 +24,20 @@ public class CommunityController {
 
     @GetMapping("/community/view")
     public String viewPosts(Model model,
-                                @PageableDefault(size = 10, sort="id", direction = Sort.Direction.DESC) Pageable pageable, String keyword) {
+                                @PageableDefault(size = 5, sort="id", direction = Sort.Direction.DESC) Pageable pageable, String keyword) {
         if (keyword == null) {
             model.addAttribute("posts", postService.viewPosts(pageable));
         } else {
             model.addAttribute("posts", postService.viewPostsOfKeyword(pageable, keyword));
         }
         return "community/view";
+    }
+
+    @GetMapping("/community/view/post/{post_id}")
+    public String viewOneOfPost(Model model, @PathVariable(name = "post_id") Long id) {
+
+        model.addAttribute("post", postService.viewOneOfPost(id));
+
+        return "community/post";
     }
 }

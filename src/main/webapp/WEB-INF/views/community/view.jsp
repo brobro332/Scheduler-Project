@@ -31,8 +31,13 @@
         <c:forEach items="${posts.content}" var="post">
           <tr>
             <td>${post.id}</td>
-            <td>${post.title}</td>
-            <td>${post.user.name}</td>
+            <td><a href="/community/view/post/${post.id}">${post.title}</a></td>
+            <td>
+                <div id="image_wrapper" style="position: relative; display:inline-block; width: 25px; height: 25px; border-radius: 70%; overflow: hidden;">
+                  <img id="profileImg" src="/api/community/post/profileImg/${post.user.email}" style="position: absolute; right: 0%; width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <a style="bottom:10%;">${post.user.name}</a>
+            </td>
             <td>${post.createdAt}</td>
             <td>${post.view_cnt}</td>
           </tr>
@@ -47,17 +52,17 @@
   <ul class="pagination" style="position:relative; left:45%; width: 20%;">
   	<c:choose>
   		<c:when test="${posts.first}">
-  			<li class="page-item disabled"><a class="page-link" href="?page=${posts.number-1}">이전</a></li>
+  			<li class="page-item disabled"><a class="page-link" href="?page=${posts.number-1}"><</a></li>
   		</c:when>
   		<c:otherwise>
-  			<li class="page-item"><a class="page-link" href="?page=${posts.number-1}">이전</a></li>
+  			<li class="page-item"><a class="page-link" href="?page=${posts.number-1}"><</a></li>
   		</c:otherwise>
   	</c:choose>
 
   	<c:forEach var="i" begin="1" end="${posts.totalPages}">
   	<c:choose>
       		<c:when test="${!empty param.keyword}">
-      		    <li class="page-item"><a class="page-link" href="?page=${i-1}&searchKeyword=${param.keyword}">${i}</a></li>
+      		    <li class="page-item"><a class="page-link" href="?page=${i-1}&keyword=${param.keyword}">${i}</a></li>
       		</c:when>
       		<c:otherwise>
       	        <li class="page-item"><a class="page-link" href="?page=${i-1}">${i}</a></li>
@@ -67,10 +72,10 @@
 
   	<c:choose>
   		<c:when test="${posts.last}">
-  			<li class="page-item disabled"><a class="page-link" href="?page=${posts.number+1}">다음</a></li>
+  			<li class="page-item disabled"><a class="page-link" href="?page=${posts.number+1}">></a></li>
   		</c:when>
   		<c:otherwise>
-  			<li class="page-item"><a class="page-link" href="?page=${posts.number+1}">다음</a></li>
+  			<li class="page-item"><a class="page-link" href="?page=${posts.number+1}">></a></li>
   		</c:otherwise>
   	</c:choose>
 

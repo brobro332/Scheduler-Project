@@ -241,7 +241,7 @@ public class UserApiController {
         userService.uploadProfileImg(principal.getName(), uploadImg);
         
         return ResponseDto.ofSuccessData(
-                "회원정보를 성공적으로 수정하였습니다.",
+                "프로필이미지를 성공적으로 등록하였습니다.",
                 null);
     }
 

@@ -39,4 +39,12 @@ public class PostService {
 
         return postRepository.findByTitleContaining(pageable, keyword);
     }
+
+    public Post viewOneOfPost(Long id) {
+
+        return postRepository.findById(id)
+                .orElseThrow(()->{
+                   return new IllegalArgumentException("해당 게시글을 조회할 수 없습니다.");
+                });
+    }
 }

@@ -8,7 +8,7 @@ let index = {
             save: function() {
                 let data = {
                         title: $("#title").val(),
-                        content: $("#content").val(),
+                        content: $("textarea[name = content]").val(),
                 };
 
                 $.ajax({
