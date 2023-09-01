@@ -6,10 +6,26 @@ let index = {
             },
 
             save: function() {
+
+                var title = $("#title").val();
+                var content = $("textarea[name = content]").val();
+
                 let data = {
                         title: $("#title").val(),
                         content: $("textarea[name = content]").val(),
                 };
+
+                if(title == '') {
+
+                    alert("제목을 입력해주세요.");
+                    return false;
+                }
+
+                if(content == '') {
+
+                    alert("내용을 입력해주세요.");
+                    return false;
+                }
 
                 $.ajax({
                     type: "POST",

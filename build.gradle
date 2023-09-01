@@ -59,6 +59,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.1'
 	implementation group: 'com.sun.mail', name: 'jakarta.mail', version: '2.0.1'
 
+	implementation 'org.jsoup:jsoup:1.16.1'
+
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'

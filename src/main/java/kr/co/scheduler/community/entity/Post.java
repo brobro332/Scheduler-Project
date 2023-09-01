@@ -26,6 +26,7 @@ public class Post extends BaseTimeEntity {
     private String title;
 
     @Lob
+    @Column(length = 1000000)
     private String content;
 
     @ManyToOne

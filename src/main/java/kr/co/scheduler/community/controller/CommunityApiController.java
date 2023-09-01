@@ -19,8 +19,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.UUID;
 
 @RestController
@@ -35,8 +33,6 @@ public class CommunityApiController {
     public ResponseDto<Object> writePost(@RequestBody PostReqDTO.CREATE create, Principal principal) {
 
         postService.writePost(create, principal.getName());
-        System.out.println(create.getTitle());
-        System.out.println(create.getContent());
 
         return ResponseDto.ofSuccessData(
                 "게시물이 정상적으로 등록되었습니다.",
@@ -52,14 +48,25 @@ public class CommunityApiController {
     @GetMapping("/api/community/post/profileImg/{email}")
     public ResponseEntity<?> getProfileImg(@PathVariable(name = "email") String email) throws IOException {
 
-        System.out.println(email);
         User user = userService.findUser(email);
 
-        InputStream inputStream = new FileInputStream(user.getProfileImgPath());
-        byte[] imageByteArray = IOUtils.toByteArray(inputStream);
-        inputStream.close();
+        if(user.getProfileImgPath() == null) {
 
-        return new ResponseEntity<>(imageByteArray, HttpStatus.OK);
+            InputStream inputStream = getClass().getResourceAsStream("/static/image/profile-spap.png");
+
+            byte[] imageByteArray = IOUtils.toByteArray(inputStream);
+            inputStream.close();
+
+            return new ResponseEntity<>(imageByteArray, HttpStatus.OK);
+        } else {
+
+            InputStream inputStream = new FileInputStream(user.getProfileImgPath());
+
+            byte[] imageByteArray = IOUtils.toByteArray(inputStream);
+            inputStream.close();
+
+            return new ResponseEntity<>(imageByteArray, HttpStatus.OK);
+        }
     }
 
     /**
@@ -67,16 +74,11 @@ public class CommunityApiController {
      * 1. 업로드 된 게시글 이미지 등록
      */
     @PostMapping("/api/community/postImg/upload")
-    public ResponseEntity<?> uploadPostImg(@RequestParam("file") MultipartFile uploadImg) throws IOException {
+    public ResponseEntity<?> uploadPostImg(@RequestParam("file") MultipartFile uploadImg, Principal principal) throws IOException {
 
-        String uploadFolder = "C:\\upload\\post\\";
+        String uploadFolder = "C:\\upload\\temp\\" + principal.getName();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = new Date();
-        String str = sdf.format(date);
-        String datePath = str.replace("-", File.separator);
-
-        File uploadPath = new File(uploadFolder, datePath);
+        File uploadPath = new File(uploadFolder);
 
         if(uploadPath.exists() == false) {
             uploadPath.mkdirs();
@@ -89,9 +91,11 @@ public class CommunityApiController {
 
         File saveFile = new File(uploadPath, uploadFileName);
 
+        System.out.println(uploadFolder + "\\" + uploadFileName);
+        System.out.println(uploadFileName);
 
         Img image = Img.builder()
-                .imgPath(uploadFolder + datePath + "\\" + uploadFileName)
+                .imgPath(uploadFolder + "\\" + uploadFileName)
                 .imgName(uploadFileName)
                 .build();
         imgRepository.save(image);
