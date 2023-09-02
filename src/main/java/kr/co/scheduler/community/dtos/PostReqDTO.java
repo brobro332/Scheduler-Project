@@ -16,7 +16,17 @@ public class PostReqDTO {
 
     @NotNull
     private String content;
+    }
 
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    public static class UPDATE {
+        @NotNull
+        private String title;
+
+        @NotNull
+        private String content;
     }
 }
 

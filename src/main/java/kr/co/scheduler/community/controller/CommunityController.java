@@ -1,5 +1,6 @@
 package kr.co.scheduler.community.controller;
 
+import kr.co.scheduler.community.entity.Post;
 import kr.co.scheduler.community.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -40,4 +41,16 @@ public class CommunityController {
 
         return "community/post";
     }
-}
+
+    @GetMapping("/community/update/{post_id}")
+    public String updatePost(Model model, @PathVariable(name = "post_id") Long id) {
+
+        Post post = postService.viewOneOfPost(id);
+
+        postService.updateImg(post);
+
+        model.addAttribute("post", post);
+
+        return "community/update";
+        }
+    }

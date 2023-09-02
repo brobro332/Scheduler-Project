@@ -162,7 +162,7 @@ public class UserService {
                 .email(kakaoProfile.getKakao_account().getEmail())
                 .password(key)
                 .phone("00000000000")
-                .name("kakaoLogin")
+                .name(kakaoProfile.getKakao_account().getProfile().getNickname())
                 .oauth("kakao")
                 .build();
 
@@ -261,8 +261,8 @@ public class UserService {
         User naverUser = User.builder()
                 .email(naverProfile.getResponse().getEmail())
                 .password(key)
-                .phone("00000000000")
-                .name("naverLogin")
+                .phone(naverProfile.getResponse().getMobile())
+                .name(naverProfile.getResponse().getName())
                 .oauth("naver")
                 .build();
 

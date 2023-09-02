@@ -1,6 +1,7 @@
 package kr.co.scheduler.community.controller;
 
 import kr.co.scheduler.community.dtos.PostReqDTO;
+import kr.co.scheduler.community.entity.Post;
 import kr.co.scheduler.community.service.PostService;
 import kr.co.scheduler.global.dtos.ResponseDto;
 import kr.co.scheduler.global.entity.Img;
@@ -37,6 +38,32 @@ public class CommunityApiController {
         return ResponseDto.ofSuccessData(
                 "게시물이 정상적으로 등록되었습니다.",
                 null);
+    }
+
+    @PutMapping("/api/community/update/{post_id}")
+    public ResponseDto<Object> updatePost(@RequestBody PostReqDTO.UPDATE update,
+                                          Principal principal,
+                                          @PathVariable(name = "post_id") Long id) {
+
+        postService.updatePost(update, principal.getName(), id);
+
+        return ResponseDto.ofSuccessData(
+                "게시물이 정상적으로 수정되었습니다.",
+                null);
+    }
+
+    @DeleteMapping("/api/community/delete/{post_id}")
+    public ResponseDto<Object> deletePost(Principal principal, @PathVariable(name = "post_id") Long id) {
+
+            Post post = postService.viewOneOfPost(id);
+
+            postService.deleteImg(post);
+
+            postService.deletePost(id);
+
+            return ResponseDto.ofSuccessData(
+                    "게시물이 정상적으로 삭제되었습니다.",
+                    null);
     }
 
     /**
