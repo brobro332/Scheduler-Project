@@ -5,6 +5,7 @@ import kr.co.scheduler.community.entity.Post;
 import kr.co.scheduler.community.repository.PostRepository;
 import kr.co.scheduler.global.entity.Img;
 import kr.co.scheduler.global.repository.ImgRepository;
+import kr.co.scheduler.user.repository.UserRepository;
 import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
@@ -15,12 +16,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 
 @Service
@@ -31,6 +35,7 @@ public class PostService {
     private final UserService userService;
     private final PostRepository postRepository;
     private final ImgRepository imgRepository;
+    private final UserRepository userRepository;
 
     public void writePost(PostReqDTO.CREATE create, String email) {
 
@@ -184,7 +189,12 @@ public class PostService {
         post.updatePost(update.getTitle(), content);
     }
 
-    public void deletePost(Long id) {
+    public void deletePost(Long id, String email) {
+
+        userRepository.findOptionalByEmail(email)
+            .orElseThrow(()->{
+                return new IllegalArgumentException("가입된 유저가 아닙니다.");
+            });
 
         Post post = postRepository.findById(id)
                 .orElseThrow(()->{
@@ -212,6 +222,43 @@ public class PostService {
                 });
     }
 
+    public Img findImg(String fileName) {
+
+        Img img = imgRepository.findByImgName(fileName);
+
+        return img;
+    }
+
+    public String uploadImg(MultipartFile uploadImg, String email) throws IOException {
+
+        String uploadFolder = "C:\\upload\\temp\\" + email;
+
+        File uploadPath = new File(uploadFolder);
+
+        if(uploadPath.exists() == false) {
+            uploadPath.mkdirs();
+        }
+
+        String uploadFileName = uploadImg.getOriginalFilename();
+        String uuid = UUID.randomUUID().toString();
+
+        uploadFileName = uuid + "_" + uploadFileName;
+
+        File saveFile = new File(uploadPath, uploadFileName);
+
+        System.out.println(uploadFolder + "\\" + uploadFileName);
+        System.out.println(uploadFileName);
+
+        Img image = Img.builder()
+                .imgPath(uploadFolder + "\\" + uploadFileName)
+                .imgName(uploadFileName)
+                .build();
+        imgRepository.save(image);
+        uploadImg.transferTo(saveFile);
+
+        return uploadFileName;
+    }
+
     @Transactional
     public void updateImg(Post post) {
 
@@ -230,7 +277,7 @@ public class PostService {
             if (parts.length == 2) {
                 fileName = parts[1];
 
-                Img img = imgRepository.findByImgName(fileName);
+                Img img = findImg(fileName);
 
                 String beforeFilePath = img.getImgPath();
                 String replaceFolder = "C:\\upload\\temp\\";
@@ -269,7 +316,7 @@ public class PostService {
             if (parts.length == 2) {
                 fileName = parts[1];
 
-                Img img = imgRepository.findByImgName(fileName);
+                Img img = findImg(fileName);
                 imgRepository.delete(img);
 
                 try {

@@ -93,7 +93,7 @@ let index = {
                 },
 
                 deletePost: function() {
-
+                    if (confirm("삭제를 진행하시겠습니까?")) {
                     var post_id = $('#post_id').val();
 
                     $.ajax({
@@ -111,6 +111,7 @@ let index = {
                     }).fail(function(error) {
                         alert(JSON.stringify(error));
                     });
+                    }
                 }
 }
 

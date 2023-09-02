@@ -15,12 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
-import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -59,7 +57,7 @@ public class CommunityApiController {
 
             postService.deleteImg(post);
 
-            postService.deletePost(id);
+            postService.deletePost(id, principal.getName());
 
             return ResponseDto.ofSuccessData(
                     "게시물이 정상적으로 삭제되었습니다.",
@@ -103,30 +101,7 @@ public class CommunityApiController {
     @PostMapping("/api/community/postImg/upload")
     public ResponseEntity<?> uploadPostImg(@RequestParam("file") MultipartFile uploadImg, Principal principal) throws IOException {
 
-        String uploadFolder = "C:\\upload\\temp\\" + principal.getName();
-
-        File uploadPath = new File(uploadFolder);
-
-        if(uploadPath.exists() == false) {
-            uploadPath.mkdirs();
-        }
-
-        String uploadFileName = uploadImg.getOriginalFilename();
-        String uuid = UUID.randomUUID().toString();
-
-        uploadFileName = uuid + "_" + uploadFileName;
-
-        File saveFile = new File(uploadPath, uploadFileName);
-
-        System.out.println(uploadFolder + "\\" + uploadFileName);
-        System.out.println(uploadFileName);
-
-        Img image = Img.builder()
-                .imgPath(uploadFolder + "\\" + uploadFileName)
-                .imgName(uploadFileName)
-                .build();
-        imgRepository.save(image);
-        uploadImg.transferTo(saveFile);
+        String uploadFileName = postService.uploadImg(uploadImg, principal.getName());
 
         return ResponseEntity.ok("/api/community/postImg/get?uploadFileName=" + uploadFileName);
     }
@@ -134,7 +109,7 @@ public class CommunityApiController {
     @GetMapping("/api/community/postImg/get")
     public ResponseEntity<?> getPostImg(@RequestParam String uploadFileName) throws IOException {
 
-        Img img = imgRepository.findByImgName(uploadFileName);
+        Img img = postService.findImg(uploadFileName);
 
         InputStream inputStream = new FileInputStream(img.getImgPath());
         byte[] imageByteArray = IOUtils.toByteArray(inputStream);
