@@ -9,6 +9,9 @@ let index = {
                 $("#btn-deletePost").on("click", ()=>{
                     this.deletePost();
                 });
+                $("#btn-comment").on("click", ()=>{
+                    this.comment();
+                });
             },
 
             save: function() {
@@ -112,6 +115,39 @@ let index = {
                         alert(JSON.stringify(error));
                     });
                     }
+                },
+
+                comment: function() {
+
+                    let comment = $('#comment').val();
+                    let post_id = $('#post_id').val();
+
+                    let data = {
+                            comment: comment
+                    };
+
+                    if(comment == '') {
+
+                        alert("댓글을 입력해주세요.");
+                        return false;
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/community/post/comment/" + post_id,
+                        data: JSON.stringify(data),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json"
+                    }).done(function(resp) {
+                        if(resp.statusCode == 400 || resp.statusCode == 500){
+                            alert(resp.message);
+                            } else {
+                            alert(resp.message);
+                            location.href = "/community/view/post/" + post_id;
+                        }
+                    }).fail(function(error) {
+                        alert(JSON.stringify(error));
+                    });
                 }
 }
 

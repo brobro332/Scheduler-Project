@@ -330,4 +330,11 @@ public class PostService {
             }
         }
     }
+
+    @Transactional
+    public int updateView_cnt(Long id) {
+
+        return postRepository.updateView_cnt(id);
+    }
+
 }

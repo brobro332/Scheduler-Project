@@ -1,6 +1,7 @@
 package kr.co.scheduler.community.controller;
 
 import kr.co.scheduler.community.entity.Post;
+import kr.co.scheduler.community.service.CommentService;
 import kr.co.scheduler.community.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class CommunityController {
 
     private final PostService postService;
+    private final CommentService commentService;
 
     @GetMapping("/community/write")
     public String writePost() {
@@ -35,9 +37,13 @@ public class CommunityController {
     }
 
     @GetMapping("/community/view/post/{post_id}")
-    public String viewOneOfPost(Model model, @PathVariable(name = "post_id") Long id) {
+    public String viewOneOfPost(Model model, @PathVariable(name = "post_id") Long id, @PageableDefault(size = 5, sort="post", direction = Sort.Direction.ASC) Pageable pageable) {
+
+        postService.updateView_cnt(id);
+        Post post = postService.viewOneOfPost(id);
 
         model.addAttribute("post", postService.viewOneOfPost(id));
+        model.addAttribute("comments", commentService.viewComments(pageable, post));
 
         return "community/post";
     }

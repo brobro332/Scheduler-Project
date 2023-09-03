@@ -1,11 +1,12 @@
 package kr.co.scheduler.community.controller;
 
+import kr.co.scheduler.community.dtos.CommentReqDTO;
 import kr.co.scheduler.community.dtos.PostReqDTO;
 import kr.co.scheduler.community.entity.Post;
+import kr.co.scheduler.community.service.CommentService;
 import kr.co.scheduler.community.service.PostService;
 import kr.co.scheduler.global.dtos.ResponseDto;
 import kr.co.scheduler.global.entity.Img;
-import kr.co.scheduler.global.repository.ImgRepository;
 import kr.co.scheduler.user.entity.User;
 import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class CommunityApiController {
 
     private final PostService postService;
     private final UserService userService;
-    private final ImgRepository imgRepository;
+    private final CommentService commentService;
 
     @PostMapping("/api/community/write")
     public ResponseDto<Object> writePost(@RequestBody PostReqDTO.CREATE create, Principal principal) {
@@ -116,5 +117,19 @@ public class CommunityApiController {
         inputStream.close();
 
         return new ResponseEntity<>(imageByteArray, HttpStatus.OK);
+    }
+
+    /**
+     * writeComment: 댓글 등록
+     */
+    @PostMapping("/api/community/post/comment/{post_id}")
+    public ResponseDto<?> writeComment(@PathVariable(name = "post_id") Long id, @RequestBody CommentReqDTO.CREATE create, Principal principal) {
+
+        System.out.println(create.getComment());
+        commentService.writeComment(id, create, principal.getName());
+
+        return ResponseDto.ofSuccessData(
+                "댓글이 정상적으로 등록되었습니다.",
+                null);
     }
 }

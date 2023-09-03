@@ -10,48 +10,37 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
-import java.util.List;
-
 @Entity
 @Getter
-@Table(name = "tbl_post")
+@Table(name = "tbl_comment")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
-public class Post extends BaseTimeEntity {
+public class Comment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
+    @Column(name = "comment_id")
     private Long id;
 
     @Column(nullable = false)
-    private String title;
+    private String comment;
 
-    @Lob
-    @Column(length = 1000000, nullable = false)
-    private String content;
+    @ColumnDefault("'N'")
+    private String delete_yn;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ColumnDefault("0")
-    private int view_cnt;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
-    private List<Comment> comment;
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
 
     @Builder
-    public Post(String title, String content, User user) {
+    public Comment(User user, String comment, Post post) {
 
-        this.title = title;
-        this.content = content;
         this.user = user;
-    }
-
-    public void updatePost(String title, String content) {
-
-        this.title = title;
-        this.content = content;
+        this.comment = comment;
+        this.post = post;
     }
 }
