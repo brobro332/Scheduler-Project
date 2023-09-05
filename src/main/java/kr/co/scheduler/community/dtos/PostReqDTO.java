@@ -11,9 +11,9 @@ public class PostReqDTO {
     @Builder
     @AllArgsConstructor
     public static class CREATE {
+
     @NotNull
     private String title;
-
     @NotNull
     private String content;
     }
@@ -24,7 +24,6 @@ public class PostReqDTO {
     public static class UPDATE {
         @NotNull
         private String title;
-
         @NotNull
         private String content;
     }

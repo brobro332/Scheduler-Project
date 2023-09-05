@@ -78,6 +78,7 @@
   			<li class="page-item"><a class="page-link" href="?page=${posts.number+1}">></a></li>
   		</c:otherwise>
   	</c:choose>
+  </ul>
 
 </div>
 

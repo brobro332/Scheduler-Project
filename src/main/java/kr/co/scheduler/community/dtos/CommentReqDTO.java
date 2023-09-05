@@ -21,7 +21,11 @@ public class CommentReqDTO {
     @AllArgsConstructor
     public static class UPDATE {
 
-        private String comment;
+        private String updateComment;
+
+        // 기본 생성자 추가
+        public UPDATE() {
+        }
     }
 }
 

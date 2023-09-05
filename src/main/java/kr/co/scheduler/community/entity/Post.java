@@ -38,7 +38,7 @@ public class Post extends BaseTimeEntity {
     @ColumnDefault("0")
     private int view_cnt;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Comment> comment;
 
     @Builder

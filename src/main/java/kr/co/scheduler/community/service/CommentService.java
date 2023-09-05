@@ -9,6 +9,7 @@ import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 @Service
@@ -31,8 +32,40 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
+    @Transactional
+    public void updateComment(Long id, CommentReqDTO.UPDATE update) {
+
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(()->{
+                    return new IllegalArgumentException("해당 댓글을 찾을 수 없습니다.");
+                });
+
+        comment.updateComment(update.getUpdateComment());
+    }
+
+    @Transactional
+    public void deleteComment(Long id) {
+
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(()->{
+                    return new IllegalArgumentException("해당 댓글을 찾을 수 없습니다.");
+                });
+
+        commentRepository.delete(comment);
+    }
+
     public Page<Comment> viewComments(Pageable pageable, Post post) {
 
         return commentRepository.findPageByPost(pageable, post);
+    }
+
+    public Comment findComment(Long id) {
+
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(()->{
+                    return new IllegalArgumentException("해당 댓글을 찾을 수 없습니다.");
+                });
+
+        return comment;
     }
 }

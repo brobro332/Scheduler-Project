@@ -2,6 +2,7 @@ package kr.co.scheduler.community.controller;
 
 import kr.co.scheduler.community.dtos.CommentReqDTO;
 import kr.co.scheduler.community.dtos.PostReqDTO;
+import kr.co.scheduler.community.entity.Comment;
 import kr.co.scheduler.community.entity.Post;
 import kr.co.scheduler.community.service.CommentService;
 import kr.co.scheduler.community.service.PostService;
@@ -125,11 +126,50 @@ public class CommunityApiController {
     @PostMapping("/api/community/post/comment/{post_id}")
     public ResponseDto<?> writeComment(@PathVariable(name = "post_id") Long id, @RequestBody CommentReqDTO.CREATE create, Principal principal) {
 
-        System.out.println(create.getComment());
         commentService.writeComment(id, create, principal.getName());
 
         return ResponseDto.ofSuccessData(
                 "댓글이 정상적으로 등록되었습니다.",
+                null);
+    }
+
+    @PutMapping("/api/community/post/comment/update/{comment_id}")
+    public ResponseDto<?> updateComment(@PathVariable(name = "comment_id") Long id, @RequestBody CommentReqDTO.UPDATE update, Principal principal) {
+        
+        User user = userService.findUser(principal.getName());
+        Comment comment = commentService.findComment(id);
+
+        if(!user.getEmail().equals(comment.getUser().getEmail())) {
+
+            return ResponseDto.ofFailMessage(
+                    HttpStatus.BAD_REQUEST.value(),
+                    "댓글 수정은 댓글 작성자만 수행할 수 있습니다.");
+        }
+
+        commentService.updateComment(id, update);
+
+        return ResponseDto.ofSuccessData(
+                "댓글이 정상적으로 수정되었습니다.",
+                null);
+    }
+
+    @DeleteMapping("/api/community/post/comment/delete/{comment_id}")
+    public ResponseDto<?> deleteComment(@PathVariable(name = "comment_id") Long id, Principal principal) {
+
+        User user = userService.findUser(principal.getName());
+        Comment comment = commentService.findComment(id);
+
+        if(!user.getEmail().equals(comment.getUser().getEmail())) {
+
+            return ResponseDto.ofFailMessage(
+                    HttpStatus.BAD_REQUEST.value(),
+                    "댓글 삭제는 댓글 작성자만 수행할 수 있습니다.");
+        }
+
+        commentService.deleteComment(id);
+
+        return ResponseDto.ofSuccessData(
+                "댓글이 정상적으로 삭제되었습니다.",
                 null);
     }
 }
