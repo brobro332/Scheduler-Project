@@ -6,7 +6,6 @@ import kr.co.scheduler.global.config.mail.RegisterMail;
 import kr.co.scheduler.global.dtos.ResponseDto;
 import kr.co.scheduler.user.dtos.UserReqDTO;
 import kr.co.scheduler.user.entity.User;
-import kr.co.scheduler.user.repository.UserRepository;
 import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +31,6 @@ import java.util.Map;
 public class UserApiController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
     private final RegisterMail registerMail;
 
     /**
@@ -187,10 +185,12 @@ public class UserApiController {
     @GetMapping("/api/user/info/profileImg")
     public ResponseEntity<?> getProfileImg(Principal principal) throws IOException {
 
-        User user = userRepository.findOptionalByEmail(principal.getName())
-                .orElseThrow(() -> {
-                    return new IllegalArgumentException("가입되지 않은 회원입니다.");
-                });
+        User user = userService.findUser(principal.getName());
+
+        if(user == null) {
+
+            return new ResponseEntity<>("회원 프로필 이미지 조회에 실패했습니다.", HttpStatus.BAD_REQUEST);
+        }
 
         InputStream inputStream = new FileInputStream(user.getProfileImgPath());
         byte[] imageByteArray = IOUtils.toByteArray(inputStream);
@@ -213,7 +213,16 @@ public class UserApiController {
         // 프로필 이미지가 업로드 되었는지 검사
         if (uploadImg != null) {
 
-            String filePath = userRepository.findByEmail(principal.getName()).getProfileImgPath();
+            User user = userService.findUser(principal.getName());
+
+            if(user == null) {
+
+                return ResponseDto.ofFailMessage(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "회원 프로필이미지 조회에 실패하였습니다.");
+            }
+
+            String filePath = user.getProfileImgPath();
 
             // 이미 등록된 이미지가 있다면 기존 이미지를 삭제
             if (filePath != null) {
@@ -241,7 +250,7 @@ public class UserApiController {
         userService.uploadProfileImg(principal.getName(), uploadImg);
         
         return ResponseDto.ofSuccessData(
-                "회원정보를 성공적으로 수정하였습니다.",
+                "프로필이미지를 성공적으로 등록하였습니다.",
                 null);
     }
 
@@ -253,7 +262,14 @@ public class UserApiController {
     @PostMapping("/api/user/info/profileImg/delete")
     public ResponseDto<?> deleteProfileImg(Principal principal, HttpSession session) {
 
-        User user = userRepository.findByEmail(principal.getName());
+        User user = userService.findUser(principal.getName());
+
+        if(user == null) {
+
+            return ResponseDto.ofFailMessage(
+                    HttpStatus.BAD_REQUEST.value(),
+                    "회원 프로필이미지 조회에 실패하였습니다.");
+        }
 
         File file = null;
 
@@ -282,6 +298,7 @@ public class UserApiController {
 
         String code = registerMail.sendSimpleMessage(email);
         System.out.println("인증코드 : " + code);
+
         return code;
     }
 }

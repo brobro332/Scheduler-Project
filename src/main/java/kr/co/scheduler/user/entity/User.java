@@ -42,6 +42,7 @@ public class User extends BaseTimeEntity {
 
     @Builder
     public User(String email, String password, String name, String phone, Role role, String oauth) {
+
         this.email = email;
         this.password = password;
         this.name = name;
@@ -55,6 +56,7 @@ public class User extends BaseTimeEntity {
     }
 
     public void updateInfo(String name, String phone) {
+
         this.name = name;
         this.phone = phone;
     }

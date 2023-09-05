@@ -6,7 +6,7 @@
 
 <br/>
 
-<div class="container" style="display: inline-block; position: relative; left: 35%; width: 70%;">
+<div class="container" style="display: inline-block; position: relative; left: 35%;">
 <form method="POST" enctype="multipart/form-data">
     <div>
         <div class="form_section_title">

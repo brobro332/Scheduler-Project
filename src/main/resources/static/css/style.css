@@ -9,3 +9,18 @@
     font-family: 'Orbit', sans-serif;
 }
 
+html, body {
+    height: 100%
+}
+
+#container {
+    overflow: auto;
+    min-height: 100%;
+    position: relative;
+    padding-bottom: 60px;
+}
+
+#footer {
+    bottom: 0;
+    background-color: #c1aef5;
+}

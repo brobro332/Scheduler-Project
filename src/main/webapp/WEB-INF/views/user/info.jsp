@@ -3,7 +3,7 @@
 <%@ include file="../layout/user/header.jsp"%>
 
 <div>
-<div class="container" style="display: inline-block; position: relative; left: 35%; width: 70%; min-height: 360px;">
+<div class="container" style="display: inline-block; position: relative; left: 35%;">
   <h2 style="display: inline-block;">내프로필</h2><span class="badge bg-secondary" style="color: white;">Info</span>
   <button type="button" onclick="location.href='/user/info/profileImgForm'" class="btn btn" style="position: absolute; left: 215px; top: 0; background-color: gray; color: white; width: 200px;">프로필이미지 변경</button>
   <div class="card" style="width:400px">
