@@ -5,9 +5,10 @@ import jakarta.persistence.*;
 import kr.co.scheduler.global.entity.BaseTimeEntity;
 import kr.co.scheduler.user.entity.User;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -15,6 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert
 public class Project extends BaseTimeEntity {
 
     @Id
@@ -36,6 +38,12 @@ public class Project extends BaseTimeEntity {
 
     @Column
     private LocalDate endPRJ;
+
+    @ColumnDefault("'N'")
+    private String active_yn;
+
+    @ColumnDefault("'N'")
+    private String complete_yn;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

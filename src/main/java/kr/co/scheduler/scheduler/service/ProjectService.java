@@ -47,10 +47,25 @@ public class ProjectService {
         }
     }
 
-    public Page<Project> viewProject(Pageable pageable, String email) {
+    public Page<Project> viewProjects(Pageable pageable, String email) {
 
         User user = userService.findUser(email);
 
         return projectRepository.findPageByUser_Id(pageable, user.getId());
+    }
+
+    public Project viewProject(Long id) {
+
+        return projectRepository.findById(id)
+                .orElseThrow(()->{
+                   return new IllegalArgumentException("해당 프로젝트가 존재하지 않습니다.");
+                });
+    }
+
+    public Long countPRJ(String email) {
+
+        User user = userService.findUser(email);
+
+        return projectRepository.countByUser(user);
     }
 }
