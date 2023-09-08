@@ -22,7 +22,7 @@
     </form>
 
     <br/>
-    <span style="position: relative; left: 4%;">
+    <span style="position: relative; left: 7%;">
     <a href="#" style="color: gray;">이메일 찾기</a> | <a href="#" style="color: gray;">비밀번호 찾기</a> | <a href="/signUpForm" style="color: gray;">회원가입</a>
     </span>
     <br/><br/>

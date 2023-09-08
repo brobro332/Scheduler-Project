@@ -4,12 +4,10 @@ import kr.co.scheduler.community.dtos.CommentReqDTO;
 import kr.co.scheduler.community.entity.Comment;
 import kr.co.scheduler.community.entity.Post;
 import kr.co.scheduler.community.repository.CommentRepository;
-import kr.co.scheduler.user.entity.User;
 import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 @Service

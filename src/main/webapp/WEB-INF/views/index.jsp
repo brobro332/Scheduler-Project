@@ -6,9 +6,9 @@
 <div>
     <div style="display: inline-block; position: absolute; left: 20%; top: 11%;">
         <div style="width:470px; height:300px;">
-        <p style="color: gray;"><small>Welcome to SPAP<small></p>
+        <p style="color: gray;"><small>Welcome to SAPP<small></p>
         <h1>일주일을 <kbd id="kbd">"가치있게"</kbd><br/>
-        당신의 주간일정관리,<br/>
+        당신의 프로젝트 플래너,<br/>
         저희가 도와드릴게요!</h1>
         <br/>
         <button id="loginForm" class="btn btn-lg" style="background-color: #956be8; color: white;"><b>둘러보기</b></button>

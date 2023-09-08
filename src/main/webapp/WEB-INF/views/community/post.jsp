@@ -38,8 +38,8 @@
       <div style="position:relative; display:inline-block; left: 1%;">
       <a><b>${post.user.name}</b></a>
       <c:if test="${post.user.email == comment.user.email}">
-      <a style="font-size: 12px; color: purple; position:relative; display:inline-block; border: 1px solid; border-radius: 30px;"><b>작성자</b></a>
-            <div class="btn-group" style="display: inline-block; position:relative; left:325%;">
+      <a style="font-size: 12px; color: purple; position:relative; display:inline-block; border: 3px solid; border-radius: 30px;"><b>작성자</b></a>
+            <div class="btn-group" style="display: inline-block; position:relative; left:360%;">
                 <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
                    ◾◾◾
                 </button>
