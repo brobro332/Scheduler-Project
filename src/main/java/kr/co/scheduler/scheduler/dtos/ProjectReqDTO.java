@@ -21,6 +21,15 @@ public class ProjectReqDTO {
         private LocalDate endPRJ;
         private Map<String, String> jsonData;
     }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    public static class UPDATE {
+
+        private Long id;
+        private String text;
+    }
 }
 
 

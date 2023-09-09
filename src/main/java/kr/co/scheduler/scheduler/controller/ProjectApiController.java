@@ -7,10 +7,8 @@ import kr.co.scheduler.scheduler.entity.Task;
 import kr.co.scheduler.scheduler.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -26,16 +24,22 @@ public class ProjectApiController {
 
     @PostMapping("/create")
     public ResponseDto<?> createScheduler(@RequestBody ProjectReqDTO.CREATE create, Principal principal) {
+
+        int idx = 0;
+
         try {
             List<Task> taskList = new ArrayList<>();
 
             for (Map.Entry<String, String> entry : create.getJsonData().entrySet()) {
+
                 Task task = Task
                         .builder()
-                        .idx(entry.getKey())
+                        .idx(Integer.toString(idx))
                         .task(entry.getValue())
                         .build();
                 taskList.add(task);
+
+                idx = idx + 1;
             }
 
             projectService.createProjectPlanner(create, taskList, principal.getName());
@@ -48,4 +52,17 @@ public class ProjectApiController {
         }
     }
 
+    // 프로젝트 업데이트 API
+    @PostMapping("/update/{project_id}")
+    public ResponseDto<?> updateProject(@PathVariable(name = "project_id") Long id, @RequestBody ProjectReqDTO.UPDATE update) {
+        try {
+            // projectId에 해당하는 프로젝트를 불러온 후 업데이트할 내용을 적용
+            Project updatedProject = projectService.updateProject(id, update);
+
+            return ResponseDto.ofSuccessData("프로젝트 업데이트에 성공하였습니다.", null);
+        } catch (Exception e) {
+
+            return ResponseDto.ofFailData(HttpStatus.BAD_REQUEST.value(), "프로젝트 업데이트에 실패하였습니다.", null);
+        }
+    }
 }

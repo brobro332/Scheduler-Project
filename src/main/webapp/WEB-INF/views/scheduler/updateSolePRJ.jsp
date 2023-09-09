@@ -5,39 +5,48 @@
 <div class="container">
 <div>
 <form>
-  <span><h2>개인프로젝트 플래너 생성</h2></span>
-  <input type="text" class="form-control" placeholder="제목을 입력해주세요" id="title" style="width:100%;"> <br/>
+  <span><h2>개인프로젝트 플래너 수정</h2></span>
+  <input type="text" class="form-control" placeholder="제목을 입력해주세요" id="title" value="${project.title}" style="width:100%;"> <br/>
+  <input type="text" id="project_id" value="${project.id}" hidden>
 
   <hr/><br/>
 
   <div style="display: inline-block; width: 20%;">
   <span><h5>프로젝트 시작일</h5></span>
-  <input type="date" style="border: 1px solid #d3d3d3; border-radius:5px;" id="startPRJ">
+  <input type="date" style="border: 1px solid #d3d3d3; border-radius:5px;" value="${project.startPRJ}" id="startPRJ">
   </div>
   <div style="display: inline-block; width: 20%;">
   <span><h5>프로젝트 종료일</h5></span>
-  <input type="date" style="border: 1px solid #d3d3d3; border-radius:5px;" id="endPRJ">
+  <input type="date" style="border: 1px solid #d3d3d3; border-radius:5px;" value="${project.endPRJ}" id="endPRJ">
   </div><br/>
 
   <br/><hr/><br/>
 
   <span><h5>목표</h5></span>
-  <textarea id="goal" placeholder="프로젝트를 통해 이루고자 하는 목표를 간략하게 입력해주세요" style="width: 100%; resize: none; border: 1px solid #d3d3d3; border-radius:5px;"></textarea><br/>
+  <textarea id="goal" placeholder="프로젝트를 통해 이루고자 하는 목표를 간략하게 입력해주세요" style="width: 100%; resize: none; border: 1px solid #d3d3d3; border-radius:5px;">${project.goal}</textarea><br/>
 
   <br/><hr/><br/>
 
-  <span><h5>업무 &nbsp; <button class="btn btn" style="background-color: #956be8; color: white;" id="addMajorTask">+</button></h5></span>
+  <span><h5>업무 &nbsp; <button class="btn btn" style="background-color: #956be8; color: white;" value="${project.goal}" id="addMajorTask">+</button></h5></span>
+
       <div id="boxContainer">
+           <c:forEach items="${project.tasks}" var="task">
+           <div class="box-group" data-task-id="${task.id}">
+              <input type="text" class="form-control" style="width: 50%; display:inline-block;" value="${task.task}" placeholder="목표 달성을 위한 업무를 입력해주세요">
+              <button type="button" style="position: absolute;" class="btn remove-box-group">제거</button>
+          </div>
+          </c:forEach>
           <!-- 여기에 추가된 박스가 표시됨 -->
       </div>
+
   <br/><hr/><br/>
 
-  <textarea id="summernote" name="description"></textarea> <br/>
+  <textarea id="summernote" name="description">${project.description}</textarea> <br/>
 </form>
 <br/><br/>
 
 <button class="btn btn" id="btn-back" style="background-color: gray; color: white; width: 201px;">뒤로가기</button>
-<button class="btn btn" id="btn-create" style="background-color: #956be8; color: white; width: 201px; float:right;">등록</button>
+<button class="btn btn" id="btn-update" style="background-color: #956be8; color: white; width: 201px; float:right;">수정</button>
 </div>
 </div>
 
@@ -47,33 +56,35 @@
 
     $(document).ready(function() {
 
-        $('#btn-create').on('click', function() {
-            var jsonData = {};
+        $('#btn-update').on('click', function() {
+
+            var project_id = $('#project_id').val();
+
+            var taskElements = $('#boxContainer .box-group');
+
+            var tasksToUpdate = []; // 업데이트할 업무 목록
+            var tasksToAdd = [];    // 추가할 업무 목록
 
             var title = $("#title").val();
             var description = $("textarea[name = description]").val();
             var goal = $("#goal").val();
 
-            $('#boxContainer input[data-id]').each(function() {
-                var fieldName = $(this).data('id');
-                var fieldValue = $(this).val();
+            taskElements.each(function()
+                var taskId = $(this).data('id');
+                var task = $(this).find('input').val();
 
-                if(fieldValue == null) {
+                if(task_id) {
 
-                    alert("업무를 입력해주세요.");
-                    return false;
+                    tasksToUpdate.push({ id: taskId, text: taskText });
+                } else {
+
+                    tasksToAdd.push({ text: taskText });
                 }
-
-                jsonData[fieldName] = fieldValue;
             });
 
             let data = {
-                    title: $("#title").val(),
-                    description: $("textarea[name = description]").val(),
-                    goal: goal,
-                    startPRJ: $('#startPRJ').val(),
-                    endPRJ: $('#endPRJ').val(),
-                    jsonData: jsonData
+                updatedTasks: tasksToUpdate,
+                addedTasks: tasksToAdd
             };
 
             if(title == '') {
@@ -112,14 +123,14 @@
 
              if(startDateCompare.getTime() > endDateCompare.getTime()) {
 
-                 alert("시작날짜와 종료날짜를 확인해 주세요.");
+                 alert("시작날짜와 종료날짜를 확인해주세요");
 
                  return;
              }
 
             $.ajax({
                 type: "POST",
-                url: "/api/scheduler/project/create",
+                url: "/api/scheduler/project/update/" + project_id,
                 data: JSON.stringify(data),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json"
@@ -127,7 +138,6 @@
                 if(resp.statusCode == 400 || resp.statusCode == 500){
                     alert(resp.message);
                     } else {
-                    location.href="/scheduler/view"
                     alert(resp.message);
                 }
             }).fail(function(error) {

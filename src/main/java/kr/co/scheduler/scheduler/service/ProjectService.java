@@ -1,9 +1,11 @@
 package kr.co.scheduler.scheduler.service;
 
 import kr.co.scheduler.scheduler.dtos.ProjectReqDTO;
+import kr.co.scheduler.scheduler.dtos.TaskReqDTO;
 import kr.co.scheduler.scheduler.entity.Project;
 import kr.co.scheduler.scheduler.entity.Task;
 import kr.co.scheduler.scheduler.repository.ProjectRepository;
+import kr.co.scheduler.scheduler.repository.TaskRepository;
 import kr.co.scheduler.user.entity.User;
 import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final UserService userService;
+    private final TaskRepository taskRepository;
 
     @Transactional
     public void createProjectPlanner(ProjectReqDTO.CREATE create, List<Task> taskList, String email) {
@@ -68,4 +71,37 @@ public class ProjectService {
 
         return projectRepository.countByUser(user);
     }
+
+    @Transactional
+    public void updateTask(Long id, TaskReqDTO.UPDATE update) {
+        // 업무 업데이트 로직 작성
+        Task task = taskRepository.findById(id).orElse(null);
+
+        if(task != null) {
+            task = Task
+                    .builder()
+                    .idx(update.getTask())
+                    .task(update.getTask())
+                    .build();
+        }
+    }
+
+    @Transactional
+    public void addTask(Long id, TaskReqDTO.CREATE create) {
+        // 업무 추가 로직 작성
+        Project project = projectRepository.findById(id).orElse(null);
+
+        Task task = Task
+                .builder()
+                .task(create.getTask())
+                .idx(create.getIdx())
+                .project(project)
+                .build();
+
+        taskRepository.save(task);
+    }
+
+
+    public Project updateProject(Long id, ProjectReqDTO.UPDATE update) {
+
 }

@@ -44,4 +44,12 @@ public class ProjectController {
 
         return "scheduler/project";
     }
+
+    @GetMapping("/scheduler/update/project/{project_id}")
+    public String updateProject(@PathVariable(name = "project_id") Long id, Model model) {
+
+        model.addAttribute("project", projectService.viewProject(id));
+
+        return "scheduler/updateSolePRJ";
+    }
 }

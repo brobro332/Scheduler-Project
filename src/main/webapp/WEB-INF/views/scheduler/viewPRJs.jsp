@@ -37,7 +37,7 @@
       <c:otherwise>
           <c:forEach items="${projects.content}" var="project">
             <div class="select">
-                <input type="text" class="form-control" value="${project.id}" hidden>
+                <input type="text" class="form-control project_id" value="${project.id}" hidden>
                 <div style="position: relative; border: 1px solid #dddddd; border-radius: 5px; padding: 10px; width: 70%; left:15%;">
                     <h5 style="display: inline-block;"><b><a href="/scheduler/view/project/${project.id}">${project.title}</a></b></h4>
                     &nbsp;
@@ -56,8 +56,8 @@
                            ◾◾◾
                         </button>
                         <div class="dropdown-menu">
-                          <button class="dropdown-item updatePRJ" id="btn-updatePRJ">수정</button>
-                          <button class="dropdown-item deletePRJ" id="btn-deletePRJ">삭제</button>
+                          <button type="button" class="dropdown-item updatePRJ" id="btn-updatePRJ">수정</button>
+                          <button type="button" class="dropdown-item deletePRJ" id="btn-deletePRJ">삭제</button>
                         </div>
                     </div>
                     <h6>${project.startPRJ} ~ ${project.endPRJ}</h6>
@@ -72,6 +72,16 @@
   </form>
 </div>
 
-<script></script>
+<script>
+$(document).ready(function() {
+
+     $(document).on('click', '.updatePRJ', function() {
+            var $project = $(this).parents(".select");
+            var project_id = $project.find(".project_id").val();
+
+            location.href = "/scheduler/update/project/" + project_id;
+        });
+});
+</script>
 
 <%@ include file="../layout/user/footer.jsp"%>
