@@ -52,12 +52,11 @@ public class ProjectApiController {
         }
     }
 
-    // 프로젝트 업데이트 API
     @PostMapping("/update/{project_id}")
     public ResponseDto<?> updateProject(@PathVariable(name = "project_id") Long id, @RequestBody ProjectReqDTO.UPDATE update) {
         try {
             // projectId에 해당하는 프로젝트를 불러온 후 업데이트할 내용을 적용
-            Project updatedProject = projectService.updateProject(id, update);
+            projectService.updateProject(id, update);
 
             return ResponseDto.ofSuccessData("프로젝트 업데이트에 성공하였습니다.", null);
         } catch (Exception e) {

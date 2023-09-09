@@ -20,7 +20,7 @@ public class TaskReqDTO {
     @AllArgsConstructor
     public static class UPDATE {
 
-        public Integer idx;
+        public String idx;
         public String task;
     }
 }

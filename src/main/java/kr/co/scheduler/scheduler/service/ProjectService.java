@@ -20,8 +20,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProjectService {
 
-    private final ProjectRepository projectRepository;
     private final UserService userService;
+    private final TaskService taskService;
+    private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
 
     @Transactional
@@ -73,35 +74,24 @@ public class ProjectService {
     }
 
     @Transactional
-    public void updateTask(Long id, TaskReqDTO.UPDATE update) {
-        // 업무 업데이트 로직 작성
-        Task task = taskRepository.findById(id).orElse(null);
+    public void updateProject(Long id, ProjectReqDTO.UPDATE update) {
 
-        if(task != null) {
-            task = Task
-                    .builder()
-                    .idx(update.getTask())
-                    .task(update.getTask())
-                    .build();
+        Project project = projectRepository.findById(id).orElse(null);
+        List<TaskReqDTO.UPDATE> updatedTasks = update.getUpdatedTasks();
+
+        if(project != null) {
+
+            project.updateProject(update.getTitle(), update.getDescription(), update.getGoal(), update.getStartPRJ(), update.getEndPRJ());
+
+            for (TaskReqDTO.UPDATE updatedTask : updatedTasks) {
+
+                Task task = taskRepository.findById(Long.parseLong(updatedTask.getIdx())).orElse(null);
+                if(task != null) {
+
+                    task.updateTask(updatedTask.getIdx(), updatedTask.getTask());
+                }
+            }
+            taskService.addTasks(project, update.getAddedTasks());
         }
     }
-
-    @Transactional
-    public void addTask(Long id, TaskReqDTO.CREATE create) {
-        // 업무 추가 로직 작성
-        Project project = projectRepository.findById(id).orElse(null);
-
-        Task task = Task
-                .builder()
-                .task(create.getTask())
-                .idx(create.getIdx())
-                .project(project)
-                .build();
-
-        taskRepository.save(task);
-    }
-
-
-    public Project updateProject(Long id, ProjectReqDTO.UPDATE update) {
-
 }

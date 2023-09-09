@@ -63,4 +63,13 @@ public class Project extends BaseTimeEntity {
         this.tasks = tasks;
         this.user = user;
     }
+
+    public void updateProject(String title, String description, String goal, LocalDate startPRJ, LocalDate endPRJ) {
+
+        this.title = title;
+        this.description = description;
+        this.goal = goal;
+        this.startPRJ = startPRJ;
+        this.endPRJ = endPRJ;
+    }
 }

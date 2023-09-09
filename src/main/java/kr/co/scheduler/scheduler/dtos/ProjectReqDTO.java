@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 public class ProjectReqDTO {
@@ -27,8 +28,13 @@ public class ProjectReqDTO {
     @AllArgsConstructor
     public static class UPDATE {
 
-        private Long id;
-        private String text;
+        private String title;
+        private String description;
+        private String goal;
+        private LocalDate startPRJ;
+        private LocalDate endPRJ;
+        private List<TaskReqDTO.UPDATE> updatedTasks;
+        private List<TaskReqDTO.CREATE> addedTasks;
     }
 }
 

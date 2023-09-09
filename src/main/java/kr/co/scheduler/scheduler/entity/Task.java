@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import kr.co.scheduler.global.entity.BaseTimeEntity;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "tbl_task")
 @Getter
@@ -22,7 +24,7 @@ public class Task extends BaseTimeEntity {
     @Column
     private String task;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "project_id")
     private Project project;
 
@@ -32,5 +34,11 @@ public class Task extends BaseTimeEntity {
         this.idx = idx;
         this.task = task;
         this.project = project;
+    }
+
+    public void updateTask(String idx, String task) {
+
+        this.idx = idx;
+        this.task = task;
     }
 }

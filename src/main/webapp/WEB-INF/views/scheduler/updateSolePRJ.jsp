@@ -69,23 +69,21 @@
             var description = $("textarea[name = description]").val();
             var goal = $("#goal").val();
 
-            taskElements.each(function()
-                var taskId = $(this).data('id');
+            taskElements.each(function() {
+                var task_id = $(this).data('task-id');
                 var task = $(this).find('input').val();
 
                 if(task_id) {
 
-                    tasksToUpdate.push({ id: taskId, text: taskText });
+                    tasksToUpdate.push({ idx: task_id, task: task });
                 } else {
 
-                    tasksToAdd.push({ text: taskText });
+                    tasksToAdd.push({ task: task });
                 }
             });
 
-            let data = {
-                updatedTasks: tasksToUpdate,
-                addedTasks: tasksToAdd
-            };
+            console.log(tasksToUpdate);
+            console.log(tasksToAdd);
 
             if(title == '') {
 
@@ -127,6 +125,16 @@
 
                  return;
              }
+
+            let data = {
+                title: title,
+                description: description,
+                goal: goal,
+                startPRJ: startDate,
+                endPRJ: endDate,
+                updatedTasks: tasksToUpdate,
+                addedTasks: tasksToAdd
+            };
 
             $.ajax({
                 type: "POST",
