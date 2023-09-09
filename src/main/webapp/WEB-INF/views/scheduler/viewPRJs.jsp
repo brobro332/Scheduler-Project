@@ -82,6 +82,31 @@ $(document).ready(function() {
             location.href = "/scheduler/update/project/" + project_id;
         });
 });
+
+     $(document).on('click', '.deletePRJ', function() {
+
+            if (confirm("삭제를 진행하시겠습니까?")) {
+
+            var $project = $(this).parents(".select");
+            var project_id = $project.find(".project_id").val();
+
+            $.ajax({
+                type: "DELETE",
+                url: "/api/scheduler/project/delete/" + project_id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            }).done(function(resp) {
+                if(resp.statusCode == 400 || resp.statusCode == 500){
+                    alert(resp.message);
+                    } else {
+                    location.href = "/scheduler/view"
+                    alert(resp.message);
+                }
+            }).fail(function(error) {
+                alert(JSON.stringify(error));
+         });
+         }
+     });
 </script>
 
 <%@ include file="../layout/user/footer.jsp"%>

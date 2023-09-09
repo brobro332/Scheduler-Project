@@ -64,4 +64,12 @@ public class ProjectApiController {
             return ResponseDto.ofFailData(HttpStatus.BAD_REQUEST.value(), "프로젝트 업데이트에 실패하였습니다.", null);
         }
     }
+
+    @DeleteMapping("/delete/{project_id}")
+    public ResponseDto<?> deleteProject(@PathVariable(name = "project_id") Long id) {
+
+        projectService.deleteProject(id);
+
+        return ResponseDto.ofSuccessData("프로젝트 삭제에 성공하였습니다.", null);
+    }
 }

@@ -95,4 +95,14 @@ public class ProjectService {
             taskService.deleteTasks(update.getDeletedTasks());
         }
     }
+
+    public void deleteProject(Long id) {
+
+        Project project = projectRepository.findById(id).orElse(null);
+
+        if(project != null) {
+
+            projectRepository.delete(project);
+        }
+    }
 }
