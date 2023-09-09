@@ -56,6 +56,8 @@
 
     $(document).ready(function() {
 
+        var tasksToDelete = [];
+
         $('#btn-update').on('click', function() {
 
             var project_id = $('#project_id').val();
@@ -81,9 +83,6 @@
                     tasksToAdd.push({ task: task });
                 }
             });
-
-            console.log(tasksToUpdate);
-            console.log(tasksToAdd);
 
             if(title == '') {
 
@@ -126,6 +125,8 @@
                  return;
              }
 
+            console.log(tasksToDelete);
+
             let data = {
                 title: title,
                 description: description,
@@ -133,7 +134,8 @@
                 startPRJ: startDate,
                 endPRJ: endDate,
                 updatedTasks: tasksToUpdate,
-                addedTasks: tasksToAdd
+                addedTasks: tasksToAdd,
+                deletedTasks: tasksToDelete
             };
 
             $.ajax({
@@ -146,6 +148,7 @@
                 if(resp.statusCode == 400 || resp.statusCode == 500){
                     alert(resp.message);
                     } else {
+                    location.href = "/scheduler/view"
                     alert(resp.message);
                 }
             }).fail(function(error) {
@@ -223,6 +226,16 @@
         var clickedButton = $(event.target);
 
         var boxGroup = clickedButton.closest('.box-group'); // 박스 그룹을 찾습니다.
+
+        boxGroup.each(function() {
+            var task_id = $(this).data('task-id');
+
+            if(task_id) {
+
+                tasksToDelete.push({ idx: task_id });
+            }
+        });
+
         boxGroup.remove(); // 박스 그룹을 삭제합니다.
     });
 });

@@ -23,4 +23,15 @@ public class TaskReqDTO {
         public String idx;
         public String task;
     }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    public static class DELETE {
+
+        public String idx;
+
+        public DELETE() {
+        }
+    }
 }

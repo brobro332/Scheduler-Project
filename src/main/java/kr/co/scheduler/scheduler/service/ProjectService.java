@@ -92,6 +92,7 @@ public class ProjectService {
                 }
             }
             taskService.addTasks(project, update.getAddedTasks());
+            taskService.deleteTasks(update.getDeletedTasks());
         }
     }
 }

@@ -35,6 +35,7 @@ public class ProjectReqDTO {
         private LocalDate endPRJ;
         private List<TaskReqDTO.UPDATE> updatedTasks;
         private List<TaskReqDTO.CREATE> addedTasks;
+        private List<TaskReqDTO.DELETE> deletedTasks;
     }
 }
 

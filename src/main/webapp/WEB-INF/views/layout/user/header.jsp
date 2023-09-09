@@ -48,9 +48,6 @@
           <a class="nav-link" href="/community/view" style="color: white;"><b>커뮤니티</b></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#" style="color: white;"><b>고객센터</b></a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link" href="/user/info" style="color: white;"><b>내프로필</b></a>
         </li>
         <li class="nav-item">

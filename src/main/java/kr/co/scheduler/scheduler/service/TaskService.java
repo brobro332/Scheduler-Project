@@ -31,4 +31,15 @@ public class TaskService {
             taskRepository.save(task);
         }
     }
+
+    @Transactional
+    public void deleteTasks(List<TaskReqDTO.DELETE> deletedTasks) {
+
+        for (TaskReqDTO.DELETE delete :  deletedTasks) {
+
+            Task task = taskRepository.findById(Long.parseLong(delete.getIdx())).orElse(null);
+
+            taskRepository.delete(task);
+        }
+    }
 }
