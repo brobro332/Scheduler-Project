@@ -24,7 +24,10 @@ public class Task extends BaseTimeEntity {
     @Column
     private String task;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @Column
+    private LocalDate deadline;
+
+    @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
 

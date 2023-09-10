@@ -4,7 +4,6 @@
 
 <div class="container">
 <div>
-/개요
 <div>
 <form>
   <span><h4>${project.title}</h4></span>
