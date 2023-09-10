@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -103,6 +104,23 @@ public class ProjectService {
         if(project != null) {
 
             projectRepository.delete(project);
+        }
+    }
+
+    @Transactional
+    public void activeProject(Long id) {
+
+        Project project = projectRepository.findById(id).orElse(null);
+
+        if (project != null) {
+
+            if (Objects.equals(project.getActive_yn(), "N")) {
+
+                project.setActive_yn("Y");
+            } else {
+
+                project.setActive_yn("N");
+            }
         }
     }
 }

@@ -47,7 +47,7 @@
                         <span class="badge bg-secondary" style="font-size: 15px; color: white; width:13%">비활성</span>
                     </c:when>
                     <c:otherwise>
-                        <span class="badge bg-secondary" style="font-size: 15px; color: white; width:13%">활성</span>
+                        <span class="badge bg-info" style="font-size: 15px; color: white; width:13%">활성</span>
                     </c:otherwise>
                     </c:choose>
 
@@ -61,7 +61,17 @@
                         </div>
                     </div>
                     <h6>${project.startPRJ} ~ ${project.endPRJ}</h6>
-                    <button class="btn btn active" style="display: flex; background-color: #956be8; color: white; margin-left: auto;" id="btn-activePRJ">활성화</button>
+                    <c:choose>
+                        <c:when test="${project.active_yn == 'N'}">
+                            <button type="button" class="btn btn activePRJ" style="display: flex; background-color: #956be8; color: white; margin-left: auto;" id="btn-activePRJ">활성화</button>
+                        </c:when>
+                        <c:otherwise>
+                            <div style="display: flex; margin-left: auto;">
+                                <button type="button" class="btn btn managePRJ" style="display: flex; background-color: #956be8; color: white; margin-left: auto;" id="btn-managePRJ">관리</button>
+                                <button type="button" class="btn btn activePRJ" style="display: flex; background-color: #956be8; color: white; margin-left: 2px;" id="btn-activePRJ">비활성화</button>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
                 <p></p>
                 </div>
@@ -70,6 +80,29 @@
       </c:choose>
   </div>
   </form>
+  <ul class="pagination" style="position:relative; left:45%; width: 20%;">
+    	<c:choose>
+    		<c:when test="${projects.first}">
+    			<li class="page-item disabled"><a class="page-link" href="?page=${projects.number-1}"><</a></li>
+    		</c:when>
+    		<c:otherwise>
+    			<li class="page-item"><a class="page-link" href="?page=${projects.number-1}"><</a></li>
+    		</c:otherwise>
+    	</c:choose>
+
+    	<c:forEach var="i" begin="1" end="${projects.totalPages}">
+            <li class="page-item"><a class="page-link" href="?page=${i-1}">${i}</a></li>
+      </c:forEach>
+
+    	<c:choose>
+    		<c:when test="${projects.last}">
+    			<li class="page-item disabled"><a class="page-link" href="?page=${projects.number+1}">></a></li>
+    		</c:when>
+    		<c:otherwise>
+    			<li class="page-item"><a class="page-link" href="?page=${projects.number+1}">></a></li>
+    		</c:otherwise>
+    	</c:choose>
+    </ul>
 </div>
 
 <script>
@@ -80,8 +113,7 @@ $(document).ready(function() {
             var project_id = $project.find(".project_id").val();
 
             location.href = "/scheduler/update/project/" + project_id;
-        });
-});
+     });
 
      $(document).on('click', '.deletePRJ', function() {
 
@@ -106,6 +138,28 @@ $(document).ready(function() {
                 alert(JSON.stringify(error));
          });
          }
+     });
+
+     $(document).on('click', '.activePRJ', function() {
+             var $project = $(this).parents(".select");
+             var project_id = $project.find(".project_id").val();
+
+             $.ajax({
+                 type: "PUT",
+                 url: "/api/scheduler/project/active/" + project_id,
+                 contentType: "application/json; charset=utf-8",
+                 dataType: "json"
+             }).done(function(resp) {
+                 if(resp.statusCode == 400 || resp.statusCode == 500){
+                     alert(resp.message);
+                     } else {
+                     location.href = "/scheduler/view"
+                     alert(resp.message);
+                 }
+             }).fail(function(error) {
+                 alert(JSON.stringify(error));
+             });
+         });
      });
 </script>
 

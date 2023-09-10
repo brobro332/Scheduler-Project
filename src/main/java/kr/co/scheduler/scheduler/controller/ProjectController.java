@@ -27,7 +27,7 @@ public class ProjectController {
     }
 
     @GetMapping("/scheduler/view")
-    public String viewProjects(Model model, @PageableDefault(size = 4, sort="updatedAt",
+    public String viewProjects(Model model, @PageableDefault(size = 3, sort="updatedAt",
                                       direction = Sort.Direction.DESC) Pageable pageable, Principal principal) {
 
         model.addAttribute("projects", projectService.viewProjects(pageable, principal.getName()));

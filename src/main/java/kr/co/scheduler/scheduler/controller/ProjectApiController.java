@@ -72,4 +72,12 @@ public class ProjectApiController {
 
         return ResponseDto.ofSuccessData("프로젝트 삭제에 성공하였습니다.", null);
     }
+
+    @PutMapping("/active/{project_id}")
+    public ResponseDto<?> activeProject(@PathVariable(name = "project_id") Long id) {
+
+        projectService.activeProject(id);
+
+        return ResponseDto.ofSuccessData("프로젝트를 활성 상태를 전환했습니다.", null);
+    }
 }
