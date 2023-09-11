@@ -29,7 +29,7 @@ public class Task extends BaseTimeEntity {
     private String task;
 
     @ColumnDefault("'N'")
-    private String complete_yn;
+    private String check_yn;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     private List<SubTask> subTasks;

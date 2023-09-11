@@ -31,6 +31,16 @@ public class TaskReqDTO {
     @Getter
     @Builder
     @AllArgsConstructor
+    public static class CHECKBOX {
+
+        private List<Long> taskIds;
+        private List<String> taskTypes;
+        private List<String> checkYnList;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
     public static class DELETE {
 
         public String idx;

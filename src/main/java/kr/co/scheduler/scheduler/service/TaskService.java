@@ -4,6 +4,7 @@ import kr.co.scheduler.scheduler.dtos.TaskReqDTO;
 import kr.co.scheduler.scheduler.entity.Project;
 import kr.co.scheduler.scheduler.entity.SubTask;
 import kr.co.scheduler.scheduler.entity.Task;
+import kr.co.scheduler.scheduler.repository.SubTaskRepository;
 import kr.co.scheduler.scheduler.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.List;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final SubTaskRepository subTaskRepository;
 
     @Transactional
     public void updateTask(Long id, String updatedTask, List<String> updatedSubTasks) {
@@ -67,6 +69,35 @@ public class TaskService {
             Task task = taskRepository.findById(Long.parseLong(delete.getIdx())).orElse(null);
 
             taskRepository.delete(task);
+        }
+    }
+
+    @Transactional
+    public void updateTaskStatus(TaskReqDTO.CHECKBOX checkbox) {
+        List<Long> taskIds = checkbox.getTaskIds();
+        List<String> taskTypes = checkbox.getTaskTypes();
+        List<String> checkYnList = checkbox.getCheckYnList();
+
+        // taskIds, taskTypes, checkYnList의 크기가 동일한지 확인
+        if (taskIds.size() != taskTypes.size() || taskIds.size() != checkYnList.size()) {
+            throw new IllegalArgumentException("입력된 데이터 크기가 일치하지 않습니다.");
+        }
+
+        // 업무 및 세부업무 업데이트 처리
+        for (int i = 0; i < taskIds.size(); i++) {
+            Long taskId = taskIds.get(i);
+            String taskType = taskTypes.get(i);
+            String checkYn = checkYnList.get(i);
+
+            if ("task".equals(taskType)) {
+                // 업무 업데이트 로직 구현
+                taskRepository.updateTaskStatus(taskId, checkYn);
+            } else if ("subTask".equals(taskType)) {
+                // 세부업무 업데이트 로직 구현
+                subTaskRepository.updateSubTaskStatus(taskId, checkYn);
+            } else {
+                throw new IllegalArgumentException("올바르지 않은 taskType 값입니다.");
+            }
         }
     }
 }

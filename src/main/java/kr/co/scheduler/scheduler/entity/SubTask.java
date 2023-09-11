@@ -27,12 +27,12 @@ public class SubTask extends BaseTimeEntity {
     private Task task;
 
     @ColumnDefault("'N'")
-    private String complete_yn;
+    private String check_yn;
 
     @Builder
-    public SubTask(String name, Task task, String complete_yn) {
+    public SubTask(String name, Task task, String check_yn) {
         this.name = name;
         this.task = task;
-        this.complete_yn = complete_yn;
+        this.check_yn = check_yn;
     }
 }

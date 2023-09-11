@@ -41,7 +41,7 @@ public class ProjectApiController {
                             SubTask subTask = SubTask.builder()
                                     .name(subTaskName)
                                     .task(task)
-                                    .complete_yn("N") // 초기값은 미완료로 설정
+                                    .check_yn("N") // 초기값은 미완료로 설정
                                     .build();
                             subTasks.add(subTask);
                         }
