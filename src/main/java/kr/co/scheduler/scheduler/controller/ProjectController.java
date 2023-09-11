@@ -52,4 +52,13 @@ public class ProjectController {
 
         return "scheduler/updateSolePRJ";
     }
+
+    @GetMapping("/scheduler/manage/project/{project_id}")
+    public String manageProject(@PathVariable(name = "project_id") Long id, Model model) {
+
+        model.addAttribute("project", projectService.viewProject(id));
+        model.addAttribute("d_day", projectService.countD_day(id));
+
+        return "scheduler/manageSolePRJ";
+    }
 }

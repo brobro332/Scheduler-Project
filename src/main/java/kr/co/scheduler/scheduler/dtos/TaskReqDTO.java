@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 public class TaskReqDTO {
 
     @Getter
@@ -13,6 +15,7 @@ public class TaskReqDTO {
 
         public String idx;
         public String task;
+        public List<String> subTasks;
     }
 
     @Getter
@@ -22,6 +25,7 @@ public class TaskReqDTO {
 
         public String idx;
         public String task;
+        public List<String> subTasks;
     }
 
     @Getter

@@ -30,7 +30,7 @@
    <button type="button" class="btn btn" onclick="location.href='/scheduler/create'" style="display: block; background-color: #956be8; color: white; width: 200px; height: 60px;">플래너 생성</button>
    </div>
   </div>
-  <div style="position:absolute; display: inline-block; width: 50%;">
+  <div style="position:absolute; display: inline-block; width: 65%;">
   <c:choose>
       <c:when test="${empty projects.content}">
       </c:when>
@@ -160,7 +160,14 @@ $(document).ready(function() {
                  alert(JSON.stringify(error));
              });
          });
+
+     $(document).on('click', '.managePRJ', function() {
+         var $project = $(this).parents(".select");
+         var project_id = $project.find(".project_id").val();
+
+         location.href = "/scheduler/manage/project/" + project_id;
      });
+ });
 </script>
 
 <%@ include file="../layout/user/footer.jsp"%>

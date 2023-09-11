@@ -5,6 +5,7 @@ import kr.co.scheduler.global.entity.BaseTimeEntity;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "tbl_task")
@@ -23,6 +24,9 @@ public class Task extends BaseTimeEntity {
 
     @Column
     private String task;
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    private List<SubTask> subTasks;
 
     @Column
     private LocalDate deadline;

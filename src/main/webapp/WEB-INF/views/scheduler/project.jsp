@@ -11,31 +11,39 @@
   <hr><br/>
 
   <div style="display: inline-block;">
-  <span class="badge bg-secondary" style="color: white;"><h6>프로젝트 기간</h6></span>
+  <span class="badge bg" style="background-color: #956be8; color: white;"><h6>프로젝트 기간</h6></span>
   &nbsp;
   ${project.startPRJ} ~ ${project.endPRJ}
   </div>
 
   <br/><br/>
 
-  <span class="badge bg-secondary" style="color: white;"><h6>프로젝트 목표</h6></span>
+  <span class="badge bg" style="background-color: #956be8; color: white;"><h6>프로젝트 목표</h6></span>
   &nbsp;
-  <div style="border:1px solid #d3d3d3; border-radius: 5px; width: auto; display: inline-block;">
   <a>${project.goal}</a>
-  </div>
 
   <br/><br/>
 
-  <span class="badge bg-secondary" style="color: white;"><h6>업무 리스트&nbsp;</h6></span>
+  <div>
+      <div style="position: absolute; display: inline-block;">
+        <span class="badge bg " style="background-color: #956be8; color: white; display: inline-block;"><h6>업무 리스트&nbsp;</h6></span>
+      </div>
 
   &nbsp;
-
-  <c:forEach items="${project.tasks}" var="task">
-      <div style="border:1px solid #d3d3d3; border-radius: 5px; width: auto; display: inline-block;">
-      ${task.task}
+      <div style="position: relative; display: inline-block; left: 8%;">
+          <c:forEach items="${project.tasks}" var="task">
+                  <div style="border:0; border-radius: 5px; background-color: #d3d3d3;">
+                     ${task.task}
+                     </div>
+                     <c:forEach items="${task.subTasks}" var="subTask">
+                        <div>
+                        ◾ ${subTask.name}
+                        </div>
+                     </c:forEach>
+              &nbsp;
+          </c:forEach>
       </div>
-      &nbsp;
-  </c:forEach>
+  </div>
 
   <br/><br/>
 

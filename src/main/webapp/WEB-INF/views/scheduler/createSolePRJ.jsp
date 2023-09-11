@@ -53,7 +53,18 @@
             var title = $("#title").val();
             var description = $("textarea[name = description]").val();
             var goal = $("#goal").val();
+            var startPRJ = $('#startPRJ').val();
+            var endPRJ = $('#endPRJ').val();
 
+            let data = {
+                    title: title,
+                    description: description,
+                    goal: goal,
+                    startPRJ: startPRJ,
+                    endPRJ: endPRJ,
+            };
+
+            var tasks = [];
             $('#boxContainer input[data-id]').each(function() {
                 var fieldName = $(this).data('id');
                 var fieldValue = $(this).val();
@@ -64,34 +75,43 @@
                     return false;
                 }
 
-                jsonData[fieldName] = fieldValue;
+                tasks.push({
+                    idx: fieldName,
+                    task: fieldValue,
+                    subTasks: []
+                });
             });
 
-            let data = {
-                    title: $("#title").val(),
-                    description: $("textarea[name = description]").val(),
-                    goal: goal,
-                    startPRJ: $('#startPRJ').val(),
-                    endPRJ: $('#endPRJ').val(),
-                    jsonData: jsonData
-            };
+            console.log(tasks);
+
+            // 세부업무 정보 수집
+            $('.sub-task-input').each(function() {
+                var subTaskValue = $(this).val();
+                if (subTaskValue.trim() !== '') {
+                    var boxGroup = $(this).closest('.box-group');
+                    var taskId = boxGroup.find('input[data-id]').data('id');
+                    tasks[taskId].subTasks.push(subTaskValue);
+                }
+            });
+
+            data.tasks = tasks;
 
             if(title == '') {
 
                 alert("제목을 입력해주세요.");
-                return false;
+                return;
             }
 
             if(description == '') {
 
                 alert("프로젝트 명세사항을 입력해주세요.");
-                return false;
+                return;
             }
 
             if(goal == '') {
 
                 alert("프로젝트 목표를 입력해주세요");
-                return false;
+                return;
             }
 
              var startDate = $( "#startPRJ" ).val();
@@ -182,15 +202,16 @@
         var inputElement = $('<input>').attr({
             type: 'text',
             class: 'form-control',
-            style: 'width: 50%; display:inline-block;',
+            style: 'width: 50%; display:inline-block; border: 0; background-color: #d3d3d3;',
             placeholder: '목표 달성을 위한 업무를 입력해주세요',
             'data-id': boxCount
         });
 
+        var subTaskButton = $('<button type="button">').addClass('btn btn subTask-box-group').text('세부업무 추가');
         var removeButton = $('<button type="button">').addClass('btn btn remove-box-group').text('제거');
 
         // 각 그룹에 입력 요소와 제거 버튼 추가
-        boxGroup.append(inputElement).append(removeButton);
+        boxGroup.append(inputElement).append(subTaskButton).append(removeButton);
 
         // 박스 그룹을 컨테이너에 추가
         $('#boxContainer').append(boxGroup);
@@ -206,6 +227,42 @@
 
         var boxGroup = clickedButton.closest('.box-group'); // 박스 그룹을 찾습니다.
         boxGroup.remove(); // 박스 그룹을 삭제합니다.
+    });
+
+    // "세부업무 추가" 버튼 클릭 이벤트 핸들러
+    $(document).on('click', '.subTask-box-group', function(event) {
+        event.preventDefault();
+
+        var clickedButton = $(event.target);
+        var boxGroup = clickedButton.closest('.box-group'); // 클릭된 버튼이 속한 박스 그룹을 찾습니다.
+
+        // 새로운 세부업무 입력 요소 생성
+        var subTaskInput = $('<input>').attr({
+            style: 'width: 47%; position: relative; left: 3%; display: inline-block;',
+            type: 'text',
+            class: 'form-control sub-task-input',
+            placeholder: '업무에 해당하는 세부업무를 입력해주세요',
+        });
+
+        // 새로운 제거 버튼 생성
+            var removeSubTaskButton = $('<button>').attr({
+                type: 'button',
+                style: 'display: inline-block; position: relative; left: 3%;',
+                class: 'btn btn remove-sub-task', // 새로운 클래스 추가
+            }).text('제거');
+
+        // 세부업무 입력 요소를 박스 그룹에 추가
+        boxGroup.append(subTaskInput).append(removeSubTaskButton);
+    });
+
+    // "세부업무 제거" 버튼 클릭 이벤트 핸들러
+    $(document).on('click', '.remove-sub-task', function(event) {
+        event.preventDefault();
+
+        var clickedButton = $(event.target);
+        var subTaskInput = clickedButton.prev(); // 클릭된 버튼 이전 요소는 세부업무 입력 요소입니다.
+        subTaskInput.remove(); // 세부업무 입력 요소 삭제
+        clickedButton.remove(); // 제거 버튼 삭제
     });
 });
 </script>

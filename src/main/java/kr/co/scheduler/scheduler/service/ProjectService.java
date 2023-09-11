@@ -3,8 +3,10 @@ package kr.co.scheduler.scheduler.service;
 import kr.co.scheduler.scheduler.dtos.ProjectReqDTO;
 import kr.co.scheduler.scheduler.dtos.TaskReqDTO;
 import kr.co.scheduler.scheduler.entity.Project;
+import kr.co.scheduler.scheduler.entity.SubTask;
 import kr.co.scheduler.scheduler.entity.Task;
 import kr.co.scheduler.scheduler.repository.ProjectRepository;
+import kr.co.scheduler.scheduler.repository.SubTaskRepository;
 import kr.co.scheduler.scheduler.repository.TaskRepository;
 import kr.co.scheduler.user.entity.User;
 import kr.co.scheduler.user.service.UserService;
@@ -14,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,9 +29,10 @@ public class ProjectService {
     private final TaskService taskService;
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
+    private final SubTaskRepository subTaskRepository;
 
     @Transactional
-    public void createProjectPlanner(ProjectReqDTO.CREATE create, List<Task> taskList, String email) {
+    public void createProjectPlanner(ProjectReqDTO.CREATE create, List<Task> tasks, List<SubTask> subTasks, String email) {
 
         User user = userService.findUser(email);
 
@@ -39,15 +44,21 @@ public class ProjectService {
                     .goal(create.getGoal())
                     .startPRJ(create.getStartPRJ())
                     .endPRJ(create.getEndPRJ())
-                    .tasks(taskList)
                     .user(user)
                     .build();
 
-            for(Task task : taskList) {
+            for(Task task : tasks) {
 
                 task.setProject(project);
+                taskRepository.save(task);
             }
 
+            for (SubTask subTask : subTasks) {
+
+                subTaskRepository.save(subTask);
+            }
+
+            project.setTasks(tasks);
             projectRepository.save(project);
         }
     }
@@ -76,22 +87,19 @@ public class ProjectService {
 
     @Transactional
     public void updateProject(Long id, ProjectReqDTO.UPDATE update) {
-
         Project project = projectRepository.findById(id).orElse(null);
-        List<TaskReqDTO.UPDATE> updatedTasks = update.getUpdatedTasks();
 
-        if(project != null) {
-
+        if (project != null) {
             project.updateProject(update.getTitle(), update.getDescription(), update.getGoal(), update.getStartPRJ(), update.getEndPRJ());
 
-            for (TaskReqDTO.UPDATE updatedTask : updatedTasks) {
-
+            for (TaskReqDTO.UPDATE updatedTask : update.getUpdatedTasks()) {
                 Task task = taskRepository.findById(Long.parseLong(updatedTask.getIdx())).orElse(null);
-                if(task != null) {
-
-                    task.updateTask(updatedTask.getIdx(), updatedTask.getTask());
+                if (task != null) {
+                    List<String> updatedSubTasks = updatedTask.getSubTasks(); // 이 부분에서 세부 업무 리스트를 가져옵니다.
+                    taskService.updateTask(Long.parseLong(updatedTask.getIdx()), updatedTask.getTask(), updatedSubTasks);
                 }
             }
+
             taskService.addTasks(project, update.getAddedTasks());
             taskService.deleteTasks(update.getDeletedTasks());
         }
@@ -122,5 +130,29 @@ public class ProjectService {
                 project.setActive_yn("N");
             }
         }
+    }
+
+    public String countD_day(Long id) {
+
+        Project project = projectRepository.findById(id).orElse(null);
+
+        if(project != null) {
+
+            LocalDate currentDate = LocalDate.now();
+            Long d_day = ChronoUnit.DAYS.between(currentDate, project.getEndPRJ());
+
+            if(d_day == 0) {
+
+                return "D-DAY입니다.";
+            } else if(d_day > 0) {
+
+                return "프로젝트 마감일까지 D-" + d_day + " 남았습니다.";
+            } else {
+
+                return "프로젝트 마감일까지 D+" + d_day + " 지났습니다.";
+            }
+        }
+
+        return "D-DAY를 계산할 수 없습니다.";
     }
 }

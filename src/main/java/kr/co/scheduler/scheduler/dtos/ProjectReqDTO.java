@@ -6,7 +6,6 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 public class ProjectReqDTO {
 
@@ -20,7 +19,7 @@ public class ProjectReqDTO {
         private String goal;
         private LocalDate startPRJ;
         private LocalDate endPRJ;
-        private Map<String, String> jsonData;
+        private List<TaskReqDTO.CREATE> tasks;
     }
 
     @Getter
