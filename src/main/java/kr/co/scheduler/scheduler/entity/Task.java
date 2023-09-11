@@ -3,6 +3,8 @@ package kr.co.scheduler.scheduler.entity;
 import jakarta.persistence.*;
 import kr.co.scheduler.global.entity.BaseTimeEntity;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert
 public class Task extends BaseTimeEntity {
 
     @Id
@@ -25,11 +28,11 @@ public class Task extends BaseTimeEntity {
     @Column
     private String task;
 
+    @ColumnDefault("'N'")
+    private String complete_yn;
+
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     private List<SubTask> subTasks;
-
-    @Column
-    private LocalDate deadline;
 
     @ManyToOne
     @JoinColumn(name = "project_id")

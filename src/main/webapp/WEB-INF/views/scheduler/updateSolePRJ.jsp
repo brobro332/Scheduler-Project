@@ -268,7 +268,7 @@
                 type: 'text',
                 class: 'form-control sub-task-input col-6',
                 placeholder: '업무에 해당하는 세부업무를 입력해주세요',
-            }).css('left', '3%').css('display', 'inline-block');
+            }).css('left', '3%').css('display', 'inline-block').css('margin-right', '4px');
 
             // 새로운 제거 버튼 생성
                 var removeSubTaskButton = $('<button>').attr({
@@ -278,8 +278,7 @@
                 }).text('제거');
 
             var subTaskInputGroup = $('<div>').addClass('input-group')
-            .append(subTaskInput).append(removeSubTaskButton)
-            .css('margin-right', '20px');
+            .append(subTaskInput).append(removeSubTaskButton);
 
             // 세부업무 입력 요소를 박스 그룹에 추가
             boxGroup.append(subTaskInputGroup);

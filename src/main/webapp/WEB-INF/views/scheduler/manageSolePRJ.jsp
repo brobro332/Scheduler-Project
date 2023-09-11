@@ -6,7 +6,7 @@
 
     <!-- Nav tabs -->
     <ul class="nav nav-tabs">
-      <li class="nav-item">
+      <li class="nav-item active">
         <a class="nav-link" data-toggle="tab" href="#outline">개요</a>
       </li>
       <li class="nav-item">
@@ -21,60 +21,98 @@
     <div class="tab-content">
 
       <div class="tab-pane container active" id="outline">
-      <form>
+
       <br/>
-        <span><h4>${project.title}</h4></span>
-        <p style="color: gray;"><small>${project.startPRJ} ~ ${project.endPRJ}<small></p>
+      <span><h4>${project.title}</h4></span>
+      <p style="color: gray;"><small>${project.startPRJ} ~ ${project.endPRJ}</small></p>
 
-        <hr><br/>
+      <hr><br/>
 
-        <!-- 프로젝트 D-Day -->
-        <div style="display: inline-block;">
-        <span class="badge bg" style="background-color: #956be8; color: white;"><h6>프로젝트 D-DAY</h6></span>
-        &nbsp;
-        ${d_day}
-        </div>
-
-        <br/><br/>
-
-        <!-- 업무 달성률 -->
-        <div>
-            <!-- 업무 달성률 -->
-            <div style="position: absolute; display: inline-block;">
-              <span class="badge bg " style="background-color: #956be8; color: white; display: inline-block;"><h6>업무 달성률&nbsp;</h6></span>
-            </div>
-
-        &nbsp;
-            <div style="position: relative; display: inline-block; left: 8%;">
-                <c:forEach items="${project.tasks}" var="task">
-                        <div style="border:0; border-radius: 5px; background-color: #d3d3d3;">
-                           ${task.task}
-                        </div>
-                        <c:forEach items="${task.subTasks}" var="subTask">
-                           <div>
-                           ◾ ${subTask.name}
-                           </div>
-                        </c:forEach>
-                        <br/>
-                </c:forEach>
-            </div>
+      <!-- 프로젝트 D-Day -->
+      <div style="display: inline-block;">
+        <span class="badge bg" style="background-color: #956be8; color: white;">
+            <h6>프로젝트 D-DAY</h6>
+        </span>
+      &nbsp;
+      ${d_day}
       </div>
 
       <br/><br/>
 
-        <button type="button" class="btn btn" id="btn-back" style="background-color: gray; color: white; width: 201px;">뒤로가기</button>
-      </form>
+      <!-- 업무 달성률 -->
+      <div>
+          <div style="position: absolute; display: inline-block;">
+            <span class="badge bg " style="background-color: #956be8; color: white; display: inline-block;">
+                <h6>업무 달성률&nbsp;</h6>
+            </span>
+          </div>
+
+        &nbsp;
+
+          <div style="position: relative; display: inline-block; left: 8%;">
+              <c:forEach items="${project.tasks}" var="task">
+                  <div style="border:0; border-radius: 5px; background-color: #d3d3d3;">
+                     ${task.task}
+                  </div>
+                  <a style="display: inline-block;"><kbd id="kbd">XX%</kbd> 하위업무 N개 중 M개 완료</a>
+                  <br/><br/>
+              </c:forEach>
+          </div>
       </div>
 
+    <br/><br/>
 
-        <div class="tab-pane container fade" id="manageTask">
-            gegege <br/>ddd
-        </div>
-        <div class="tab-pane container fade" id="dailyTask">
-            gegegegegegeg
-        </div>
+    <button type="button" class="btn btn" id="btn-back" style="background-color: gray; color: white; width: 201px;">뒤로가기</button>
+
+    </div>
+
+
+    <div class="tab-pane container active fade" id="manageTask">
+
+          <br/>
+          <span><h4>${project.title}</h4></span>
+          <p style="color: gray;"><small>${project.startPRJ} ~ ${project.endPRJ}</small></p>
+
+          <hr><br/>
+
+          <div>
+          <div style="position: absolute; display: inline-block;">
+             <span class="badge bg " style="background-color: #956be8; color: white; display: inline-block;">
+                    <h6>업무 달성 관리&nbsp;</h6>
+                </span>
+              </div>
+
+            &nbsp;
+
+              <div style="position: relative; display: inline-block; left: 10%;">
+                  <c:forEach items="${project.tasks}" var="task">
+                      <div style="border:0; border-radius: 5px; background-color: #d3d3d3;">
+                         <label class="custom-checkbox">${task.task}<input type="checkbox" class="task-checkbox dynamicCheckbox" data-task-id="${task.id}" data-task-type="task"></label>
+                      </div>
+                  <c:forEach items="${task.subTasks}" var="subTask">
+                      <div>
+                         <label class="custom-checkbox">◾ ${subTask.name}<input type="checkbox" class="subTask-checkbox dynamicCheckbox" data-task-id="${subTask.id}" data-task-type="subTask"></label>
+                      </div>
+                  </c:forEach>
+                  <br/>
+                  </c:forEach>
+              </div>
+          </div>
+
+        <br/><br/>
+
+        <button type="button" class="btn btn" id="btn-back" style="background-color: gray; color: white; width: 201px;">뒤로가기</button>
+
+    </div>
+
+
+    <div class="tab-pane container active fade" id="dailyTask">
+    </div>
+
+
     </div>
 </div>
+
 
 <script>
 $(document).ready(function() {
@@ -109,6 +147,20 @@ $(document).ready(function() {
         // 일일 탭이 선택되었을 때 실행할 코드 추가
       }
     });
+
+// 동적으로 생성된 체크박스에 대한 이벤트 핸들러 등록
+  $(document).ready(function() {
+      $(document).on("change", ".dynamicCheckbox", function() {
+          var taskId = $(this).data("task-id");
+          var isChecked = $(this).prop("checked");
+
+          if (isChecked) {
+              alert("체크된 상태 - Task ID: " + taskId);
+          } else {
+              alert("언체크된 상태 - Task ID: " + taskId);
+          }
+      });
+  });
   });
 </script>
 
