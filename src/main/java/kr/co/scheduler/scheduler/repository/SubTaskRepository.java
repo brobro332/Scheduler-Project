@@ -1,6 +1,7 @@
 package kr.co.scheduler.scheduler.repository;
 
 import kr.co.scheduler.scheduler.entity.SubTask;
+import kr.co.scheduler.scheduler.entity.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

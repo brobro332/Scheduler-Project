@@ -78,7 +78,7 @@ public class TaskService {
         List<String> taskTypes = checkbox.getTaskTypes();
         List<String> checkYnList = checkbox.getCheckYnList();
 
-        // taskIds, taskTypes, checkYnList의 크기가 동일한지 확인
+        // taskIds, taskTypes, checkYnList 의 크기가 동일한지 확인
         if (taskIds.size() != taskTypes.size() || taskIds.size() != checkYnList.size()) {
             throw new IllegalArgumentException("입력된 데이터 크기가 일치하지 않습니다.");
         }

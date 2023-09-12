@@ -16,8 +16,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -154,5 +156,46 @@ public class ProjectService {
         }
 
         return "D-DAY를 계산할 수 없습니다.";
+    }
+
+    @Transactional
+    public void calculateTaskPercentage(Long id) {
+
+        Project project = projectRepository.findById(id).orElse(null);
+
+        if (project.getTasks() != null) {
+
+            for (Task task : project.getTasks()) {
+                int checkedSubTasks = 0;
+                int totalSubTasks = task.getSubTasks().size();
+
+                task.setTotalSubTasks(totalSubTasks);
+
+                for (SubTask subTask : task.getSubTasks()) {
+
+                    if (subTask.getCheck_yn().equals("Y")) {
+
+                        checkedSubTasks++; // 체크된 세부 업무 개수 추가
+                    }
+                }
+                task.setCheckedSubTasks(checkedSubTasks);
+
+                if (totalSubTasks > 0) {
+
+                    float taskPercentage = (float) checkedSubTasks / totalSubTasks * 100;
+
+                    DecimalFormat df = new DecimalFormat("#.##");
+                    taskPercentage = Float.parseFloat(df.format(taskPercentage));
+
+                    task.setTaskPercentage(taskPercentage);
+                } else if (checkedSubTasks == 0 && task.getCheck_yn().equals("Y")) {
+
+                    task.setTaskPercentage(100.0f);
+                } else {
+
+                    task.setTaskPercentage(0.0f); // 총 세부 업무가 없을 경우 0%로 설정
+                }
+            }
+        }
     }
 }

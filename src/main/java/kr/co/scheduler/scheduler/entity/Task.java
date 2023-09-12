@@ -28,6 +28,15 @@ public class Task extends BaseTimeEntity {
     @Column
     private String task;
 
+    @Column
+    private Float taskPercentage;
+
+    @Column
+    private Integer checkedSubTasks;
+
+    @Column
+    private Integer totalSubTasks;
+
     @ColumnDefault("'N'")
     private String check_yn;
 

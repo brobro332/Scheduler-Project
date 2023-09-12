@@ -56,6 +56,8 @@ public class ProjectController {
     @GetMapping("/scheduler/manage/project/{project_id}")
     public String manageProject(@PathVariable(name = "project_id") Long id, Model model) {
 
+        projectService.calculateTaskPercentage(id);
+
         model.addAttribute("project", projectService.viewProject(id));
         model.addAttribute("d_day", projectService.countD_day(id));
 
