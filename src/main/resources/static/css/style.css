@@ -99,3 +99,14 @@ html, body {
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
+
+select {
+  width: 300px;
+  padding: .4em .5em;
+  border: 1px solid #d3d3d3;
+  font-family: inherit;
+  border-radius: 5px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}

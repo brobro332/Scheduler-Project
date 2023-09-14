@@ -27,7 +27,7 @@ public class Project extends BaseTimeEntity {
     @Column
     private String title;
 
-    @Column
+    @Column(length = 1000000, nullable = false)
     private String description;
 
     @Column
@@ -52,8 +52,11 @@ public class Project extends BaseTimeEntity {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Task> tasks;
 
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private List<TaskLog> taskLogs;
+
     @Builder
-    public Project(String title, String description, String goal, LocalDate startPRJ, LocalDate endPRJ, List<Task> tasks, User user) {
+    public Project(String title, String description, String goal, LocalDate startPRJ, LocalDate endPRJ, List<Task> tasks, List<TaskLog> taskLogs, User user) {
 
         this.title = title;
         this.description = description;
@@ -61,6 +64,7 @@ public class Project extends BaseTimeEntity {
         this.startPRJ = startPRJ;
         this.endPRJ = endPRJ;
         this.tasks = tasks;
+        this.taskLogs = taskLogs;
         this.user = user;
     }
 

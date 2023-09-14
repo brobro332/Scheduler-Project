@@ -100,4 +100,11 @@ public class TaskService {
             }
         }
     }
+
+    public List<SubTask> getSubTasks(Long id) {
+
+        Task task = taskRepository.findById(id).orElse(null);
+
+        return task.getSubTasks();
+    }
 }

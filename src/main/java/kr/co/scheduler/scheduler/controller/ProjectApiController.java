@@ -2,6 +2,7 @@ package kr.co.scheduler.scheduler.controller;
 
 import kr.co.scheduler.global.dtos.ResponseDto;
 import kr.co.scheduler.scheduler.dtos.ProjectReqDTO;
+import kr.co.scheduler.scheduler.dtos.TaskLogReqDTO;
 import kr.co.scheduler.scheduler.dtos.TaskReqDTO;
 import kr.co.scheduler.scheduler.entity.SubTask;
 import kr.co.scheduler.scheduler.entity.Task;
@@ -85,6 +86,14 @@ public class ProjectApiController {
 
         projectService.activeProject(id);
 
-        return ResponseDto.ofSuccessData("프로젝트를 활성 상태를 전환했습니다.", null);
+        return ResponseDto.ofSuccessData("프로젝트 활성 상태를 전환했습니다.", null);
+    }
+
+    @PostMapping("/taskLog/{project_id}")
+    public ResponseDto<?> writeTaskLog(@PathVariable(name = "project_id") Long id, @RequestBody TaskLogReqDTO taskLogReqDTO) {
+
+        projectService.writeTaskLog(taskLogReqDTO, id);
+
+        return ResponseDto.ofSuccessData("업무 일지를 성공적으로 등록했습니다.", null);
     }
 }

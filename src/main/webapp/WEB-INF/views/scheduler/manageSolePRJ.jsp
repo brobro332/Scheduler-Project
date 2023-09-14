@@ -15,7 +15,7 @@
         <a class="nav-link" data-toggle="tab" href="#manageTask">업무 수행 관리</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" data-toggle="tab" href="#dailyTask">일일 수행 기록</a>
+        <a class="nav-link" data-toggle="tab" href="#dailyTask">업무 일지 관리</a>
       </li>
     </ul>
 
@@ -74,8 +74,8 @@
     <div class="tab-pane container active fade" id="manageTask">
 
           <br/>
-          <span><h4>${project.title}</h4></span>
-          <p style="color: gray;"><small>${project.startPRJ} ~ ${project.endPRJ}</small></p>
+          <span><h4>업무 수행 관리</h4></span>
+          <p style="color: gray;"><small>업무 리스트에서 수행 완료된 업무를 체크해보세요</small></p>
 
           <hr><br/>
 
@@ -136,6 +136,32 @@
 
 
     <div class="tab-pane container active fade" id="dailyTask">
+    <div>
+    <br/>
+    <form method="post">
+      <span><h4>업무 일지 관리</h4></span>
+      <p style="color: gray;"><small>오늘 수행한 업무 일지를 작성해보세요</small></p>
+      <hr><br/>
+
+        <div>
+            <select id="task" name="task">
+                <option disabled selected>업무 카테고리 선택</option>
+                <c:forEach items="${project.tasks}" var="task">
+                    <option value="${task.id}">${task.task}</option>
+                </c:forEach>
+            </select>
+
+            <select id="subTask" name="subTask">
+              <option disabled selected>하위업무 카테고리 선택</option>
+            </select>
+
+      </div><br/>
+      <input type="text" class="form-control" placeholder="제목" id="title" style="width:100%;"> <br/>
+      <textarea id="summernote" name="content"></textarea> <br/>
+    </form>
+    <button class="btn btn" id="btn-back" style="background-color: gray; color: white; width: 201px;">뒤로가기</button>
+    <button class="btn btn" id="btn-save" style="background-color: #956be8; color: white; width: 201px; float:right;">등록</button>
+    </div>
     </div>
 
 
@@ -244,6 +270,146 @@ $(document).ready(function() {
               }
           });
       });
+
+          $('#summernote').summernote({
+                  height: 500,
+                  minHeight: null,
+                  maxHeight: null,
+                  focus: true,
+                  lang: "ko-KR",
+                  callbacks: {
+                      onImageUpload: function(files, editor, welEditable){
+                          for (var i = files.length - 1; i >= 0; i--) {
+                              uploadSummernoteImageFile(files[i], this);
+                          }
+                   }
+                 }
+      	    });
+
+      	function uploadSummernoteImageFile(file, el) {
+               data = new FormData();
+               data.append("file", file);
+
+               $.ajax({
+                  data: data,
+                  type: "POST",
+                  url: "/api/community/postImg/upload",
+                  cache: false,
+                  contentType: false,
+                  processData: false,
+                  enctype : 'multipart/form-data',
+                  success: function(data){
+                      $(el).summernote('editor.insertImage', data);
+               }
+            });
+          }
+
+      	$("#btn-back").on("click", ()=>{
+              window.history.back();
+          });
+
+        $("#task").change(function () {
+            var taskId = $(this).val();
+            var subTaskSelect = $("#subTask");
+
+            // 업무 선택에 따라 세부 업무 옵션을 동적으로 업데이트
+            $.ajax({
+                type: "GET",
+                url: "/scheduler/manage/subTask",
+                data: { task_id: taskId },
+                dataType: "json",
+                success: function (data) {
+
+                    // 받아온 세부 업무 목록을 옵션으로 추가
+                    $.each(data, function (index, subTask) {
+                        subTaskSelect.append(new Option(subTask.name, subTask.id));
+                    });
+
+                    if (data.length === 0) {
+                        subTaskSelect.append(new Option("-", ""));
+                    }
+                }
+            });
+        });
+
+        // 세부 업무 선택 셀렉트 박스 변경 이벤트 처리
+        $("#subTask").change(function () {
+            var selectedValue = $(this).val();
+            if (selectedValue === "direct") {
+                $("#customSubTask").css("display", "inline-block");
+            } else {
+                $("#customSubTask").hide();
+            }
+        });
+
+        $("#btn-save").click(function() {
+
+            var project_id = $("#project_id").val();
+
+            var title = $("#title").val();
+            var content = $("textarea[name = content]").val();
+
+            if(title == '') {
+
+                alert("제목을 입력해주세요.");
+                return false;
+            }
+
+            if(content == '') {
+
+                alert("내용을 입력해주세요.");
+                return false;
+            }
+
+            var taskSelectBox = document.getElementById("task");
+            var taskSelectedIndex = taskSelectBox.selectedIndex;
+            var taskSelectedValue = taskSelectBox.options[taskSelectedIndex].value;
+
+            if (taskSelectedValue === "업무 카테고리 선택") {
+
+                alert("업무 카테고리를 선택해주세요.");
+
+                return;
+            }
+
+            var subTaskSelectBox = document.getElementById("subTask");
+            var subTaskSelectedIndex = subTaskSelectBox.selectedIndex;
+            var subTaskSelectedValue = subTaskSelectBox.options[subTaskSelectedIndex].value;
+
+            console.log(subTaskSelectedValue);
+
+            if (subTaskSelectedValue === "하위업무 카테고리 선택") {
+
+                alert("하위업무 카테고리를 선택해주세요.");
+
+                return;
+            }
+
+            let data = {
+
+                    title: title,
+                    content: content,
+                    taskCategory: taskSelectedValue,
+                    subTaskCategory: subTaskSelectedValue
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/api/scheduler/project/taskLog/" + project_id,
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            }).done(function(resp) {
+                if(resp.statusCode == 400 || resp.statusCode == 500){
+                    alert(resp.message);
+                    } else {
+                    alert(resp.message);
+                    location.href="/scheduler/manage/project/" + project_id;;
+                }
+            }).fail(function(error) {
+                alert(JSON.stringify(error));
+            });
+        });
   });
 </script>
 

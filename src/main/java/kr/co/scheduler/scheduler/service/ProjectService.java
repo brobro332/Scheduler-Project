@@ -1,12 +1,15 @@
 package kr.co.scheduler.scheduler.service;
 
 import kr.co.scheduler.scheduler.dtos.ProjectReqDTO;
+import kr.co.scheduler.scheduler.dtos.TaskLogReqDTO;
 import kr.co.scheduler.scheduler.dtos.TaskReqDTO;
 import kr.co.scheduler.scheduler.entity.Project;
 import kr.co.scheduler.scheduler.entity.SubTask;
 import kr.co.scheduler.scheduler.entity.Task;
+import kr.co.scheduler.scheduler.entity.TaskLog;
 import kr.co.scheduler.scheduler.repository.ProjectRepository;
 import kr.co.scheduler.scheduler.repository.SubTaskRepository;
+import kr.co.scheduler.scheduler.repository.TaskLogRepository;
 import kr.co.scheduler.scheduler.repository.TaskRepository;
 import kr.co.scheduler.user.entity.User;
 import kr.co.scheduler.user.service.UserService;
@@ -19,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,6 +34,7 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
     private final SubTaskRepository subTaskRepository;
+    private final TaskLogRepository taskLogRepository;
 
     @Transactional
     public void createProjectPlanner(ProjectReqDTO.CREATE create, List<Task> tasks, List<SubTask> subTasks, String email) {
@@ -196,6 +199,30 @@ public class ProjectService {
                     task.setTaskPercentage(0.0f); // 총 세부 업무가 없을 경우 0%로 설정
                 }
             }
+        }
+    }
+
+    @Transactional
+    public void writeTaskLog(TaskLogReqDTO taskLogReqDTO, Long id) {
+
+        Project project = projectRepository.findById(id).orElse(null);
+
+        if (project != null) {
+
+            TaskLog taskLog = TaskLog
+                    .builder()
+                    .title(taskLogReqDTO.getTitle())
+                    .content(taskLogReqDTO.getContent())
+                    .taskCategory(taskLogReqDTO.getTaskCategory())
+                    .subTaskCategory(taskLogReqDTO.getSubTaskCategory())
+                    .project(project)
+                    .build();
+
+            List<TaskLog> temp = project.getTaskLogs();
+            temp.add(taskLog);
+            project.setTaskLogs(temp);
+
+            taskLogRepository.save(taskLog);
         }
     }
 }
