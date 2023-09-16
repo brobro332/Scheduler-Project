@@ -30,6 +30,8 @@
 
       <hr><br/>
 
+      <div>
+      <div style="display: inline-block;">
       <!-- 프로젝트 D-Day -->
       <div style="display: inline-block;">
         <span class="badge bg" style="background-color: #956be8; color: white;">
@@ -51,7 +53,7 @@
 
         &nbsp;
 
-          <div style="position: relative; display: inline-block; left: 8%;">
+          <div style="position: relative; display: inline-block; left: 30%;">
               <c:forEach items="${project.tasks}" var="task" varStatus="loop">
                   <div>
                   <c:if test="${!loop.first}">
@@ -62,6 +64,72 @@
                   <h6><a style="display: inline-block;"> ◾ <kbd id="kbd">${task.taskPercentage}%</kbd> 하위업무 ${task.totalSubTasks}개 중 ${task.checkedSubTasks}개 완료</a></h6>
               </c:forEach>
           </div>
+      </div>
+      </div>
+
+      <div style="position: absolute; display: inline-block; left: 50%;">
+      <div style="text-align: center; width: 500px; height: 500px; overflow: auto;">
+      <form>
+        <table class="table table-hover" style="text-align:center; width: 100%; height: 100%; border-collapse: collapse;">
+          <thead>
+            <tr>
+                <th>작성일자</th>
+                <th>제목</th>
+                <th>업무</th>
+                <th>하위업무</th>
+            </tr>
+        </thead>
+        <tbody>
+        <c:choose>
+            <c:when test="${empty taskLogs.content}">
+                <tr>
+                    <td colspan="4">조회결과가 없습니다.</td>
+                </tr>
+            </c:when>
+            <c:otherwise>
+                <c:forEach items="${taskLogs.content}" var="taskLog" varStatus="loop">
+                    <tr>
+                        <th style="font-weight: lighter;">
+                            <c:set var="createdAt" value="${taskLog.createdAt}" />
+                            <c:out value="${createdAt.year}-${createdAt.monthValue}-${createdAt.dayOfMonth}" />
+                        </th>
+                        <th style="font-weight: lighter;"><a href="/scheduler/manage/project/taskLog/${taskLog.id}">${taskLog.title}</a></th>
+                        <th style="font-weight: lighter;">${taskLog.taskCategory}</th>
+                        <th style="font-weight: lighter;">${taskLog.subTaskCategory}</th>
+                    </tr>
+                </c:forEach>
+            </c:otherwise>
+        </c:choose>
+        </tbody>
+        </table>
+      </form>
+        <div style="display: inline-block;">
+        <ul class="pagination" style="position:relative; width: 20%;">
+                <c:choose>
+                    <c:when test="${taskLogs.first}">
+                        <li class="page-item disabled"><a class="page-link" href="?page=${taskLogs.number-1}"><</a></li>
+                    </c:when>
+                    <c:otherwise>
+                        <li class="page-item"><a class="page-link" href="?page=${taskLogs.number-1}"><</a></li>
+                    </c:otherwise>
+                </c:choose>
+
+                <c:forEach var="i" begin="1" end="${taskLogs.totalPages}">
+                    <li class="page-item"><a class="page-link" href="?page=${i-1}">${i}</a></li>
+              </c:forEach>
+
+                <c:choose>
+                    <c:when test="${taskLogs.last}">
+                        <li class="page-item disabled"><a class="page-link" href="?page=${taskLogs.number+1}">></a></li>
+                    </c:when>
+                    <c:otherwise>
+                        <li class="page-item"><a class="page-link" href="?page=${taskLogs.number+1}">></a></li>
+                    </c:otherwise>
+                </c:choose>
+            </ul>
+            </div>
+      </div>
+      </div>
       </div>
 
     <br/><br/>
@@ -147,7 +215,7 @@
             <select id="task" name="task">
                 <option disabled selected>업무 카테고리 선택</option>
                 <c:forEach items="${project.tasks}" var="task">
-                    <option value="${task.id}">${task.task}</option>
+                    <option value="${task.id}" data-task="${task.task}">${task.task}</option>
                 </c:forEach>
             </select>
 
@@ -322,7 +390,7 @@ $(document).ready(function() {
 
                     // 받아온 세부 업무 목록을 옵션으로 추가
                     $.each(data, function (index, subTask) {
-                        subTaskSelect.append(new Option(subTask.name, subTask.id));
+                        subTaskSelect.append(new Option(subTask.name, subTask.name));
                     });
 
                     if (data.length === 0) {
@@ -363,9 +431,9 @@ $(document).ready(function() {
 
             var taskSelectBox = document.getElementById("task");
             var taskSelectedIndex = taskSelectBox.selectedIndex;
-            var taskSelectedValue = taskSelectBox.options[taskSelectedIndex].value;
+            var taskSelectedValue = taskSelectBox.options[taskSelectedIndex].getAttribute("data-task");
 
-            if (taskSelectedValue === "업무 카테고리 선택") {
+            if (taskSelectedValue === null) {
 
                 alert("업무 카테고리를 선택해주세요.");
 

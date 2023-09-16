@@ -7,13 +7,16 @@ import kr.co.scheduler.scheduler.dtos.TaskReqDTO;
 import kr.co.scheduler.scheduler.entity.SubTask;
 import kr.co.scheduler.scheduler.entity.Task;
 import kr.co.scheduler.scheduler.service.ProjectService;
+import kr.co.scheduler.scheduler.service.TaskLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +24,7 @@ import java.util.List;
 public class ProjectApiController {
 
     private final ProjectService projectService;
+    private final TaskLogService taskLogService;
 
     @PostMapping("/create")
     public ResponseDto<?> createProjectPlanner(@RequestBody ProjectReqDTO.CREATE create, Principal principal) {
@@ -33,6 +37,7 @@ public class ProjectApiController {
                     Task task = Task.builder()
                             .idx(taskDTO.getIdx())
                             .task(taskDTO.getTask())
+                            .check_yn("N")
                             .build();
                     tasks.add(task);
 
@@ -95,5 +100,31 @@ public class ProjectApiController {
         projectService.writeTaskLog(taskLogReqDTO, id);
 
         return ResponseDto.ofSuccessData("업무 일지를 성공적으로 등록했습니다.", null);
+    }
+
+    @PutMapping("/taskLog/{task_log_id}")
+    public ResponseDto<?> updateTaskLog(@PathVariable(name = "task_log_id") Long id, @RequestBody TaskLogReqDTO taskLogReqDTO) {
+
+        projectService.updateTaskLog(taskLogReqDTO, id);
+
+        return ResponseDto.ofSuccessData("업무 일지를 성공적으로 수정했습니다.", null);
+    }
+
+    @DeleteMapping("/taskLog/{taskLog_id}")
+    public ResponseDto<?> deleteTaskLog(@PathVariable(name = "taskLog_id") Long task_log_id, @RequestParam("project_id") Long project_id) {
+
+        projectService.deleteTaskLog(task_log_id, project_id);
+
+        return ResponseDto.ofSuccessData("업무 일지를 성공적으로 삭제했습니다.", null);
+    }
+
+    @GetMapping("/taskLog/category")
+    public @ResponseBody Map<String, String> getCategory(@RequestParam("taskLog_id") Long id) {
+
+        Map<String, String> data = new HashMap<>();
+        data.put("taskCategory", taskLogService.getTaskCategory(id));
+        data.put("subTaskCategory", taskLogService.getSubTaskCategory(id));
+
+        return data;
     }
 }

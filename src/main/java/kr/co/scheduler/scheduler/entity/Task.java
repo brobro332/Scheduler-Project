@@ -13,7 +13,6 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DynamicInsert
 public class Task extends BaseTimeEntity {
 
     @Id
@@ -36,7 +35,7 @@ public class Task extends BaseTimeEntity {
     @Column
     private Integer totalSubTasks;
 
-    @ColumnDefault("'N'")
+    @Column
     private String check_yn;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
@@ -47,11 +46,12 @@ public class Task extends BaseTimeEntity {
     private Project project;
 
     @Builder
-    public Task(String idx, String task, Project project) {
+    public Task(String idx, String task, Project project, String check_yn) {
 
         this.idx = idx;
         this.task = task;
         this.project = project;
+        this.check_yn = check_yn;
     }
 
     public void updateTask(String idx, String task) {

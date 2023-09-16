@@ -38,7 +38,7 @@
           <c:forEach items="${projects.content}" var="project">
             <div class="select">
                 <input type="text" class="form-control project_id" value="${project.id}" hidden>
-                <div style="position: relative; border: 1px solid #dddddd; border-radius: 5px; padding: 10px; width: 70%; left:15%;">
+                <div style="position: relative; border: 1px solid #dddddd; border-radius: 5px; padding: 10px; width: 70%;">
                     <h5 style="display: inline-block;"><b><a href="/scheduler/view/project/${project.id}">${project.title}</a></b></h4>
                     &nbsp;
 
@@ -80,7 +80,8 @@
       </c:choose>
   </div>
   </form>
-  <ul class="pagination" style="position:relative; left:45%; width: 20%;">
+  <div style="display: inline-block;">
+  <ul class="pagination" style="position:relative; width: 20%;">
     	<c:choose>
     		<c:when test="${projects.first}">
     			<li class="page-item disabled"><a class="page-link" href="?page=${projects.number-1}"><</a></li>
@@ -103,6 +104,7 @@
     		</c:otherwise>
     	</c:choose>
     </ul>
+</div>
 </div>
 
 <script>

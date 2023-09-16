@@ -2,6 +2,7 @@
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ page import="java.time.LocalDateTime" %>
 <sec:authorize access="isAuthenticated()">
 	<sec:authentication property="principal" var="principal"/>
 </sec:authorize>

@@ -225,4 +225,43 @@ public class ProjectService {
             taskLogRepository.save(taskLog);
         }
     }
+
+    @Transactional
+    public void updateTaskLog(TaskLogReqDTO taskLogReqDTO, Long id) {
+
+        TaskLog taskLog = taskLogRepository.findById(id).orElse(null);
+
+
+        if (taskLog != null) {
+
+            taskLog.updateTaskLog(taskLogReqDTO.getTitle(), taskLogReqDTO.getContent(), taskLogReqDTO.getTaskCategory(), taskLogReqDTO.getSubTaskCategory());
+        }
+    }
+
+    @Transactional
+    public void deleteTaskLog(Long task_log_id, Long project_id) {
+
+        Project project = projectRepository.findById(project_id).orElse(null);
+        TaskLog taskLog = taskLogRepository.findById(task_log_id).orElse(null);
+
+        if (taskLog != null) {
+
+            project.getTaskLogs().remove(taskLog);
+            taskLogRepository.delete(taskLog);
+        }
+    }
+
+    @Transactional
+    public Page<TaskLog> viewTaskLog(Pageable pageable, Long id) {
+
+        Project project = projectRepository.findById(id).orElse(null);
+        Page<TaskLog> taskLogs = null;
+
+        if (project != null) {
+
+            taskLogs = taskLogRepository.findByProject(pageable, project);
+        }
+
+        return taskLogs;
+    }
 }

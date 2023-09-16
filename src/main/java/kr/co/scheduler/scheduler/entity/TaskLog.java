@@ -41,4 +41,12 @@ public class TaskLog extends BaseTimeEntity {
         this.subTaskCategory = subTaskCategory;
         this.project = project;
     }
+
+    public void updateTaskLog(String title, String content, String taskCategory, String subTaskCategory) {
+
+        this.title = title;
+        this.content = content;
+        this.taskCategory = taskCategory;
+        this.subTaskCategory = subTaskCategory;
+    }
 }

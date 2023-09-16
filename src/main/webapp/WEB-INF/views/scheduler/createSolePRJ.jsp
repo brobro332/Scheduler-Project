@@ -202,7 +202,7 @@
         var inputElement = $('<input>').attr({
             type: 'text',
             class: 'form-control',
-            style: 'width: 50%; display:inline-block; border: 0; background-color: #d3d3d3;',
+            style: 'width: 53%; display:inline-block; border: 0; background-color: #d3d3d3;',
             placeholder: '목표 달성을 위한 업무를 입력해주세요',
             'data-id': boxCount
         });
@@ -238,11 +238,10 @@
 
         // 새로운 세부업무 입력 요소 생성
         var subTaskInput = $('<input>').attr({
-            style: 'width: 47%; position: relative; left: 3%; display: inline-block;',
             type: 'text',
-            class: 'form-control sub-task-input',
+            class: 'form-control sub-task-input col-6',
             placeholder: '업무에 해당하는 세부업무를 입력해주세요',
-        });
+        }).css('left', '3%').css('display', 'inline-block').css('margin-right', '4px');
 
         // 새로운 제거 버튼 생성
             var removeSubTaskButton = $('<button>').attr({
