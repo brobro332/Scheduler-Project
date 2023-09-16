@@ -17,8 +17,12 @@ public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
 
+
+    /**
+     * selectUserInfo: 사용자 정보 조회 페이지를 리턴
+     */
     @GetMapping("/user/info")
-    public String searchInfo(Principal principal, Model model) {
+    public String selectUserInfo(Principal principal, Model model) {
 
         model.addAttribute("info", userService.searchInfo(principal.getName()));
         model.addAttribute("img", userRepository.findByEmail(principal.getName()));
@@ -27,7 +31,48 @@ public class UserController {
     }
 
     /**
-     * kakaoCallback: 카카오 로그인 요청 및 콜백 응답받음
+     * selectUpdateList: 수정 목록 선택하는 페이지 리턴
+     * 1. 사용자 정보 수정
+     * 2. 패스워드 수정
+     */
+    @GetMapping("/user/info/updateList")
+    public String selectUpdateList() {
+
+        return "user/updateList";
+    }
+
+    /**
+     * updateInfo: 사용자 정보 수정 페이지 리턴
+     */
+    @GetMapping("/user/info/updateInfo")
+    public String updateInfo() {
+
+        return "user/updateInfo";
+    }
+
+
+    /**
+     * updatePasswordForm: 패스워드 수정 페이지 리턴
+     */
+    @GetMapping("/user/info/updatePW")
+    public String updatePW() {
+
+        return "user/updatePW";
+    }
+
+    /**
+     * profileImg: 프로필 이미지 변경 페이지 리턴
+     */
+    @GetMapping("/user/info/profileImg")
+    public String profileImg() {
+
+        return "user/profileImg";
+    }
+
+    // ================================== 구분 ================================== //
+
+    /**
+     * kakaoCallback: 카카오 로그인 요청 및 콜백 응답받아 리다이렉트
      */
     @GetMapping("/kakao/callback")
     public String kakaoCallback(HttpServletRequest request, String code) {
@@ -38,7 +83,7 @@ public class UserController {
     }
 
     /**
-     * NaverCallback: 네이버 로그인 요청 및 콜백 응답받음
+     * NaverCallback: 네이버 로그인 요청 및 콜백 응답받아 리다이렉트
      */
     @GetMapping("/naver/callback")
     public String naverCallback(HttpServletRequest request, String code, String state) {
@@ -46,29 +91,5 @@ public class UserController {
         userService.naverLogin(request, code, state);
 
         return "redirect:/";
-    }
-
-    @GetMapping("/user/info/updateList")
-    public String updateSelect() {
-
-        return "user/updateList";
-    }
-
-    @GetMapping("/user/info/updatePasswordForm")
-    public String updatePasswordForm() {
-
-        return "user/updatePasswordForm";
-    }
-
-    @GetMapping("/user/info/updateInfoForm")
-    public String updateInfoForm() {
-
-        return "user/updateInfoForm";
-    }
-
-    @GetMapping("/user/info/profileImgForm")
-    public String profileImgForm() {
-
-        return "user/profileImgForm";
     }
 }

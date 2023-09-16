@@ -107,7 +107,7 @@ public class PostService {
         Post post = Post.builder()
                 .title(create.getTitle())
                 .content(content)
-                .user(userService.findUser(email))
+                .user(userService.selectUser(email))
                 .build();
 
         postRepository.save(post);

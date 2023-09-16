@@ -27,5 +27,4 @@
     기능명, 간단한 설명, 클릭하면 해당 메뉴로 들어가게끔(로그인한 사람에 한해서)</b>
 </div>
 
-
 <%@ include file="layout/user/footer.jsp"%>

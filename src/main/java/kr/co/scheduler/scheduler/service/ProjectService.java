@@ -39,7 +39,7 @@ public class ProjectService {
     @Transactional
     public void createProjectPlanner(ProjectReqDTO.CREATE create, List<Task> tasks, List<SubTask> subTasks, String email) {
 
-        User user = userService.findUser(email);
+        User user = userService.selectUser(email);
 
         if (user != null) {
 
@@ -70,7 +70,7 @@ public class ProjectService {
 
     public Page<Project> viewProjects(Pageable pageable, String email) {
 
-        User user = userService.findUser(email);
+        User user = userService.selectUser(email);
 
         return projectRepository.findPageByUser_Id(pageable, user.getId());
     }
@@ -85,7 +85,7 @@ public class ProjectService {
 
     public Long countPRJ(String email) {
 
-        User user = userService.findUser(email);
+        User user = userService.selectUser(email);
 
         return projectRepository.countByUser(user);
     }

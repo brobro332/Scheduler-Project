@@ -75,7 +75,7 @@ public class CommunityApiController {
     @GetMapping("/api/community/post/profileImg/{email}")
     public ResponseEntity<?> getProfileImg(@PathVariable(name = "email") String email) throws IOException {
 
-        User user = userService.findUser(email);
+        User user = userService.selectUser(email);
 
         if(user.getProfileImgPath() == null) {
 
@@ -136,7 +136,7 @@ public class CommunityApiController {
     @PutMapping("/api/community/post/comment/update/{comment_id}")
     public ResponseDto<?> updateComment(@PathVariable(name = "comment_id") Long id, @RequestBody CommentReqDTO.UPDATE update, Principal principal) {
         
-        User user = userService.findUser(principal.getName());
+        User user = userService.selectUser(principal.getName());
         Comment comment = commentService.findComment(id);
 
         if(!user.getEmail().equals(comment.getUser().getEmail())) {
@@ -156,7 +156,7 @@ public class CommunityApiController {
     @DeleteMapping("/api/community/post/comment/delete/{comment_id}")
     public ResponseDto<?> deleteComment(@PathVariable(name = "comment_id") Long id, Principal principal) {
 
-        User user = userService.findUser(principal.getName());
+        User user = userService.selectUser(principal.getName());
         Comment comment = commentService.findComment(id);
 
         if(!user.getEmail().equals(comment.getUser().getEmail())) {

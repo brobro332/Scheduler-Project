@@ -22,7 +22,7 @@ public class CommentService {
     public void writeComment(Long id, CommentReqDTO.CREATE create, String email) {
 
         Comment comment = Comment.builder()
-                .user(userService.findUser(email))
+                .user(userService.selectUser(email))
                 .comment(create.getComment())
                 .post(postService.viewOneOfPost(id))
                 .build();

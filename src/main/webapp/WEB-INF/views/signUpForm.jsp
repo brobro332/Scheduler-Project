@@ -44,9 +44,8 @@
 
     <br/>
 
-    <button class="btn btn" id="btn-save" style="background-color: #956be8; color: white; width: 402px;">회원가입</button>
+    <button class="btn btn" id="btn-signUp" style="background-color: #956be8; color: white; width: 402px;">회원가입</button>
     <br/><br/><br/>
 </div>
 
-<script src="/js/user.js"></script>
 <%@ include file="layout/user/footer.jsp"%>
