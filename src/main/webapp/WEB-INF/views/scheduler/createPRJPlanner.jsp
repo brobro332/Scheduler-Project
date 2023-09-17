@@ -41,6 +41,69 @@
 </div>
 </div>
 
+<script>
+
+var boxCount = 0;
+$(document).ready(function() {
+
+    // + 버튼을 클릭할 때 박스를 추가하는 JavaScript 코드
+    $('#addMajorTask').click(function(event) {
+        event.preventDefault();
+        var boxGroup = $('<div>').addClass('box-group');
+        var inputElement = $('<input>').attr({
+            type: 'text',
+            class: 'form-control',
+            style: 'width: 53%; display:inline-block;',
+            placeholder: '프로젝트 주요업무를 입력해주세요',
+            'data-id': boxCount
+        });
+        var subTaskButton = $('<button type="button">').addClass('btn btn subTask-box-group').text('세부업무 추가');
+        var removeButton = $('<button type="button">').addClass('btn btn remove-box-group').text('제거');
+        // 각 그룹에 입력 요소와 제거 버튼 추가
+        boxGroup.append(inputElement).append(subTaskButton).append(removeButton);
+        // 박스 그룹을 컨테이너에 추가
+        $('#boxContainer').append(boxGroup);
+        boxCount++;
+    });
+    // "제거" 버튼 클릭 이벤트 핸들러를 이벤트 위임하여 설정
+    $(document).on('click', '.remove-box-group', function(event) {
+        event.preventDefault();
+        var clickedButton = $(event.target);
+        var boxGroup = clickedButton.closest('.box-group'); // 박스 그룹을 찾습니다.
+        boxGroup.remove(); // 박스 그룹을 삭제합니다.
+    });
+
+    // "세부업무 추가" 버튼 클릭 이벤트 핸들러
+    $(document).on('click', '.subTask-box-group', function(event) {
+        event.preventDefault();
+        var clickedButton = $(event.target);
+        var boxGroup = clickedButton.closest('.box-group'); // 클릭된 버튼이 속한 박스 그룹을 찾습니다.
+        // 새로운 세부업무 입력 요소 생성
+        var subTaskInput = $('<input>').attr({
+            type: 'text',
+            class: 'form-control sub-task-input col-6',
+            placeholder: '업무에 해당하는 세부업무를 입력해주세요',
+        }).css('left', '3%').css('display', 'inline-block').css('margin-right', '4px');
+        // 새로운 제거 버튼 생성
+            var removeSubTaskButton = $('<button>').attr({
+                type: 'button',
+                style: 'display: inline-block; position: relative; left: 3%;',
+                class: 'btn btn remove-sub-task', // 새로운 클래스 추가
+            }).text('제거');
+        // 세부업무 입력 요소를 박스 그룹에 추가
+        boxGroup.append(subTaskInput).append(removeSubTaskButton);
+    });
+
+    // "세부업무 제거" 버튼 클릭 이벤트 핸들러
+    $(document).on('click', '.remove-sub-task', function(event) {
+        event.preventDefault();
+        var clickedButton = $(event.target);
+        var subTaskInput = clickedButton.prev(); // 클릭된 버튼 이전 요소는 세부업무 입력 요소입니다.
+        subTaskInput.remove(); // 세부업무 입력 요소 삭제
+        clickedButton.remove(); // 제거 버튼 삭제
+    });
+});
+</script>
 <script src="/js/scheduler.js"></script>
 
 <%@ include file="../layout/user/footer.jsp"%>

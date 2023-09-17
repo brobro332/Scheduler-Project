@@ -38,11 +38,13 @@ public class Project extends BaseTimeEntity {
     @Column
     private LocalDate endPRJ;
 
+    @Column(name = "active_yn")
     @ColumnDefault("'N'")
-    private String active_yn;
+    private String activeYn;
 
+    @Column(name = "complete_yn")
     @ColumnDefault("'N'")
-    private String complete_yn;
+    private String completeYn;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

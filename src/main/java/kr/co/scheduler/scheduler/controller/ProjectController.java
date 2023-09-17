@@ -42,7 +42,9 @@ public class ProjectController {
 
         model.addAttribute("projects", projectService.selectPRJPlanners(pageable, principal.getName()));
         model.addAttribute("info", userService.searchInfo(principal.getName()));
-        model.addAttribute("count", projectService.countPRJPlanners(principal.getName()));
+        model.addAttribute("countTotal", projectService.countPRJPlanners(principal.getName()));
+        model.addAttribute("countActive", projectService.countActivePRJPlanners(principal.getName()));
+        model.addAttribute("countCompleted", projectService.countCompletedPRJPlanners(principal.getName()));
 
         return "scheduler/selectPRJPlanners";
     }

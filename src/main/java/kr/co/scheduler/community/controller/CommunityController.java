@@ -64,6 +64,7 @@ public class CommunityController {
 
         model.addAttribute("post", postService.selectPost(id));
         model.addAttribute("comments", commentService.selectComments(pageable, post));
+        model.addAttribute("countComment", commentService.countComments(post));
 
         if (user != null) {
 

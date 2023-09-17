@@ -42,6 +42,7 @@ public class TaskService {
                     .builder()
                     .task(create.getTask())
                     .project(project)
+                    .check_yn(Character.toString('N'))
                     .build();
 
             taskRepository.save(task);
@@ -83,7 +84,7 @@ public class TaskService {
     @Transactional
     public void deleteTasks(List<TaskReqDTO.DELETE> deletedTasks) {
 
-        for (TaskReqDTO.DELETE delete :  deletedTasks) {
+        for (TaskReqDTO.DELETE delete : deletedTasks) {
 
             Task task = taskRepository.findById(Long.parseLong(delete.getIdx())).orElse(null);
 

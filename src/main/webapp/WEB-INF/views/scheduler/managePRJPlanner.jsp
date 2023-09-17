@@ -67,6 +67,8 @@
       </div>
       </div>
 
+      <div style="border-left: 4px dashed #d3d3d3; display: inline-block; height: 280px; margin-left: 100px;"></div>
+
       <div style="position: absolute; display: inline-block; left: 50%;">
       <div style="text-align: center; width: 500px; height: 500px; overflow: auto;">
       <form>

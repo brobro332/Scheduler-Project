@@ -11,7 +11,7 @@
         당신의 프로젝트 플래너,<br/>
         저희가 도와드릴게요!</h1>
         <br/>
-        <button id="loginForm" class="btn btn-lg" style="background-color: #956be8; color: white;"><b>둘러보기</b></button>
+        <button onclick="location.href='/scheduler/selectPRJPlanners'" class="btn btn-lg" style="background-color: #956be8; color: white;"><b>시작하기</b></button>
         </div>
     </div>
 </div>
@@ -22,9 +22,26 @@
 </div>
 
 <div class="container" style="display: inline-block; position: relative; left: 15%; width: 70%;">
-    <b>이 영역에 내용 추가하기<br/>
-    어떤 서비스를 제공하는지<br/>
-    기능명, 간단한 설명, 클릭하면 해당 메뉴로 들어가게끔(로그인한 사람에 한해서)</b>
+
+    <br/><br/><br/>
+    <div>
+        <div style="display: inline-block;">
+            <h3>📑 프로젝트 플래너</h3>
+            <h5>업무 일지를 작성해 프로젝트를 계획하고 포트폴리오를 만들어보세요</h5>
+
+            <br/><br/><br/>
+
+            <h3>🕛 스케줄러</h3>
+            <h5>프로젝트 마감일 3일/7일 전에 브라우저 알림을 받아보세요</h5>
+
+            <br/><br/><br/>
+
+            <h3>👩‍👧‍👦 커뮤니티</h3>
+            <h5>커뮤니티에서 정보를 공유하고 소통해보세요</h5>
+        </div>
+    </div>
+
+    <br/><br/><br/>
 </div>
 
 <%@ include file="layout/user/footer.jsp"%>

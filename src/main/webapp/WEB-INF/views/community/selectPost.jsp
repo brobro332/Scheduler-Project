@@ -3,15 +3,8 @@
 <%@ include file="../layout/user/header.jsp"%>
 
 <div class="container">
-<div class="card">
+<div class="card" style="padding: 20px;">
   <div class="card-body">
-  <c:choose>
-      <c:when test="${empty name}">
-      </c:when>
-      <c:otherwise>
-        <input type="text" class="form-control" value="${name}" id="principal_name" readonly>
-      </c:otherwise>
-  </c:choose>
   <input type="text" class="form-control" value="${post.id}" id="post_id" hidden>
   <span><h1>${post.title}</h1></span>
   <div id="image_wrapper" style="position: relative; display:inline-block; width: 40px; height: 40px; border-radius: 70%; overflow: hidden;">
@@ -24,7 +17,7 @@
   <hr>
   ${post.content}
   <br/>
-  <b>댓글 N</b>
+  <b>댓글 ${countComment}</b>
   <hr>
   <c:choose>
     <c:when test="${empty comments.content}">
@@ -43,9 +36,11 @@
       </div>
 
       <div style="position:relative; display:inline-block; left: 1%;">
-      <a><b>${post.user.name}</b></a>
-      <c:if test="${principal.user.email == comment.user.email}">
+      <a><b>${comment.user.name}</b></a>
+      <c:if test="${post.user.email == comment.user.email}">
       <a style="font-size: 12px; color: purple; position:relative; display:inline-block; border: 3px solid; border-radius: 30px;"><b>작성자</b></a>
+      </c:if>
+        <c:if test="${info.email == comment.user.email}">
             <div class="btn-group" style="display: inline-block; position:relative; left:360%;">
                 <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
                    ◾◾◾
@@ -94,7 +89,7 @@
   </c:choose>
 
   <div style="border: 1px solid #dddddd; border-radius: 5px; padding: 10px;">
-  <p>&nbsp;${principal.user.name}</p>
+  <p>&nbsp;${name}</p>
   <textarea type="text" style="border: 0px; color: gray; resize: none;" class="form-control" placeholder="댓글을 입력해보세요" id="comment"></textarea>
   <p></p>
   <button class="btn btn" id="btn-comment" style="background-color: white; color: gray; width: 100px; float:right;">등록</button>

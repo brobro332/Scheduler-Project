@@ -11,4 +11,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     Page<Project> findPageByUser_Id(Pageable pageable, Long id);
 
     Long countByUser(User user);
+
+    Long countByUserAndActiveYn(User user, String active_yn);
+
+    Long countByUserAndCompleteYn(User user, String complete_yn);
 }

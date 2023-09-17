@@ -1,15 +1,12 @@
 package kr.co.scheduler.scheduler.service;
 
 import kr.co.scheduler.scheduler.dtos.ProjectReqDTO;
-import kr.co.scheduler.scheduler.dtos.TaskLogReqDTO;
 import kr.co.scheduler.scheduler.dtos.TaskReqDTO;
 import kr.co.scheduler.scheduler.entity.Project;
 import kr.co.scheduler.scheduler.entity.SubTask;
 import kr.co.scheduler.scheduler.entity.Task;
-import kr.co.scheduler.scheduler.entity.TaskLog;
 import kr.co.scheduler.scheduler.repository.ProjectRepository;
 import kr.co.scheduler.scheduler.repository.SubTaskRepository;
-import kr.co.scheduler.scheduler.repository.TaskLogRepository;
 import kr.co.scheduler.scheduler.repository.TaskRepository;
 import kr.co.scheduler.user.entity.User;
 import kr.co.scheduler.user.service.UserService;
@@ -34,7 +31,6 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
     private final SubTaskRepository subTaskRepository;
-    private final TaskLogRepository taskLogRepository;
 
     /**
      * selectPRJPlanner: 프로젝트 플래너 조회 및 리턴
@@ -130,12 +126,12 @@ public class ProjectService {
 
         if (project != null) {
 
-            if (Objects.equals(project.getActive_yn(), "N")) {
+            if (Objects.equals(project.getActiveYn(), "N")) {
 
-                project.setActive_yn("Y");
+                project.setActiveYn("Y");
             } else {
 
-                project.setActive_yn("N");
+                project.setActiveYn("N");
             }
         }
     }
@@ -162,6 +158,26 @@ public class ProjectService {
         User user = userService.selectUser(email);
 
         return projectRepository.countByUser(user);
+    }
+
+    /**
+     * countActivePRJPlanners: 활성화된 프로젝트 플래너 개수 리턴
+     */
+    public Long countActivePRJPlanners(String email) {
+
+        User user = userService.selectUser(email);
+
+        return projectRepository.countByUserAndActiveYn(user, Character.toString('Y'));
+    }
+
+    /**
+     * countCompletedPRJPlanners: 완료된 프로젝트 플래너 개수 리턴
+     */
+    public Long countCompletedPRJPlanners(String email) {
+
+        User user = userService.selectUser(email);
+
+        return projectRepository.countByUserAndCompleteYn(user, Character.toString('Y'));
     }
 
     /**

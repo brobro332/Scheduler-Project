@@ -101,7 +101,7 @@ if (!window.communityLoaded) {
                 alert(resp.message);
                 } else {
                 alert(resp.message);
-                location.href = "/community/view/post/" + post_id;
+                location.href = "/community/selectPost/" + post_id;
             }
         }).fail(function(error) {
             alert(JSON.stringify(error));

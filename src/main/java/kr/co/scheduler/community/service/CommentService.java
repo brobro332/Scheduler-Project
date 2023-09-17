@@ -85,4 +85,12 @@ public class CommentService {
 
         return commentRepository.findPageByPost(pageable, post);
     }
+
+    /**
+     * countComments: 게시글에 해당하는 댓글의 수를 리턴
+     */
+    public Long countComments(Post post) {
+
+        return commentRepository.countByPost(post);
+    }
 }
