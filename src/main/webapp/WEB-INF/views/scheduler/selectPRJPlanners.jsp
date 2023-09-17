@@ -14,7 +14,7 @@
     <c:otherwise>
     <br>
     <div id="image_wrapper" style="position: relative; width: 200px; height: 200px; border-radius: 70%; overflow: hidden;">
-      <img id="profileImg" src="/api/user/info/profileImg" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
+      <img id="profileImg" src="/api/profileImg" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
     </div>
     </c:otherwise>
     </c:choose>
@@ -27,7 +27,7 @@
    <h5>진행중인 프로젝트: N 개</h5>
    <h5>완료된 프로젝트: N 개</h5>
 
-   <button type="button" class="btn btn" onclick="location.href='/scheduler/create'" style="display: block; background-color: #956be8; color: white; width: 200px; height: 60px;">플래너 생성</button>
+   <button type="button" class="btn btn" onclick="location.href='/scheduler/createPRJPlanner'" style="display: block; background-color: #956be8; color: white; width: 200px; height: 60px;">플래너 생성</button>
    </div>
   </div>
   <div style="position:absolute; display: inline-block; width: 65%;">
@@ -39,7 +39,7 @@
             <div class="select">
                 <input type="text" class="form-control project_id" value="${project.id}" hidden>
                 <div style="position: relative; border: 1px solid #dddddd; border-radius: 5px; padding: 10px; width: 70%;">
-                    <h5 style="display: inline-block;"><b><a href="/scheduler/view/project/${project.id}">${project.title}</a></b></h4>
+                    <h5 style="display: inline-block;"><b><a href="/scheduler/selectPRJPlanner/${project.id}">${project.title}</a></b></h4>
                     &nbsp;
 
                     <c:choose>
@@ -107,69 +107,6 @@
 </div>
 </div>
 
-<script>
-$(document).ready(function() {
-
-     $(document).on('click', '.updatePRJ', function() {
-            var $project = $(this).parents(".select");
-            var project_id = $project.find(".project_id").val();
-
-            location.href = "/scheduler/update/project/" + project_id;
-     });
-
-     $(document).on('click', '.deletePRJ', function() {
-
-            if (confirm("삭제를 진행하시겠습니까?")) {
-
-            var $project = $(this).parents(".select");
-            var project_id = $project.find(".project_id").val();
-
-            $.ajax({
-                type: "DELETE",
-                url: "/api/scheduler/project/delete/" + project_id,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json"
-            }).done(function(resp) {
-                if(resp.statusCode == 400 || resp.statusCode == 500){
-                    alert(resp.message);
-                    } else {
-                    location.href = "/scheduler/view"
-                    alert(resp.message);
-                }
-            }).fail(function(error) {
-                alert(JSON.stringify(error));
-         });
-         }
-     });
-
-     $(document).on('click', '.activePRJ', function() {
-             var $project = $(this).parents(".select");
-             var project_id = $project.find(".project_id").val();
-
-             $.ajax({
-                 type: "PUT",
-                 url: "/api/scheduler/project/active/" + project_id,
-                 contentType: "application/json; charset=utf-8",
-                 dataType: "json"
-             }).done(function(resp) {
-                 if(resp.statusCode == 400 || resp.statusCode == 500){
-                     alert(resp.message);
-                     } else {
-                     location.href = "/scheduler/view"
-                     alert(resp.message);
-                 }
-             }).fail(function(error) {
-                 alert(JSON.stringify(error));
-             });
-         });
-
-     $(document).on('click', '.managePRJ', function() {
-         var $project = $(this).parents(".select");
-         var project_id = $project.find(".project_id").val();
-
-         location.href = "/scheduler/manage/project/" + project_id;
-     });
- });
-</script>
+<script src="/js/scheduler.js"></script>
 
 <%@ include file="../layout/user/footer.jsp"%>

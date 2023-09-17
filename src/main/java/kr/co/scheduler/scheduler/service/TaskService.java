@@ -19,36 +19,23 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final SubTaskRepository subTaskRepository;
+    
+    /**
+     * selectSubTasks: 업무에 해당되는 하위 업무 List 객체 리턴
+     */
+    public List<SubTask> selectSubTasks(Long id) {
 
-    @Transactional
-    public void updateTask(Long id, String updatedTask, List<String> updatedSubTasks) {
-        Task task = taskRepository.findById(id).orElseThrow(() -> new RuntimeException("업무를 찾을 수 없습니다."));
+        Task task = taskRepository.findById(id).orElse(null);
 
-        // 업무 업데이트 로직을 여기에 추가합니다.
-        task.updateTask(Long.toString(id), updatedTask);
-
-        if (updatedSubTasks != null) {
-            // 업데이트된 세부 업무 목록을 가져와서 기존 세부 업무와 비교하며 업데이트 또는 추가합니다.
-            List<SubTask> subTasks = new ArrayList<>();
-            for (int i = 0; i < updatedSubTasks.size(); i++) {
-                String updatedSubTask = updatedSubTasks.get(i);
-                SubTask subTask;
-                if (i < task.getSubTasks().size()) {
-                    // 기존 세부 업무가 있으면 업데이트
-                    subTask = task.getSubTasks().get(i);
-                    subTask.setName(updatedSubTask);
-                } else {
-                    // 기존 세부 업무가 없으면 추가
-                    subTask = new SubTask(updatedSubTask, task, Character.toString('N'));
-                }
-                subTasks.add(subTask);
-            }
-            task.setSubTasks(subTasks);
-        }
+        return task.getSubTasks();
     }
+
+    /**
+     * createTasks: 업무 목록 및 요소 등록
+     */
     @Transactional
-    public void addTasks(Project project, List<TaskReqDTO.CREATE> addedTasks) {
-        // 업무 추가 로직 작성
+    public void createTasks(Project project, List<TaskReqDTO.CREATE> addedTasks) {
+
         for (TaskReqDTO.CREATE create : addedTasks) {
 
             Task task = Task
@@ -61,6 +48,38 @@ public class TaskService {
         }
     }
 
+    /**
+     * updateTasks: 업무 목록 및 요소 수정
+     */
+    @Transactional
+    public void updateTasks(Long id, String updatedTask, List<String> updatedSubTasks) {
+        Task task = taskRepository.findById(id).orElseThrow(() -> new RuntimeException("업무를 찾을 수 없습니다."));
+
+        task.updateTask(Long.toString(id), updatedTask);
+
+        if (updatedSubTasks != null) {
+
+            List<SubTask> subTasks = new ArrayList<>();
+            for (int i = 0; i < updatedSubTasks.size(); i++) {
+                String updatedSubTask = updatedSubTasks.get(i);
+                SubTask subTask;
+                if (i < task.getSubTasks().size()) {
+
+                    subTask = task.getSubTasks().get(i);
+                    subTask.setName(updatedSubTask);
+                } else {
+
+                    subTask = new SubTask(updatedSubTask, task, Character.toString('N'));
+                }
+                subTasks.add(subTask);
+            }
+            task.setSubTasks(subTasks);
+        }
+    }
+
+    /**
+     * deleteTasks: 업무 목록 및 요소 삭제
+     */
     @Transactional
     public void deleteTasks(List<TaskReqDTO.DELETE> deletedTasks) {
 
@@ -72,39 +91,36 @@ public class TaskService {
         }
     }
 
+    // ================================== 구분 ================================== //
+
+    /**
+     * updateTaskCheckStatus: 업무 완료 여부에 대한 체크박스를 수정
+     */
     @Transactional
-    public void updateTaskStatus(TaskReqDTO.CHECKBOX checkbox) {
+    public void updateTaskCheckStatus(TaskReqDTO.CHECKBOX checkbox) {
         List<Long> taskIds = checkbox.getTaskIds();
         List<String> taskTypes = checkbox.getTaskTypes();
         List<String> checkYnList = checkbox.getCheckYnList();
 
-        // taskIds, taskTypes, checkYnList 의 크기가 동일한지 확인
         if (taskIds.size() != taskTypes.size() || taskIds.size() != checkYnList.size()) {
             throw new IllegalArgumentException("입력된 데이터 크기가 일치하지 않습니다.");
         }
 
-        // 업무 및 세부업무 업데이트 처리
         for (int i = 0; i < taskIds.size(); i++) {
             Long taskId = taskIds.get(i);
             String taskType = taskTypes.get(i);
             String checkYn = checkYnList.get(i);
 
             if ("task".equals(taskType)) {
-                // 업무 업데이트 로직 구현
+
                 taskRepository.updateTaskStatus(taskId, checkYn);
             } else if ("subTask".equals(taskType)) {
-                // 세부업무 업데이트 로직 구현
+
                 subTaskRepository.updateSubTaskStatus(taskId, checkYn);
             } else {
-                throw new IllegalArgumentException("올바르지 않은 taskType 값입니다.");
+
+                throw new IllegalArgumentException("유효하지 않은 업무타입 값입니다");
             }
         }
-    }
-
-    public List<SubTask> getSubTasks(Long id) {
-
-        Task task = taskRepository.findById(id).orElse(null);
-
-        return task.getSubTasks();
     }
 }

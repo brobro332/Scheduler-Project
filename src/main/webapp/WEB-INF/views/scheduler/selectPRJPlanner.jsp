@@ -59,6 +59,6 @@
 </div>
 </div>
 
-<script></script>
+<script src="/js/scheduler.js"></script>
 
 <%@ include file="../layout/user/footer.jsp"%>

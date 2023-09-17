@@ -1,5 +1,7 @@
 package kr.co.scheduler.scheduler.controller;
 
+import kr.co.scheduler.scheduler.entity.Project;
+import kr.co.scheduler.scheduler.entity.TaskLog;
 import kr.co.scheduler.scheduler.service.ProjectService;
 import kr.co.scheduler.scheduler.service.TaskLogService;
 import kr.co.scheduler.user.service.UserService;
@@ -18,71 +20,124 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class ProjectController {
 
-    private final ProjectService projectService;
     private final UserService userService;
+    private final ProjectService projectService;
     private final TaskLogService taskLogService;
 
-    @GetMapping("/scheduler/create")
-    public String createSoleProject() {
+    /**
+     * createSolePRJPlanner: 개인 프로젝트 플래너 등록 페이지 리턴
+     */
+    @GetMapping("/scheduler/createPRJPlanner")
+    public String createPRJPlanner() {
 
-        return "scheduler/createSolePRJ";
+        return "scheduler/createPRJPlanner";
     }
 
-    @GetMapping("/scheduler/view")
-    public String viewProjects(Model model, @PageableDefault(size = 3, sort="updatedAt",
+    /**
+     * selectPRJPlanners: 사용자의 프로젝트 플래너 목록 조회 페이지 리턴
+     */
+    @GetMapping("/scheduler/selectPRJPlanners")
+    public String selectPRJPlanners(Model model, @PageableDefault(size = 3, sort="updatedAt",
                                       direction = Sort.Direction.DESC) Pageable pageable, Principal principal) {
 
-        model.addAttribute("projects", projectService.viewProjects(pageable, principal.getName()));
+        model.addAttribute("projects", projectService.selectPRJPlanners(pageable, principal.getName()));
         model.addAttribute("info", userService.searchInfo(principal.getName()));
-        model.addAttribute("count", projectService.countPRJ(principal.getName()));
+        model.addAttribute("count", projectService.countPRJPlanners(principal.getName()));
 
-        return "scheduler/viewPRJs";
+        return "scheduler/selectPRJPlanners";
     }
 
-    @GetMapping("/scheduler/view/project/{project_id}")
-    public String viewProject(@PathVariable(name = "project_id") Long id, Model model) {
+    /**
+     * selectPRJPlanner: 사용자의 프로젝트 플래너 조회 페이지 리턴
+     */
+    @GetMapping("/scheduler/selectPRJPlanner/{project_id}")
+    public String selectPRJPlanner(@PathVariable(name = "project_id") Long id, Model model, Principal principal) {
 
-        model.addAttribute("project", projectService.viewProject(id));
+        Project project = projectService.selectPRJPlanner(id);
 
-        return "scheduler/project";
+        if (project.getUser() == userService.selectUser(principal.getName())) {
+
+            model.addAttribute("project", project);
+        }
+
+        return "scheduler/selectPRJPlanner";
     }
 
-    @GetMapping("/scheduler/update/project/{project_id}")
-    public String updateProject(@PathVariable(name = "project_id") Long id, Model model) {
+    /**
+     * updatePRJPlanner: 사용자의 프로젝트 플래너 수정 페이지 리턴 
+     */
+    @GetMapping("/scheduler/updatePRJPlanner/{project_id}")
+    public String updatePRJPlanner(@PathVariable(name = "project_id") Long id, Model model, Principal principal) {
 
-        model.addAttribute("project", projectService.viewProject(id));
+        Project project = projectService.selectPRJPlanner(id);
 
-        return "scheduler/updateSolePRJ";
+        if (project.getUser() == userService.selectUser(principal.getName())) {
+
+            model.addAttribute("project", project);
+        }
+
+        return "scheduler/updatePRJPlanner";
     }
 
-    @GetMapping("/scheduler/manage/project/{project_id}")
-    public String manageProject(@PathVariable(name = "project_id") Long id, Model model,
-                                @PageableDefault(size = 5, sort="createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+    /**
+     * managePRJPlanner: 사용자의 프로젝트 플래너 관리 페이지 리턴
+     */
+    @GetMapping("/scheduler/managePRJPlanner/{project_id}")
+    public String managePRJPlanner(@PathVariable(name = "project_id") Long id, Model model,
+                                @PageableDefault(size = 5, sort="createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                   Principal principal) {
 
-        projectService.calculateTaskPercentage(id);
+        Project project = projectService.selectPRJPlanner(id);
 
-        model.addAttribute("project", projectService.viewProject(id));
-        model.addAttribute("d_day", projectService.countD_day(id));
-        model.addAttribute("taskLogs", projectService.viewTaskLog(pageable, id));
+        if (project.getUser() == userService.selectUser(principal.getName())) {
 
-        return "scheduler/manageSolePRJ";
+            projectService.calculateTaskPercentage(id);
+
+            model.addAttribute("project", projectService.selectPRJPlanner(id));
+            model.addAttribute("d_day", projectService.countD_day(id));
+            model.addAttribute("taskLogs", taskLogService.selectTaskLog(pageable, id));
+        }
+
+        return "scheduler/managePRJPlanner";
     }
 
-    @GetMapping("/scheduler/manage/project/taskLog/{task_log_id}")
-    public String selectTaskLog(@PathVariable(name = "task_log_id") Long id, Model model) {
+    // ================================== 구분 ================================== //
 
-        model.addAttribute("taskLog", taskLogService.selectTaskLog(id));
+    /**
+     * selectTaskLog: 사용자의 업무일지 조회 페이지 리턴
+     */
+    @GetMapping("/scheduler/managePRJPlanner/{project_id}/selectTaskLog/{task_log_id}")
+    public String selectTaskLog(@PathVariable(name = "project_id") Long project_id, @PathVariable(name = "task_log_id") Long task_log_id, Model model, Principal principal) {
 
-        return "scheduler/taskLog";
+        Project project = projectService.selectPRJPlanner(project_id);
+        TaskLog taskLog = taskLogService.selectTaskLog(task_log_id);
+
+        if (project.getUser() == userService.selectUser(principal.getName())) {
+
+            model.addAttribute("taskLog", taskLog);
+        }
+
+        return "scheduler/selectTaskLog";
     }
 
-    @GetMapping("/scheduler/manage/project/{project_id}/taskLog/updateForm/{task_log_id}")
-    public String TaskLogUpdateForm(@PathVariable(name = "project_id") Long project_id, @PathVariable(name = "task_log_id") Long task_log_id, Model model) {
+    /**
+     * updateTaskLog: 사용자의 업무일지 수정 페이지 리턴
+     */
+    @GetMapping("/scheduler/managePRJPlanner/{project_id}/updateTaskLog/{task_log_id}")
+    public String updateTaskLog(@PathVariable(name = "project_id") Long project_id,
+                                @PathVariable(name = "task_log_id") Long task_log_id,
+                                Model model, Principal principal) {
 
-        model.addAttribute("project", projectService.viewProject(project_id));
-        model.addAttribute("taskLog", taskLogService.selectTaskLog(task_log_id));
+        Project project = projectService.selectPRJPlanner(project_id);
+        TaskLog taskLog = taskLogService.selectTaskLog(task_log_id);
 
-        return "scheduler/taskLogUpdateForm";
+        if (project.getUser() == userService.selectUser(principal.getName())) {
+
+            model.addAttribute("project", project);
+            model.addAttribute("taskLog", taskLog);
+        }
+
+        return "scheduler/updateTaskLog";
     }
 
 }

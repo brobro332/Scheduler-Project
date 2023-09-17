@@ -36,8 +36,23 @@ public class ProjectService {
     private final SubTaskRepository subTaskRepository;
     private final TaskLogRepository taskLogRepository;
 
+    /**
+     * selectPRJPlanner: 프로젝트 플래너 조회 및 리턴
+     */
+    public Project selectPRJPlanner(Long id) {
+
+        return projectRepository.findById(id)
+                .orElseThrow(()->{
+
+                    return new IllegalArgumentException("해당 프로젝트가 존재하지 않습니다.");
+                });
+    }
+    
+    /**
+     * createPRJPlanner: 프로젝트 플래너 등록
+     */
     @Transactional
-    public void createProjectPlanner(ProjectReqDTO.CREATE create, List<Task> tasks, List<SubTask> subTasks, String email) {
+    public void createPRJPlanner(ProjectReqDTO.CREATE create, List<Task> tasks, List<SubTask> subTasks, String email) {
 
         User user = userService.selectUser(email);
 
@@ -68,30 +83,11 @@ public class ProjectService {
         }
     }
 
-    public Page<Project> viewProjects(Pageable pageable, String email) {
-
-        User user = userService.selectUser(email);
-
-        return projectRepository.findPageByUser_Id(pageable, user.getId());
-    }
-
-    public Project viewProject(Long id) {
-
-        return projectRepository.findById(id)
-                .orElseThrow(()->{
-                   return new IllegalArgumentException("해당 프로젝트가 존재하지 않습니다.");
-                });
-    }
-
-    public Long countPRJ(String email) {
-
-        User user = userService.selectUser(email);
-
-        return projectRepository.countByUser(user);
-    }
-
+    /**
+     * updatePRJPlanner: 프로젝트 플래너 수정
+     */
     @Transactional
-    public void updateProject(Long id, ProjectReqDTO.UPDATE update) {
+    public void updatePRJPlanner(Long id, ProjectReqDTO.UPDATE update) {
         Project project = projectRepository.findById(id).orElse(null);
 
         if (project != null) {
@@ -101,15 +97,19 @@ public class ProjectService {
                 Task task = taskRepository.findById(Long.parseLong(updatedTask.getIdx())).orElse(null);
                 if (task != null) {
                     List<String> updatedSubTasks = updatedTask.getSubTasks(); // 이 부분에서 세부 업무 리스트를 가져옵니다.
-                    taskService.updateTask(Long.parseLong(updatedTask.getIdx()), updatedTask.getTask(), updatedSubTasks);
+                    taskService.updateTasks(Long.parseLong(updatedTask.getIdx()), updatedTask.getTask(), updatedSubTasks);
                 }
             }
 
-            taskService.addTasks(project, update.getAddedTasks());
+            taskService.createTasks(project, update.getAddedTasks());
             taskService.deleteTasks(update.getDeletedTasks());
         }
     }
 
+    /**
+     * deleteProject: 프로젝트 플래너 삭제
+     */
+    @Transactional
     public void deleteProject(Long id) {
 
         Project project = projectRepository.findById(id).orElse(null);
@@ -120,8 +120,11 @@ public class ProjectService {
         }
     }
 
+    /**
+     * activePRJPlanner: 프로젝트 플래너를 활성화
+     */
     @Transactional
-    public void activeProject(Long id) {
+    public void activePRJPlanner(Long id) {
 
         Project project = projectRepository.findById(id).orElse(null);
 
@@ -136,31 +139,34 @@ public class ProjectService {
             }
         }
     }
+    
+    // ================================== 구분 ================================== //
 
-    public String countD_day(Long id) {
+    /**
+     * selectPRJPlanners: 프로젝트 플래너에 대한 Page 객체를 리턴
+     */
+    public Page<Project> selectPRJPlanners(Pageable pageable, String email) {
 
-        Project project = projectRepository.findById(id).orElse(null);
+        User user = userService.selectUser(email);
 
-        if(project != null) {
-
-            LocalDate currentDate = LocalDate.now();
-            Long d_day = ChronoUnit.DAYS.between(currentDate, project.getEndPRJ());
-
-            if(d_day == 0) {
-
-                return "D-DAY입니다.";
-            } else if(d_day > 0) {
-
-                return "프로젝트 마감일까지 D-" + d_day + " 남았습니다.";
-            } else {
-
-                return "프로젝트 마감일까지 D+" + d_day + " 지났습니다.";
-            }
-        }
-
-        return "D-DAY를 계산할 수 없습니다.";
+        return projectRepository.findPageByUser_Id(pageable, user.getId());
     }
 
+    // ================================== 구분 ================================== //
+
+    /**
+     * countPRJPlanners: 업무 달성률 계산을 위해 프로젝트 플래너의 총 개수를 카운트
+     */
+    public Long countPRJPlanners(String email) {
+
+        User user = userService.selectUser(email);
+
+        return projectRepository.countByUser(user);
+    }
+
+    /**
+     * calculateTaskPercentage: 업무 달성률 계산
+     */
     @Transactional
     public void calculateTaskPercentage(Long id) {
 
@@ -201,67 +207,31 @@ public class ProjectService {
             }
         }
     }
-
-    @Transactional
-    public void writeTaskLog(TaskLogReqDTO taskLogReqDTO, Long id) {
-
-        Project project = projectRepository.findById(id).orElse(null);
-
-        if (project != null) {
-
-            TaskLog taskLog = TaskLog
-                    .builder()
-                    .title(taskLogReqDTO.getTitle())
-                    .content(taskLogReqDTO.getContent())
-                    .taskCategory(taskLogReqDTO.getTaskCategory())
-                    .subTaskCategory(taskLogReqDTO.getSubTaskCategory())
-                    .project(project)
-                    .build();
-
-            List<TaskLog> temp = project.getTaskLogs();
-            temp.add(taskLog);
-            project.setTaskLogs(temp);
-
-            taskLogRepository.save(taskLog);
-        }
-    }
-
-    @Transactional
-    public void updateTaskLog(TaskLogReqDTO taskLogReqDTO, Long id) {
-
-        TaskLog taskLog = taskLogRepository.findById(id).orElse(null);
-
-
-        if (taskLog != null) {
-
-            taskLog.updateTaskLog(taskLogReqDTO.getTitle(), taskLogReqDTO.getContent(), taskLogReqDTO.getTaskCategory(), taskLogReqDTO.getSubTaskCategory());
-        }
-    }
-
-    @Transactional
-    public void deleteTaskLog(Long task_log_id, Long project_id) {
-
-        Project project = projectRepository.findById(project_id).orElse(null);
-        TaskLog taskLog = taskLogRepository.findById(task_log_id).orElse(null);
-
-        if (taskLog != null) {
-
-            project.getTaskLogs().remove(taskLog);
-            taskLogRepository.delete(taskLog);
-        }
-    }
-
-    @Transactional
-    public Page<TaskLog> viewTaskLog(Pageable pageable, Long id) {
+    
+    /**
+     * countD_day: 프로젝트 마감일까지 남은 날짜를 계산
+     */
+    public String countD_day(Long id) {
 
         Project project = projectRepository.findById(id).orElse(null);
-        Page<TaskLog> taskLogs = null;
 
-        if (project != null) {
+        if(project != null) {
 
-            taskLogs = taskLogRepository.findByProject(pageable, project);
+            LocalDate currentDate = LocalDate.now();
+            Long d_day = ChronoUnit.DAYS.between(currentDate, project.getEndPRJ());
+
+            if(d_day == 0) {
+
+                return "D-DAY입니다.";
+            } else if(d_day > 0) {
+
+                return "프로젝트 마감일까지 D-" + d_day + " 남았습니다.";
+            } else {
+
+                return "프로젝트 마감일까지 D+" + d_day + " 지났습니다.";
+            }
         }
 
-        return taskLogs;
+        return "D-DAY를 계산할 수 없습니다.";
     }
 }

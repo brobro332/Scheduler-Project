@@ -93,7 +93,7 @@
                             <c:set var="createdAt" value="${taskLog.createdAt}" />
                             <c:out value="${createdAt.year}-${createdAt.monthValue}-${createdAt.dayOfMonth}" />
                         </th>
-                        <th style="font-weight: lighter;"><a href="/scheduler/manage/project/taskLog/${taskLog.id}">${taskLog.title}</a></th>
+                        <th style="font-weight: lighter;"><a href="/scheduler/managePRJPlanner/${project.id}/selectTaskLog/${taskLog.id}">${taskLog.title}</a></th>
                         <th style="font-weight: lighter;">${taskLog.taskCategory}</th>
                         <th style="font-weight: lighter;">${taskLog.subTaskCategory}</th>
                     </tr>
@@ -236,249 +236,83 @@
     </div>
 </div>
 
-
 <script>
+var boxCount = 0;
+
 $(document).ready(function() {
-     $('#outline').show(); // outline 탭 콘텐츠 표시
-     $('#manageTask').hide(); // manageTask 탭 콘텐츠 숨김
-     $('#dailyTask').hide(); // dailyTask 탭 콘텐츠 숨김
 
-     $(".task-checkbox").click(function() {
-         var isChecked = $(this).prop("checked");
-         var taskId = $(this).data("task-id");
-         var taskType = $(this).data("task-type");
+    // + 버튼을 클릭할 때 박스를 추가하는 JavaScript 코드
+    $('#addMajorTask').click(function(event) {
+        event.preventDefault();
 
-         if (taskType === "task") {
-             // 업무 체크박스 처리
-             // 해당 업무의 하위 업무 체크박스 선택 여부 변경
-             $(".subTask-checkbox[data-uppertask-id='" + taskId + "']").prop("checked", isChecked);
-         }
-     });
+        var boxGroup = $('<div>').addClass('box-group');
 
-    $(document).on("click", ".subTask-checkbox", function() {
+        var inputElement = $('<input>').attr({
+            type: 'text',
+            class: 'form-control',
+            style: 'width: 53%; display:inline-block; border: 0; background-color: #d3d3d3;',
+            placeholder: '목표 달성을 위한 업무를 입력해주세요',
+            'data-id': boxCount
+        });
 
-        var upperTaskId = $(this).data("uppertask-id");
-        console.log(upperTaskId);
+        var subTaskButton = $('<button type="button">').addClass('btn btn subTask-box-group').text('세부업무 추가');
+        var removeButton = $('<button type="button">').addClass('btn btn remove-box-group').text('제거');
 
-        // 해당 상위 업무 ID와 연결된 모든 하위 업무 체크박스를 가져옴
-        var subTaskCheckboxes = $(".subTask-checkbox[data-uppertask-id='" + upperTaskId + "']");
+        // 각 그룹에 입력 요소와 제거 버튼 추가
+        boxGroup.append(inputElement).append(subTaskButton).append(removeButton);
 
-        // 모든 하위 업무 체크박스의 선택 여부가 true라면 상위 업무 체크박스도 체크
-        var allSubTasksChecked = subTaskCheckboxes.length === subTaskCheckboxes.filter(":checked").length;
+        // 박스 그룹을 컨테이너에 추가
+        $('#boxContainer').append(boxGroup);
 
-        console.log(subTaskCheckboxes.length);
-        console.log(subTaskCheckboxes.filter(":checked").length);
-        console.log(allSubTasksChecked);
-
-        $(".task-checkbox[data-task-id='" + upperTaskId + "']").prop("checked", allSubTasksChecked);
+        boxCount++;
     });
 
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+    // "제거" 버튼 클릭 이벤트 핸들러를 이벤트 위임하여 설정
+    $(document).on('click', '.remove-box-group', function(event) {
+        event.preventDefault();
 
-      var target = $(e.target).attr("href");
+        var clickedButton = $(event.target);
 
-      if (target === "#outline") {
-
-         e.preventDefault(); // 링크 클릭 동작을 중지
-
-         $('#outline').show(); // outline 탭 콘텐츠 표시
-         $('#manageTask').hide(); // manageTask 탭 콘텐츠 숨김
-         $('#dailyTask').hide(); // dailyTask 탭 콘텐츠 숨김
-        // 개요 탭이 선택되었을 때 실행할 코드 추가
-      } else if (target === "#manageTask") {
-
-       e.preventDefault(); // 링크 클릭 동작을 중지
-
-       $('#outline').hide(); // outline 탭 콘텐츠 숨김
-       $('#manageTask').show(); // manageTask 탭 콘텐츠 표시
-       $('#dailyTask').hide(); // dailyTask 탭 콘텐츠 숨김
-        // 관리 탭이 선택되었을 때 실행할 코드 추가
-      } else if (target === "#dailyTask") {
-
-       e.preventDefault(); // 링크 클릭 동작을 중지
-
-       $('#outline').hide(); // outline 탭 콘텐츠 숨김
-       $('#manageTask').hide(); // manageTask 탭 콘텐츠 숨김
-       $('#dailyTask').show(); // dailyTask 탭 콘텐츠 표시
-        // 일일 탭이 선택되었을 때 실행할 코드 추가
-      }
+        var boxGroup = clickedButton.closest('.box-group'); // 박스 그룹을 찾습니다.
+        boxGroup.remove(); // 박스 그룹을 삭제합니다.
     });
 
-      $("#btn-set").click(function() {
-          var project_id = $("#project_id").val();
-          var data = { taskIds: [], taskTypes: [], checkYnList: [] }; // 체크박스 상태 업데이트 정보를 저장할 배열
+    // "세부업무 추가" 버튼 클릭 이벤트 핸들러
+    $(document).on('click', '.subTask-box-group', function(event) {
+        event.preventDefault();
 
-          // 모든 체크박스를 순회하며 상태를 수집
-          $(".dynamicCheckbox").each(function() {
-              var taskId = $(this).data("task-id");
-              var isChecked = $(this).prop("checked");
-              var taskType = $(this).data("task-type");
-              var check_yn = isChecked ? "Y" : "N";
+        var clickedButton = $(event.target);
+        var boxGroup = clickedButton.closest('.box-group'); // 클릭된 버튼이 속한 박스 그룹을 찾습니다.
 
-              data.taskIds.push(taskId);
-              data.taskTypes.push(taskType);
-              data.checkYnList.push(check_yn);
-          });
+        // 새로운 세부업무 입력 요소 생성
+        var subTaskInput = $('<input>').attr({
+            type: 'text',
+            class: 'form-control sub-task-input col-6',
+            placeholder: '업무에 해당하는 세부업무를 입력해주세요',
+        }).css('left', '3%').css('display', 'inline-block').css('margin-right', '4px');
 
-          // 서버로 업데이트 정보 배열을 전송
-          $.ajax({
-              type: "POST",
-              url: "/api/scheduler/task/update/checkStatus",
-              data: JSON.stringify(data),
-              contentType: "application/json; charset=utf-8",
-              dataType: "json",
-              success: function(response) {
-                  // 성공 시 실행할 코드
-                  alert("체크박스 상태가 업데이트되었습니다.");
-                  location.href="/scheduler/manage/project/" + project_id;
-              },
-              error: function(error) {
-                  // 오류 시 실행할 코드
-                  alert("오류가 발생하였습니다.");
-              }
-          });
-      });
+        // 새로운 제거 버튼 생성
+            var removeSubTaskButton = $('<button>').attr({
+                type: 'button',
+                style: 'display: inline-block; position: relative; left: 3%;',
+                class: 'btn btn remove-sub-task', // 새로운 클래스 추가
+            }).text('제거');
 
-          $('#summernote').summernote({
-                  height: 500,
-                  minHeight: null,
-                  maxHeight: null,
-                  focus: true,
-                  lang: "ko-KR",
-                  callbacks: {
-                      onImageUpload: function(files, editor, welEditable){
-                          for (var i = files.length - 1; i >= 0; i--) {
-                              uploadSummernoteImageFile(files[i], this);
-                          }
-                   }
-                 }
-      	    });
+        // 세부업무 입력 요소를 박스 그룹에 추가
+        boxGroup.append(subTaskInput).append(removeSubTaskButton);
+    });
 
-      	function uploadSummernoteImageFile(file, el) {
-               data = new FormData();
-               data.append("file", file);
+    // "세부업무 제거" 버튼 클릭 이벤트 핸들러
+    $(document).on('click', '.remove-sub-task', function(event) {
+        event.preventDefault();
 
-               $.ajax({
-                  data: data,
-                  type: "POST",
-                  url: "/api/summernoteImg",
-                  cache: false,
-                  contentType: false,
-                  processData: false,
-                  enctype : 'multipart/form-data',
-                  success: function(data){
-                      $(el).summernote('editor.insertImage', data);
-               }
-            });
-          }
-
-      	$("#btn-back").on("click", ()=>{
-              window.history.back();
-          });
-
-        $("#task").change(function () {
-            var taskId = $(this).val();
-            var subTaskSelect = $("#subTask");
-
-            // 업무 선택에 따라 세부 업무 옵션을 동적으로 업데이트
-            $.ajax({
-                type: "GET",
-                url: "/scheduler/manage/subTask",
-                data: { task_id: taskId },
-                dataType: "json",
-                success: function (data) {
-
-                    // 받아온 세부 업무 목록을 옵션으로 추가
-                    $.each(data, function (index, subTask) {
-                        subTaskSelect.append(new Option(subTask.name, subTask.name));
-                    });
-
-                    if (data.length === 0) {
-                        subTaskSelect.append(new Option("-", ""));
-                    }
-                }
-            });
-        });
-
-        // 세부 업무 선택 셀렉트 박스 변경 이벤트 처리
-        $("#subTask").change(function () {
-            var selectedValue = $(this).val();
-            if (selectedValue === "direct") {
-                $("#customSubTask").css("display", "inline-block");
-            } else {
-                $("#customSubTask").hide();
-            }
-        });
-
-        $("#btn-save").click(function() {
-
-            var project_id = $("#project_id").val();
-
-            var title = $("#title").val();
-            var content = $("textarea[name = content]").val();
-
-            if(title == '') {
-
-                alert("제목을 입력해주세요.");
-                return false;
-            }
-
-            if(content == '') {
-
-                alert("내용을 입력해주세요.");
-                return false;
-            }
-
-            var taskSelectBox = document.getElementById("task");
-            var taskSelectedIndex = taskSelectBox.selectedIndex;
-            var taskSelectedValue = taskSelectBox.options[taskSelectedIndex].getAttribute("data-task");
-
-            if (taskSelectedValue === null) {
-
-                alert("업무 카테고리를 선택해주세요.");
-
-                return;
-            }
-
-            var subTaskSelectBox = document.getElementById("subTask");
-            var subTaskSelectedIndex = subTaskSelectBox.selectedIndex;
-            var subTaskSelectedValue = subTaskSelectBox.options[subTaskSelectedIndex].value;
-
-            console.log(subTaskSelectedValue);
-
-            if (subTaskSelectedValue === "하위업무 카테고리 선택") {
-
-                alert("하위업무 카테고리를 선택해주세요.");
-
-                return;
-            }
-
-            let data = {
-
-                    title: title,
-                    content: content,
-                    taskCategory: taskSelectedValue,
-                    subTaskCategory: subTaskSelectedValue
-            };
-
-            $.ajax({
-                type: "POST",
-                url: "/api/scheduler/project/taskLog/" + project_id,
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json"
-            }).done(function(resp) {
-                if(resp.statusCode == 400 || resp.statusCode == 500){
-                    alert(resp.message);
-                    } else {
-                    alert(resp.message);
-                    location.href="/scheduler/manage/project/" + project_id;;
-                }
-            }).fail(function(error) {
-                alert(JSON.stringify(error));
-            });
-        });
-  });
+        var clickedButton = $(event.target);
+        var subTaskInput = clickedButton.prev(); // 클릭된 버튼 이전 요소는 세부업무 입력 요소입니다.
+        subTaskInput.remove(); // 세부업무 입력 요소 삭제
+        clickedButton.remove(); // 제거 버튼 삭제
+    });
+});
 </script>
+<script src="/js/scheduler.js"></script>
 
 <%@ include file="../layout/user/footer.jsp"%>

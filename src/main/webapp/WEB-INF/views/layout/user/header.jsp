@@ -43,7 +43,7 @@
     <c:otherwise>
     <ul id="navbar-interceptor" class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" href="/scheduler/view" style="color: white;"><b>프로젝트 플래너</b></a>
+          <a class="nav-link" href="/scheduler/selectPRJPlanners" style="color: white;"><b>프로젝트 플래너</b></a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/community/selectPosts" style="color: white;"><b>커뮤니티</b></a>

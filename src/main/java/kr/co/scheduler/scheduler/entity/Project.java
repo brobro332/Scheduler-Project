@@ -1,6 +1,5 @@
 package kr.co.scheduler.scheduler.entity;
 
-
 import jakarta.persistence.*;
 import kr.co.scheduler.global.entity.BaseTimeEntity;
 import kr.co.scheduler.user.entity.User;

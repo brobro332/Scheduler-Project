@@ -27,45 +27,6 @@
 
 </div>
 
-<script>
-
-    $(document).ready(function() {
-
-        var project_id = $("#project_id").val();
-        var taskLog_id = $("#taskLog_id").val();
-
-    	$("#btn-back").on("click", ()=>{
-
-            window.history.back();
-        });
-
-        $("#btn-updateForm").on("click", ()=>{
-
-            location.href = "/scheduler/manage/project/" + project_id + "/taskLog/updateForm/" + taskLog_id;
-        });
-
-        $("#btn-delete").on("click", ()=>{
-
-            if (confirm("삭제를 진행하시겠습니까?")) {
-
-              $.ajax({
-                  type: "DELETE",
-                  url: "/api/scheduler/project/taskLog/" + taskLog_id + "?project_id=" + project_id,
-                  contentType: "application/json; charset=utf-8",
-                  dataType: "json"
-              }).done(function(resp) {
-                  if(resp.statusCode == 400 || resp.statusCode == 500){
-                      alert(resp.message);
-                      } else {
-                      alert(resp.message);
-                      location.href="/scheduler/manage/project/" + project_id;
-                  }
-              }).fail(function(error) {
-                  alert(JSON.stringify(error));
-              });
-            }
-          });
-    });
-</script>
+<script src="/js/scheduler.js"></script>
 
 <%@ include file="../layout/user/footer.jsp"%>
