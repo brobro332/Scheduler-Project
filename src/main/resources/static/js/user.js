@@ -6,8 +6,8 @@ let emailCertifyChk = false;
 
 let index = {
     init: function() {
-        $("#btn-save").on("click", ()=>{
-            this.save();
+        $("#btn-signUp").on("click", ()=>{
+            this.signUp();
         });
         $("#btn-updatePassword").on("click", ()=>{
             this.updatePassword();
@@ -29,7 +29,7 @@ let index = {
         });
     },
 
-    save: function() {
+    signUp: function() {
         var password = $("#password").val();
         var checkedPassword = $("#checkedPassword").val();
 

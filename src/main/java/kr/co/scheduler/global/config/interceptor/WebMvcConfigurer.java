@@ -10,6 +10,7 @@ public class WebMvcConfigurer implements org.springframework.web.servlet.config.
     public void addInterceptors(InterceptorRegistry registry) {
 
         registry.addInterceptor(new ProfileImgInterceptor())
+                // navbar 에 프로필 이미지 표시하기 위함 
                 .addPathPatterns("/user/info");
     }
 }

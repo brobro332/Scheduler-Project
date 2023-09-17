@@ -14,7 +14,7 @@
   <c:otherwise>
   <br>
   <div id="image_wrapper" style="position: relative; width: 200px; height: 200px; left: 100px; border-radius: 70%; overflow: hidden;">
-    <img id="profileImg" src="/api/user/info/profileImg" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
+    <img id="profileImg" src="/api/profileImg" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
   </div>
   </c:otherwise>
   </c:choose>

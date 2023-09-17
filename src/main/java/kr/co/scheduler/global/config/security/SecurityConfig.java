@@ -30,12 +30,11 @@ public class SecurityConfig {
                         .shouldFilterAllDispatcherTypes(false)
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .requestMatchers("/signIn", "/signUp").permitAll()
-                        .requestMatchers("/signInForm", "/signUpForm").permitAll()
                         .requestMatchers("/user/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                             .formLogin(login -> login
-                                .loginPage("/signInForm")
+                                .loginPage("/signIn")
                                 .loginProcessingUrl("/signIn")
                                 .usernameParameter("email")
                                 .passwordParameter("password")

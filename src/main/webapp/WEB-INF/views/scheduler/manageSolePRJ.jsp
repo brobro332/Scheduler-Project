@@ -361,7 +361,7 @@ $(document).ready(function() {
                $.ajax({
                   data: data,
                   type: "POST",
-                  url: "/api/community/postImg/upload",
+                  url: "/api/summernoteImg",
                   cache: false,
                   contentType: false,
                   processData: false,

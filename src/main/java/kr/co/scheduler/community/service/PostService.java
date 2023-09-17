@@ -5,6 +5,8 @@ import kr.co.scheduler.community.entity.Post;
 import kr.co.scheduler.community.repository.PostRepository;
 import kr.co.scheduler.global.entity.Img;
 import kr.co.scheduler.global.repository.ImgRepository;
+import kr.co.scheduler.global.service.ImgService;
+import kr.co.scheduler.user.entity.User;
 import kr.co.scheduler.user.repository.UserRepository;
 import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -33,18 +35,37 @@ import java.util.UUID;
 public class PostService {
 
     private final UserService userService;
+    private final ImgService imgService;
     private final PostRepository postRepository;
     private final ImgRepository imgRepository;
     private final UserRepository userRepository;
 
-    public void writePost(PostReqDTO.CREATE create, String email) {
+    /**
+     * selectPost: Post 객체 리턴
+     */
+    public Post selectPost(Long id) {
+
+        return postRepository.findById(id)
+                .orElseThrow(()->{
+                    return new IllegalArgumentException("해당 게시글을 조회할 수 없습니다.");
+                });
+    }
+
+    /**
+     * createPost: 게시글 등록
+     * 1. 썸머노트에 이미지 업로드 시 c:\\upload\\temp\\{email}에 이미지 저장
+     * 2. 게시글 등록시 썸머노트 내용의 이미지 파일을 통해 이미지 경로 및 파일명 조회
+     * 3. 해당 이미지를 c:\\upload\\post\\{email}로 이동
+     * 4. c:\\upload\\temp\\{email} 경로 내 파일 모두 삭제(임시폴더를 비우는 개념)
+     * 5. 게시글 등록
+     */
+    public void createPost(PostReqDTO.CREATE create, String email) throws IOException {
 
         String content = create.getContent();
-
         Document doc = Jsoup.parse(content);
         Elements imgElements = doc.select("img");
-        String fileName = null;
 
+        String fileName = null;
         for(Element imgElement : imgElements) {
 
             // src 추출
@@ -55,54 +76,23 @@ public class PostService {
             if(parts.length == 2) {
                 fileName = parts[1];
 
+                // 썸머노트에 업로드할 때 저장된 이미지의 경로와 파일명 추출
                 Img img = imgRepository.findByImgName(fileName);
 
                 String beforeFilePath = img.getImgPath();
-                String replaceFolder = "C:\\upload\\post\\";
+                String replaceFolder = "C:\\upload\\post\\" + email;
 
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                Date date = new Date();
-                String str = sdf.format(date);
-                String datePath = str.replace("-", File.separator);
+                img.setImgPath(replaceFolder + "\\" + fileName);
 
-                img.setImgPath(replaceFolder + "\\" + datePath + "\\" + fileName);
-
-                File replacePath = new File(replaceFolder, datePath);
-
-                if(replacePath.exists() == false) {
-                    replacePath.mkdirs();
-                }
-
-                try {
-                    File file = new File(beforeFilePath);
-
-                    file.renameTo(new File(replaceFolder + "\\" + datePath + "\\" + fileName));
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
+                // 폴더 이동
+                imgService.renameImg(beforeFilePath, replaceFolder, fileName);
             }
         }
 
         // temp 폴더 비우기
         String deletePath = "C:\\upload\\temp\\" + email;
 
-        try {
-
-            File folder = new File(deletePath);
-
-            if(folder.exists()) {
-
-                File[] file_list = folder.listFiles();
-                for(File file : file_list) {
-
-                    file.delete();
-                }
-            }
-
-        } catch(Exception e) {
-
-            e.printStackTrace();
-        }
+        imgService.clearTempDir(deletePath);
 
         Post post = Post.builder()
                 .title(create.getTitle())
@@ -113,15 +103,22 @@ public class PostService {
         postRepository.save(post);
     }
 
+    /**
+     * updatePost: 게시글 수정
+     * 1. 썸머노트에 이미지 업로드 시 c:\\upload\\temp\\{email}에 이미지 저장
+     * 2. 게시글 수정시 썸머노트 내용의 이미지 파일을 통해 이미지 경로 및 파일명 조회
+     * 3. 해당 이미지를 c:\\upload\\post\\{email}로 이동
+     * 4. c:\\upload\\temp\\{email} 경로 내 파일 모두 삭제(임시폴더를 비우는 개념)
+     * 5. 게시글 수정
+     */
     @Transactional
-    public void updatePost(PostReqDTO.UPDATE update, String email, Long id) {
+    public void updatePost(PostReqDTO.UPDATE update, String email, Long id) throws IOException {
 
         String content = update.getContent();
-
         Document doc = Jsoup.parse(content);
         Elements imgElements = doc.select("img");
-        String fileName = null;
 
+        String fileName = null;
         for(Element imgElement : imgElements) {
 
             // src 추출
@@ -132,209 +129,103 @@ public class PostService {
             if(parts.length == 2) {
                 fileName = parts[1];
 
+                // 썸머노트에 업로드할 때 저장된 이미지의 경로와 파일명 추출
                 Img img = imgRepository.findByImgName(fileName);
 
                 String beforeFilePath = img.getImgPath();
-                String replaceFolder = "C:\\upload\\post\\";
+                String replaceFolder = "C:\\upload\\post\\" + email;
 
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                Date date = new Date();
-                String str = sdf.format(date);
-                String datePath = str.replace("-", File.separator);
+                img.setImgPath(replaceFolder + "\\" + fileName);
 
-                img.setImgPath(replaceFolder + "\\" + datePath + "\\" + fileName);
-
-                File replacePath = new File(replaceFolder, datePath);
-
-                if(replacePath.exists() == false) {
-                    replacePath.mkdirs();
-                }
-
-                try {
-                    File file = new File(beforeFilePath);
-
-                    file.renameTo(new File(replaceFolder + "\\" + datePath + "\\" + fileName));
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
+                // 폴더 이동
+                imgService.renameImg(beforeFilePath, replaceFolder, fileName);
             }
         }
 
         // temp 폴더 비우기
         String deletePath = "C:\\upload\\temp\\" + email;
 
-        try {
-
-            File folder = new File(deletePath);
-
-            if(folder.exists()) {
-
-                File[] file_list = folder.listFiles();
-                for(File file : file_list) {
-
-                    file.delete();
-                }
-            }
-
-        } catch(Exception e) {
-
-            e.printStackTrace();
-        }
+        imgService.clearTempDir(deletePath);
 
         Post post = postRepository.findById(id)
                         .orElseThrow(()->{
-                            return new IllegalArgumentException("해당 게시물을 찾을 수 없습니다.");
+                            return new IllegalArgumentException("해당 게시글을 찾을 수 없습니다.");
                         });
 
         post.updatePost(update.getTitle(), content);
     }
 
-    public void deletePost(Long id, String email) {
+    /**
+     * deletePost: 게시글 삭제
+     * 1. 사용자 이메일 확인
+     * 2. 사용자와 게시글 작성자 동일한지 확인
+     * 3. 게시글 삭제
+     */
+    @Transactional
+    public void deletePost(Post post, String email) throws IOException {
 
-        userRepository.findOptionalByEmail(email)
+        String content = post.getContent();
+        Document doc = Jsoup.parse(content);
+        Elements imgElements = doc.select("img");
+
+        String fileName = null;
+        for (Element imgElement : imgElements) {
+
+            // src 추출
+            String srcValue = imgElement.attr("src");
+
+            // 파일명 추출
+            String[] parts = srcValue.split("=");
+            if (parts.length == 2) {
+                fileName = parts[1];
+
+                Img img = imgService.selectImg(fileName);
+                imgRepository.delete(img);
+
+                imgService.deleteImg(img.getImgPath());
+            }
+        }
+
+        User user = userRepository.findOptionalByEmail(email)
             .orElseThrow(()->{
-                return new IllegalArgumentException("가입된 유저가 아닙니다.");
+                return new IllegalArgumentException("가입된 이메일이 아닙니다.");
             });
 
-        Post post = postRepository.findById(id)
-                .orElseThrow(()->{
-                    return new IllegalArgumentException("해당 게시물을 찾을 수 없습니다.");
-                });
+        if (user != post.getUser()) {
+
+            throw new IllegalArgumentException("작성자가 아니라면 게시글을 삭제할 수 없습니다.");
+        }
 
         postRepository.delete(post);
     }
 
-    public Page<Post> viewPosts(Pageable pageable) {
+    // ================================== 구분 ================================== //
+
+    /**
+     * selectPosts: 게시글 목록 조회 페이지에 Page 객체 리턴
+     */
+    public Page<Post> selectPosts(Pageable pageable) {
 
         return postRepository.findAll(pageable);
     }
 
-    public Page<Post> viewPostsOfKeyword(Pageable pageable, String keyword) {
+    /**
+     * selectPostsOfKeyword: 검색어를 포함한 게시글 목록 조회 페이지에 Page 객체 리턴
+     */
+    public Page<Post> selectPostsOfKeyword(Pageable pageable, String keyword) {
 
         return postRepository.findByTitleContaining(pageable, keyword);
     }
 
-    public Post viewOneOfPost(Long id) {
+    // ================================== 구분 ================================== //
 
-        return postRepository.findById(id)
-                .orElseThrow(()->{
-                   return new IllegalArgumentException("해당 게시글을 조회할 수 없습니다.");
-                });
-    }
-
-    public Img findImg(String fileName) {
-
-        Img img = imgRepository.findByImgName(fileName);
-
-        return img;
-    }
-
-    public String uploadImg(MultipartFile uploadImg, String email) throws IOException {
-
-        String uploadFolder = "C:\\upload\\temp\\" + email;
-
-        File uploadPath = new File(uploadFolder);
-
-        if(uploadPath.exists() == false) {
-            uploadPath.mkdirs();
-        }
-
-        String uploadFileName = uploadImg.getOriginalFilename();
-        String uuid = UUID.randomUUID().toString();
-
-        uploadFileName = uuid + "_" + uploadFileName;
-
-        File saveFile = new File(uploadPath, uploadFileName);
-
-        System.out.println(uploadFolder + "\\" + uploadFileName);
-        System.out.println(uploadFileName);
-
-        Img image = Img.builder()
-                .imgPath(uploadFolder + "\\" + uploadFileName)
-                .imgName(uploadFileName)
-                .build();
-        imgRepository.save(image);
-        uploadImg.transferTo(saveFile);
-
-        return uploadFileName;
-    }
-
+    /**
+     * increaseView_cnt: 게시글 조회시 조회수 증가
+     * 수정사항: 쿠키 기반의 조회수 증가 로직으로 구현해야함
+     */
     @Transactional
-    public void updateImg(Post post) {
-
-        String content = post.getContent();
-        Document doc = Jsoup.parse(content);
-        Elements imgElements = doc.select("img");
-        String fileName = null;
-
-        for (Element imgElement : imgElements) {
-
-            // src 추출
-            String srcValue = imgElement.attr("src");
-
-            // 파일명 추출
-            String[] parts = srcValue.split("=");
-            if (parts.length == 2) {
-                fileName = parts[1];
-
-                Img img = findImg(fileName);
-
-                String beforeFilePath = img.getImgPath();
-                String replaceFolder = "C:\\upload\\temp\\";
-
-                img.setImgPath(replaceFolder + "\\" + post.getUser().getEmail() + "\\" + fileName);
-                File replacePath = new File(replaceFolder);
-
-                if (replacePath.exists() == false) {
-                    replacePath.mkdirs();
-                }
-
-                try {
-                    File file = new File(beforeFilePath);
-
-                    file.renameTo(new File(replaceFolder + "\\" + post.getUser().getEmail() + "\\" + fileName));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-    public void deleteImg(Post post) {
-
-        String content = post.getContent();
-        Document doc = Jsoup.parse(content);
-        Elements imgElements = doc.select("img");
-        String fileName = null;
-
-        for (Element imgElement : imgElements) {
-
-            // src 추출
-            String srcValue = imgElement.attr("src");
-
-            // 파일명 추출
-            String[] parts = srcValue.split("=");
-            if (parts.length == 2) {
-                fileName = parts[1];
-
-                Img img = findImg(fileName);
-                imgRepository.delete(img);
-
-                try {
-                    File file = new File(URLDecoder.decode(img.getImgPath(), StandardCharsets.UTF_8));
-
-                    file.delete();
-                } catch (Exception e) {
-
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    @Transactional
-    public int updateView_cnt(Long id) {
+    public int increaseView_cnt(Long id) {
 
         return postRepository.updateView_cnt(id);
     }
-
 }

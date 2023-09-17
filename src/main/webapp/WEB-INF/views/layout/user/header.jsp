@@ -36,7 +36,7 @@
     <c:when test="${empty principal}" >
     <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" href="/signInForm" style="color: white;"><b>로그인</b></a>
+          <a class="nav-link" href="/signIn" style="color: white;"><b>로그인</b></a>
         </li>
     </ul>
     </c:when>
@@ -46,7 +46,7 @@
           <a class="nav-link" href="/scheduler/view" style="color: white;"><b>프로젝트 플래너</b></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/community/view" style="color: white;"><b>커뮤니티</b></a>
+          <a class="nav-link" href="/community/selectPosts" style="color: white;"><b>커뮤니티</b></a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/user/info" style="color: white;"><b>내프로필</b></a>
@@ -66,7 +66,7 @@
           <c:otherwise>
             <li class="nav-item">
               <div id="navbar_image_wrapper" style="position: relative; width: 40px; height: 40px; left: 20px; border-radius: 70%; overflow: hidden; border: 3px solid white;">
-                <img id="profileImg" src="/api/user/info/profileImg" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
+                <img id="profileImg" src="/api/profileImg" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
               </div>
             </li>
           </c:otherwise>

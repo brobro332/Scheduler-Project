@@ -15,7 +15,6 @@ import kr.co.scheduler.user.entity.User;
 import kr.co.scheduler.user.enums.Role;
 import kr.co.scheduler.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,9 +36,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -427,25 +423,6 @@ public class UserService {
     }
 
     // ================================== 구분 ================================== //
-
-    /**
-     * selectProfileImg: 프로필이미지를 뷰로 전송
-     */
-    @Transactional
-    public byte[] selectProfileImg(String email) throws IOException {
-
-        User user = selectUser(email);
-        byte[] imageByteArray = null;
-
-        if(user != null) {
-
-            InputStream inputStream = new FileInputStream(user.getProfileImgPath());
-            imageByteArray = IOUtils.toByteArray(inputStream);
-            inputStream.close();
-        }
-
-        return imageByteArray;
-    }
 
     /**
      * uploadProfileImg : 프로필이미지 등록 및 수정
