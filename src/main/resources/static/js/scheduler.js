@@ -198,7 +198,7 @@ if (!window.schedulerLoaded) {
 
         $.ajax({
             type: "PUT",
-            url: "/api/scheduler/project/" + project_id + "/active",
+            url: "/api/scheduler/project/" + project_id + "/activity",
             contentType: "application/json; charset=utf-8",
             dataType: "json"
         }).done(function(resp) {
@@ -211,6 +211,30 @@ if (!window.schedulerLoaded) {
         }).fail(function(error) {
             alert(JSON.stringify(error));
         });
+    });
+
+    $(document).on('click', '.endPRJ', function() {
+        var $project = $(this).parents(".select");
+        var project_id = $project.find(".project_id").val();
+
+        if (confirm("프로젝트 플래너 마감을 진행하시겠습니까?\n마감을 진행하면 다시 활성화할 수 없습니다.")) {
+
+        $.ajax({
+            type: "PUT",
+            url: "/api/scheduler/project/" + project_id + "/deadline",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function(resp) {
+            if(resp.statusCode == 400 || resp.statusCode == 500){
+                alert(resp.message);
+                } else {
+                location.href = "/scheduler/selectPRJPlanners"
+                alert(resp.message);
+            }
+        }).fail(function(error) {
+            alert(JSON.stringify(error));
+        });
+        }
     });
 
     $(document).on('click', '.managePRJ', function() {
@@ -330,6 +354,41 @@ if (!window.schedulerLoaded) {
                 // 성공 시 실행할 코드
                 alert("체크박스 상태가 업데이트되었습니다.");
                 location.href="/scheduler/managePRJPlanner/" + project_id;
+            },
+            error: function(error) {
+                  // 오류 시 실행할 코드
+                  alert("오류가 발생하였습니다.");
+            }
+        });
+    });
+
+    $("#btn-setEndedPRJ").click(function() {
+        var project_id = $("#project_id").val();
+        var data = { taskIds: [], taskTypes: [], checkYnList: [] }; // 체크박스 상태 업데이트 정보를 저장할 배열
+
+          // 모든 체크박스를 순회하며 상태를 수집
+        $(".dynamicCheckbox").each(function() {
+            var taskId = $(this).data("task-id");
+            var isChecked = $(this).prop("checked");
+            var taskType = $(this).data("task-type");
+            var check_yn = isChecked ? "Y" : "N";
+
+            data.taskIds.push(taskId);
+            data.taskTypes.push(taskType);
+            data.checkYnList.push(check_yn);
+        });
+
+        // 서버로 업데이트 정보 배열을 전송
+        $.ajax({
+            type: "PUT",
+            url: "/api/scheduler/task/checkStatus",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(response) {
+                // 성공 시 실행할 코드
+                alert("체크박스 상태가 업데이트되었습니다.");
+                location.href="/scheduler/selectEndedPRJPlanner/" + project_id;
             },
             error: function(error) {
                   // 오류 시 실행할 코드

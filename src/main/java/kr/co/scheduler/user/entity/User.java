@@ -40,6 +40,8 @@ public class User extends BaseTimeEntity {
 
     private String oauth;
 
+    private String targetToken;
+
     @Builder
     public User(String email, String password, String name, String phone, Role role, String oauth) {
 

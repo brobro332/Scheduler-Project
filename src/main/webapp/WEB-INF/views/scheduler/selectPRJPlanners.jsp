@@ -49,7 +49,14 @@
 
                     <c:choose>
                     <c:when test="${project.activeYn == 'N'}">
-                        <span class="badge bg-secondary" style="font-size: 15px; color: white; width:13%">비활성</span>
+                        <c:choose>
+                            <c:when test="${project.completeYn == 'Y'}">
+                                <span class="badge bg" style="background-color: #d3d3d3; font-size: 15px; color: white; width:13%">완료</span>
+                            </c:when>
+                            <c:otherwise>
+                                <span class="badge bg-secondary" style="font-size: 15px; color: white; width:13%">비활성</span>
+                            </c:otherwise>
+                        </c:choose>
                     </c:when>
                     <c:otherwise>
                         <span class="badge bg-info" style="font-size: 15px; color: white; width:13%">활성</span>
@@ -68,10 +75,18 @@
                     <h6>${project.startPRJ} ~ ${project.endPRJ}</h6>
                     <c:choose>
                         <c:when test="${project.activeYn == 'N'}">
-                            <button type="button" class="btn btn activePRJ" style="display: flex; background-color: #956be8; color: white; margin-left: auto;" id="btn-activePRJ">활성화</button>
+                        <c:choose>
+                            <c:when test="${project.completeYn == 'Y'}">
+                                <button type="button" class="btn btn viewEndedPRJ" onclick="location.href='/scheduler/selectEndedPRJPlanner/${project.id}'" style="display: flex; background-color: gray; color: white; margin-left: auto;" id="btn-activePRJ">조회</button>
+                            </c:when>
+                            <c:otherwise>
+                                <button type="button" class="btn btn activePRJ" style="display: flex; background-color: #956be8; color: white; margin-left: auto;" id="btn-activePRJ">활성화</button>
+                            </c:otherwise>
+                        </c:choose>
                         </c:when>
                         <c:otherwise>
                             <div style="display: flex; margin-left: auto;">
+                            <button type="button" class="btn btn endPRJ" style="background-color: gray; color: white;" id="btn-endPRJ">마감</button>
                                 <button type="button" class="btn btn managePRJ" style="display: flex; background-color: #956be8; color: white; margin-left: auto;" id="btn-managePRJ">관리</button>
                                 <button type="button" class="btn btn activePRJ" style="display: flex; background-color: #956be8; color: white; margin-left: 2px;" id="btn-activePRJ">비활성화</button>
                             </div>

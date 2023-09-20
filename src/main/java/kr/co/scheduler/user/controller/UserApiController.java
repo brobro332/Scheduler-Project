@@ -1,8 +1,11 @@
 package kr.co.scheduler.user.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import kr.co.scheduler.global.config.mail.RegisterMail;
 import kr.co.scheduler.global.dtos.ResponseDto;
+import kr.co.scheduler.global.dtos.TargetTokenReqDTO;
 import kr.co.scheduler.global.service.ImgService;
 import kr.co.scheduler.user.dtos.UserReqDTO;
 import kr.co.scheduler.user.entity.User;
@@ -10,6 +13,10 @@ import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -244,5 +251,36 @@ public class UserApiController {
         System.out.println("인증코드 : " + code);
 
         return code;
+    }
+
+    // ================================== 구분 ================================== //
+
+    @GetMapping("/api/user/loginStatus")
+    public ResponseDto<?> selectLoginStatus() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+            // 사용자가 로그인한 상태
+            return ResponseDto.ofSuccessMessage("로그인한 사용자 입니다.");
+        } else {
+            // 사용자가 로그인하지 않은 상태
+            return ResponseDto.ofFailMessage(HttpStatus.UNAUTHORIZED.value(), "로그인하지 않은 사용자입니다.");
+        }
+    }
+
+    @PutMapping("/api/user/targetToken")
+    public ResponseDto<?> updateTargetToken(@RequestBody TargetTokenReqDTO targetTokenReqDTO, Principal principal) {
+
+        User user = userService.selectUser(principal.getName());
+
+        if (user != null) {
+
+            userService.updateTargetToken(targetTokenReqDTO.getTargetToken(), user);
+
+            return ResponseDto.ofSuccessMessage("TargetToken이 정상적으로 등록되었습니다.");
+        }
+
+        return ResponseDto.ofFailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(), "TargetToken 등록에 실패하였습니다.");
     }
 }

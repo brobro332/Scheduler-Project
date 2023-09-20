@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import kr.co.scheduler.global.dtos.TargetTokenReqDTO;
 import kr.co.scheduler.global.entity.kakao.KaKaoOAuthToken;
 import kr.co.scheduler.global.entity.kakao.KakaoProfile;
 import kr.co.scheduler.global.entity.naver.NaverProfile;
@@ -469,5 +470,16 @@ public class UserService {
             user.setProfileImgName(null);
             user.setProfileImgPath(null);
         }
+    }
+
+    // ================================== 구분 ================================== //
+
+    /**
+     * updateTargetToken: 로그인한 사용자가 알림 허용 상태라면 FCM TargetToken 등록
+     */
+    @Transactional
+    public void updateTargetToken(String targetToken, User user) {
+
+        user.setTargetToken(targetToken);
     }
 }

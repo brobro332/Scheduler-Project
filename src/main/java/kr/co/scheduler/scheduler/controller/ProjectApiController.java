@@ -101,12 +101,23 @@ public class ProjectApiController {
      * activePRJPlanner: 프로젝트 플래너 활성화
      * 활성화된 경우 스케줄러가 작동하여 FCM 메세지를 사용자의 브라우저로 전송
      */
-    @PutMapping("/{project_id}/active")
+    @PutMapping("/{project_id}/activity")
     public ResponseDto<?> activePRJPlanner(@PathVariable(name = "project_id") Long id) {
 
         projectService.activePRJPlanner(id);
 
         return ResponseDto.ofSuccessData("프로젝트 활성 상태를 전환했습니다.", null);
+    }
+
+    /**
+     * endPRJPlanner: 프로젝트 플래너 마감
+     */
+    @PutMapping("/{project_id}/deadline")
+    public ResponseDto<?> endPRJPlanner(@PathVariable(name = "project_id") Long id) {
+
+        projectService.endPRJPlanner(id);
+
+        return ResponseDto.ofSuccessData("프로젝트를 마감했습니다.", null);
     }
 
     // ================================== 구분 ================================== //

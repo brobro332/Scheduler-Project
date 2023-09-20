@@ -103,6 +103,28 @@ public class ProjectController {
         return "scheduler/managePRJPlanner";
     }
 
+    /**
+     * endedPRJPlanner: 마감된 프로젝트 플래너 조회 및 관리 페이지 리턴
+     */
+    @GetMapping("/scheduler/selectEndedPRJPlanner/{project_id}")
+    public String endedPRJPlanner(@PathVariable(name = "project_id") Long id, Model model,
+                                   @PageableDefault(size = 5, sort="createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                   Principal principal) {
+
+        Project project = projectService.selectPRJPlanner(id);
+
+        if (project.getUser() == userService.selectUser(principal.getName())) {
+
+            projectService.calculateTaskPercentage(id);
+
+            model.addAttribute("project", projectService.selectPRJPlanner(id));
+            model.addAttribute("totalPercentage", projectService.calculateTotalPercentage(id));
+            model.addAttribute("taskLogs", taskLogService.selectTaskLog(pageable, id));
+        }
+
+        return "scheduler/selectEndedPRJPlanner";
+    }
+
     // ================================== 구분 ================================== //
 
     /**

@@ -1,5 +1,6 @@
 package kr.co.scheduler.scheduler.service;
 
+import kr.co.scheduler.global.service.FCMService;
 import kr.co.scheduler.scheduler.dtos.ProjectReqDTO;
 import kr.co.scheduler.scheduler.dtos.TaskReqDTO;
 import kr.co.scheduler.scheduler.entity.Project;
@@ -13,6 +14,7 @@ import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ public class ProjectService {
 
     private final UserService userService;
     private final TaskService taskService;
+    private final FCMService fcmService;
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
     private final SubTaskRepository subTaskRepository;
@@ -135,6 +138,22 @@ public class ProjectService {
             }
         }
     }
+
+    @Transactional
+    public void endPRJPlanner(Long id) {
+
+        Project project = projectRepository.findById(id).orElse(null);
+
+        if (project != null) {
+
+            if (Objects.equals(project.getCompleteYn(), "N")) {
+
+                project.setCompleteYn("Y");
+                project.setActiveYn("N");
+            }
+        }
+    }
+
     
     // ================================== 구분 ================================== //
 
@@ -223,11 +242,37 @@ public class ProjectService {
             }
         }
     }
+
+    /**
+     * calculateTotalPercentage: 프로젝트 달성률 계산
+     */
+    @Transactional
+    public Float calculateTotalPercentage(Long id) {
+
+        Project project = projectRepository.findById(id).orElse(null);
+        List<Task> tasks = project.getTasks();
+
+        float sum = 0;
+        float result = 0;
+
+        if (tasks != null) {
+
+            for (Task task : tasks) {
+
+                sum += task.getTaskPercentage();
+            }
+
+            DecimalFormat df = new DecimalFormat("#.##");
+            result = Float.parseFloat(df.format(sum / tasks.size()));
+        }
+
+        return result;
+    }
     
     /**
      * countD_day: 프로젝트 마감일까지 남은 날짜를 계산
      */
-    public String countD_day(Long id) {
+    public Long countD_day(Long id) {
 
         Project project = projectRepository.findById(id).orElse(null);
 
@@ -236,18 +281,42 @@ public class ProjectService {
             LocalDate currentDate = LocalDate.now();
             Long d_day = ChronoUnit.DAYS.between(currentDate, project.getEndPRJ());
 
-            if(d_day == 0) {
+            return d_day;
+        } else {
 
-                return "D-DAY입니다.";
-            } else if(d_day > 0) {
+            throw new IllegalArgumentException("D-Day 를 계산할 수 없습니다.");
+        }
+    }
 
-                return "프로젝트 마감일까지 D-" + d_day + " 남았습니다.";
-            } else {
+    // ================================== 구분 ================================== //
 
-                return "프로젝트 마감일까지 D+" + d_day + " 지났습니다.";
+    @Scheduled(cron = "0 0 0 * * *")
+    public void sendFCMMessageToWriter() {
+
+        List<Project> projects = projectRepository.findByActiveYn(Character.toString('Y'));
+
+        for (Project project : projects) {
+
+            Long D_day = countD_day(project.getId());
+            if (D_day != null) {
+
+                if (D_day <= 7) {
+
+                    String targetToken = project.getUser().getTargetToken();
+
+                    if (targetToken != null) {
+
+                        fcmService.sendFCMMessage(targetToken,
+                                "SPAP 스케줄러",
+                                project.getUser().getName()
+                                        + "님의 플래너 "
+                                        + project.getTitle()
+                                        + "만기일이 "
+                                        + D_day
+                                        + "일 남았습니다.");
+                    }
+                }
             }
         }
-
-        return "D-DAY를 계산할 수 없습니다.";
     }
 }

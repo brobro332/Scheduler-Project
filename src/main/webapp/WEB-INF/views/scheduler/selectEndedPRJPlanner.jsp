@@ -14,9 +14,6 @@
       <li class="nav-item">
         <a class="nav-link" data-toggle="tab" href="#manageTask">업무 수행 관리</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" data-toggle="tab" href="#dailyTask">업무 일지 관리</a>
-      </li>
     </ul>
 
     <!-- Tab panes -->
@@ -32,27 +29,13 @@
 
       <div>
       <div style="display: inline-block; position: absolute;">
-      <!-- 프로젝트 D-Day -->
+      <!-- 프로젝트 달성률 -->
       <div style="display: inline-block;">
         <span class="badge bg" style="background-color: #956be8; color: white;">
-            <h6>프로젝트 D-DAY</h6>
+            <h6>프로젝트 달성률</h6>
         </span>
       &nbsp;
-      <c:choose>
-          <c:when test="${d_day > 0}">
-            프로젝트 마감일까지 D-${d_day} 남았습니다.
-          </c:when>
-          <c:otherwise>
-            <c:choose>
-              <c:when test="${d_day < 0}">
-                프로젝트 마감일부터 D+${d_day} 지났습니다.
-              </c:when>
-              <c:otherwise>
-                D-DAY 입니다.
-              </c:otherwise>
-            </c:choose>
-          </c:otherwise>
-      </c:choose>
+      ${totalPercentage}%
       </div>
 
       <br/><br/>
@@ -214,43 +197,12 @@
         <br/><br/>
 
         <button type="button" class="btn btn" id="btn-back" style="background-color: gray; color: white; width: 201px;">뒤로가기</button>
-        <button type="button" class="btn btn" id="btn-set" style="float: right; background-color: #956be8; color: white; width: 201px;">등록</button>
+        <button type="button" class="btn btn" id="btn-setEndedPRJ" style="float: right; background-color: #956be8; color: white; width: 201px;">등록</button>
 
     </div>
-
-
-    <div class="tab-pane container active fade" id="dailyTask">
-    <div>
-    <br/>
-    <form method="post">
-      <span><h4>업무 일지 관리</h4></span>
-      <p style="color: gray;"><small>오늘 수행한 업무 일지를 작성해보세요</small></p>
-      <hr><br/>
-
-        <div>
-            <select id="task" name="task">
-                <option disabled selected>업무 카테고리 선택</option>
-                <c:forEach items="${project.tasks}" var="task">
-                    <option value="${task.id}" data-task="${task.task}">${task.task}</option>
-                </c:forEach>
-            </select>
-
-            <select id="subTask" name="subTask">
-              <option disabled selected>하위업무 카테고리 선택</option>
-            </select>
-
-      </div><br/>
-      <input type="text" class="form-control" placeholder="제목" id="title" style="width:100%;"> <br/>
-      <textarea id="summernote" name="content"></textarea> <br/>
-    </form>
-    <button class="btn btn" id="btn-back" style="background-color: gray; color: white; width: 201px;">뒤로가기</button>
-    <button class="btn btn" id="btn-save" style="background-color: #956be8; color: white; width: 201px; float:right;">등록</button>
-    </div>
-    </div>
-
-
-    </div>
+  </div>
 </div>
+
 <script src="/js/scheduler.js"></script>
 
 <%@ include file="../layout/user/footer.jsp"%>
