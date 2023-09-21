@@ -519,4 +519,21 @@ public class UserService {
 
         alertUserRepository.delete(alertUser);
     }
+
+    @Transactional
+    public void deleteAllAlert(String email) {
+
+        User user = selectUser(email);
+        List<AlertUser> alertUsers = null;
+
+        if (user != null) {
+
+            alertUsers = alertUserRepository.findListByUser(user);
+
+            for (AlertUser alertUser : alertUsers) {
+
+                alertUserRepository.delete(alertUser);
+            }
+        }
+    }
 }

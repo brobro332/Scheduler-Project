@@ -323,7 +323,7 @@ public class ProjectService {
     /**
      * sendFCMMessageToWriter: 스케줄러를 통해 매일 0시 정각에 마감일이 다가온 프로젝트 사용자에게 웹 푸시 전달
      */
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "30 10 15 * * *")
     public void sendFCMMessageAndAlertToWriter() {
 
         List<Project> projects2 = projectRepository.findByActiveYn(Character.toString('Y'));
@@ -339,7 +339,7 @@ public class ProjectService {
                     String body = project.getUser().getName()
                             + "님의 플래너 "
                             + project.getTitle()
-                            + "만기일이 "
+                            + " 만기일이 "
                             + D_day
                             + "일 남았습니다.";
 

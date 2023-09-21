@@ -29,6 +29,9 @@ let index = {
               });
             });
         });
+        $(document).on("click", "#btn-deleteAllAlert", () => {
+            this.deleteAllAlert();
+        });
         $("#btn-deleteProfileImg").on("click", ()=>{
             this.deleteProfileImg();
         });
@@ -271,6 +274,15 @@ let index = {
                 }
             })
         }
+    },
+
+    deleteAllAlert: function() {
+        $.ajax({
+          type: "DELETE",
+          url: "/api/user/allAlert",
+        }).done(function (resp) {
+            location.href="/";
+        });
     }
 }
 

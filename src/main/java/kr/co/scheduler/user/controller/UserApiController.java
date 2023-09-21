@@ -300,4 +300,13 @@ public class UserApiController {
 
         userService.deleteAlert(id);
     }
+
+    /**
+     * deleteAllAlert: 알림 모두 제거
+     */
+    @DeleteMapping("/api/user/allAlert")
+    public void deleteAllAlert(Principal principal) {
+
+        userService.deleteAllAlert(principal.getName());
+    }
 }

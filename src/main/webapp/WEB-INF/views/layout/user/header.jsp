@@ -123,6 +123,7 @@
                   </form>
               </div>
               <div class="modal-footer">
+                <button type="button" id="btn-deleteAllAlert" class="btn btn-default" style="display: flex; margin-right: auto;">알림 모두 제거</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
               </div>
             </div>
