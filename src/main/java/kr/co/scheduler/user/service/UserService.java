@@ -5,10 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import kr.co.scheduler.global.dtos.TargetTokenReqDTO;
+import kr.co.scheduler.global.entity.Alert;
+import kr.co.scheduler.global.entity.AlertUser;
 import kr.co.scheduler.global.entity.kakao.KaKaoOAuthToken;
 import kr.co.scheduler.global.entity.kakao.KakaoProfile;
 import kr.co.scheduler.global.entity.naver.NaverProfile;
 import kr.co.scheduler.global.entity.naver.NaverOAuthToken;
+import kr.co.scheduler.global.repository.AlertUserRepository;
 import kr.co.scheduler.global.service.ImgService;
 import kr.co.scheduler.user.dtos.UserReqDTO;
 import kr.co.scheduler.user.dtos.UserResDTO;
@@ -17,6 +20,8 @@ import kr.co.scheduler.user.enums.Role;
 import kr.co.scheduler.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -46,10 +51,11 @@ import java.util.*;
 @Transactional
 public class UserService {
 
-    private final BCryptPasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
-    private final AuthenticationManager authenticationManager;
     private final ImgService imgService;
+    private final UserRepository userRepository;
+    private final AlertUserRepository alertUserRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     @Value("${oauth.key}")
     private String key;
@@ -481,5 +487,36 @@ public class UserService {
     public void updateTargetToken(String targetToken, User user) {
 
         user.setTargetToken(targetToken);
+    }
+
+    // ================================== 구분 ================================== //
+
+    /**
+     * selectAlerts: 알림 조회
+     */
+    public Page<AlertUser> selectAlerts(Pageable pageable, String email) {
+
+        User user = selectUser(email);
+        Page alertUser = null;
+
+        if (user != null) {
+
+            alertUser = alertUserRepository.findPageByUser(pageable, user);
+        }
+
+        return alertUser;
+    }
+
+    /**
+     * deleteAlert: 알림 제거
+     */
+    public void deleteAlert(Long id) {
+
+        AlertUser alertUser = alertUserRepository.findById(id)
+                .orElseThrow(()->{
+                    return new IllegalArgumentException("해당 알림을 찾을 수 없습니다.");
+        });
+
+        alertUserRepository.delete(alertUser);
     }
 }

@@ -1,5 +1,8 @@
 package kr.co.scheduler.scheduler.service;
 
+import kr.co.scheduler.global.entity.Alert;
+import kr.co.scheduler.global.entity.AlertUser;
+import kr.co.scheduler.global.repository.AlertUserRepository;
 import kr.co.scheduler.global.service.FCMService;
 import kr.co.scheduler.scheduler.dtos.ProjectReqDTO;
 import kr.co.scheduler.scheduler.dtos.TaskReqDTO;
@@ -34,6 +37,7 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
     private final SubTaskRepository subTaskRepository;
+    private final AlertUserRepository alertUserRepository;
 
     /**
      * selectPRJPlanner: 프로젝트 플래너 조회 및 리턴
@@ -128,6 +132,11 @@ public class ProjectService {
         Project project = projectRepository.findById(id).orElse(null);
 
         if (project != null) {
+
+            if (Objects.equals(project.getCompleteYn(), "Y")) {
+
+                throw new IllegalArgumentException("이미 완료된 프로젝트입니다.");
+            }
 
             if (Objects.equals(project.getActiveYn(), "N")) {
 
@@ -290,12 +299,36 @@ public class ProjectService {
 
     // ================================== 구분 ================================== //
 
+    /**
+     * completePRJOverTheDeadline: 마감일이 지난 프로젝트를 완료된 상태로 전환
+     */
     @Scheduled(cron = "0 0 0 * * *")
-    public void sendFCMMessageToWriter() {
+    public void completePRJOverTheDeadline() {
 
-        List<Project> projects = projectRepository.findByActiveYn(Character.toString('Y'));
+        List<Project> projects1 = projectRepository.findByCompleteYn(Character.toString('N'));
 
-        for (Project project : projects) {
+        for (Project project : projects1) {
+
+            Long D_day = countD_day(project.getId());
+            if (D_day != null) {
+
+                if (D_day < 0) {
+
+                    project.setCompleteYn(Character.toString('Y'));
+                }
+            }
+        }
+    }
+
+    /**
+     * sendFCMMessageToWriter: 스케줄러를 통해 매일 0시 정각에 마감일이 다가온 프로젝트 사용자에게 웹 푸시 전달
+     */
+    @Scheduled(cron = "0 0 0 * * *")
+    public void sendFCMMessageAndAlertToWriter() {
+
+        List<Project> projects2 = projectRepository.findByActiveYn(Character.toString('Y'));
+
+        for (Project project : projects2) {
 
             Long D_day = countD_day(project.getId());
             if (D_day != null) {
@@ -303,18 +336,32 @@ public class ProjectService {
                 if (D_day <= 7) {
 
                     String targetToken = project.getUser().getTargetToken();
+                    String body = project.getUser().getName()
+                            + "님의 플래너 "
+                            + project.getTitle()
+                            + "만기일이 "
+                            + D_day
+                            + "일 남았습니다.";
 
                     if (targetToken != null) {
 
-                        fcmService.sendFCMMessage(targetToken,
-                                "SPAP 스케줄러",
-                                project.getUser().getName()
-                                        + "님의 플래너 "
-                                        + project.getTitle()
-                                        + "만기일이 "
-                                        + D_day
-                                        + "일 남았습니다.");
+                        fcmService.sendFCMMessage(targetToken, "SPAP 스케줄러", body);
                     }
+
+                Alert alert = Alert
+                        .builder()
+                        .content(body)
+                        .build();
+
+                User user = project.getUser();
+
+                AlertUser alertUser = AlertUser
+                        .builder()
+                        .alert(alert)
+                        .user(user)
+                        .build();
+
+                alertUserRepository.save(alertUser);
                 }
             }
         }

@@ -17,6 +17,17 @@ let index = {
         });
         window.addEventListener("load", ()=>{
             this.selectProfileImg();
+            this.selectAlert();
+            $(document).on('click', 'tr', function () {
+              var dataAlertValue = $(this).data('alert');
+
+              $.ajax({
+                type: "DELETE",
+                url: "/api/user/alert/" + dataAlertValue,
+              }).done(function (result) {
+                  location.href="/";
+              });
+            });
         });
         $("#btn-deleteProfileImg").on("click", ()=>{
             this.deleteProfileImg();
@@ -175,6 +186,17 @@ let index = {
             url: "/user/info"
         }).done(function(resp) {
             $("#navbar-interceptor").load(location.href+" #navbar-interceptor");
+        });
+    },
+
+    selectAlert: function() {
+         $.ajax({
+            type: "GET",
+            url: "/user/alert",
+            dataType: "text"
+        }).done(function(result) {
+            $("#navbar-interceptor").load(location.href+" #navbar-interceptor");
+            $("#alertList").load(location.href+" #alertList");
         });
     },
 

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -59,6 +60,11 @@ public class TaskLogService {
         Project project = projectRepository.findById(id).orElse(null);
 
         if (project != null) {
+
+            if (Objects.equals(project.getCompleteYn(), "Y")) {
+
+                throw new IllegalArgumentException("이미 완료된 프로젝트입니다.");
+            }
 
             TaskLog taskLog = TaskLog
                     .builder()

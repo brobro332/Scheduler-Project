@@ -255,6 +255,9 @@ public class UserApiController {
 
     // ================================== 구분 ================================== //
 
+    /**
+     * selectLoginStatus: 클라이언트로 HttpStatus 를 통해 로그인 여부 전송
+     */
     @GetMapping("/api/user/loginStatus")
     public ResponseDto<?> selectLoginStatus() {
 
@@ -269,6 +272,9 @@ public class UserApiController {
         }
     }
 
+    /**
+     * updateTargetToken: 타겟토큰 등록
+     */
     @PutMapping("/api/user/targetToken")
     public ResponseDto<?> updateTargetToken(@RequestBody TargetTokenReqDTO targetTokenReqDTO, Principal principal) {
 
@@ -282,5 +288,16 @@ public class UserApiController {
         }
 
         return ResponseDto.ofFailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(), "TargetToken 등록에 실패하였습니다.");
+    }
+
+    // ================================== 구분 ================================== //
+
+    /**
+     * deleteAlert: 알림 제거
+     */
+    @DeleteMapping("/api/user/alert/{alert_user_id}")
+    public void deleteAlert(@PathVariable(name = "alert_user_id") Long id) {
+
+        userService.deleteAlert(id);
     }
 }

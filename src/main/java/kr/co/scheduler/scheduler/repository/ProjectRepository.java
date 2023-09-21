@@ -19,4 +19,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     Long countByUserAndCompleteYn(User user, String complete_yn);
 
     List<Project> findByActiveYn(String active_yn);
+
+    List<Project> findByCompleteYn(String complete_yn);
 }

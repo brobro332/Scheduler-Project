@@ -1,9 +1,13 @@
 package kr.co.scheduler.user.entity;
 
 import jakarta.persistence.*;
+import kr.co.scheduler.global.entity.AlertUser;
 import kr.co.scheduler.user.enums.Role;
 import kr.co.scheduler.global.entity.BaseTimeEntity;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tbl_user")
@@ -41,6 +45,9 @@ public class User extends BaseTimeEntity {
     private String oauth;
 
     private String targetToken;
+
+    @OneToMany(mappedBy = "user")
+    private List<AlertUser> alertUsers = new ArrayList<>();
 
     @Builder
     public User(String email, String password, String name, String phone, Role role, String oauth) {

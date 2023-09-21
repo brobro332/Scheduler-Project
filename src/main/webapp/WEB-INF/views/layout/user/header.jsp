@@ -71,6 +71,63 @@
             </li>
           </c:otherwise>
         </c:choose>
+
+        <c:choose>
+        <c:when test="${empty alerts.content}" >
+        <div style="position: relative; left: 8%; height: 20px; bottom: 3px;">
+            <button type="button" style="width: 75px; display: inline-block; position: relative; background-color: #7a46c5;" class="btn btn btn-lg" data-toggle="modal" data-target="#myModal">🔔</button>
+        </div>
+        </c:when>
+        <c:otherwise>
+        <div style="position: relative; left: 8%; height: 20px; bottom: 3px;">
+            <button type="button" style="width: 75px; display: inline-block; position: relative; background-color: #7a46c5;" class="btn btn-secondary btn-lg" data-toggle="modal" data-target="#myModal">🔔❗</button>
+        </div>
+        </c:otherwise>
+        </c:choose>
+        <!-- Modal -->
+        <div id="myModal" class="modal fade" role="dialog" style="z-index: 1050;">
+          <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div style="width:1000px;" class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">알림 - N개</h5>
+              </div>
+              <div id="alertList" class="modal-body">
+                <form style="text-align:center;">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th width="15%">시간</th>
+                        <th>내용</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <c:choose>
+                            <c:when test="${empty alerts.content}">
+                                <tr>
+                                    <td colspan="2" style="text-align:center;">새 알림이 없습니다.</td>
+                                </tr>
+                            </c:when>
+                        <c:otherwise>
+                    <c:forEach items="${alerts.content}" var="alert">
+                      <tr data-alert="${alert.id}">
+                        <td width="10%">${alert.createdAt}</td>
+                        <td>${alert.alert.content}</td>
+                      </tr>
+                      </c:forEach>
+                      </c:otherwise>
+                  </c:choose>
+                    </tbody>
+                  </table>
+                  </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
     </ul>
 
     </c:otherwise>

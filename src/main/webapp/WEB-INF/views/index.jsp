@@ -3,9 +3,10 @@
 <%@ include file="layout/user/header.jsp"%>
 
 <div class="container" style="height: 300px; min-height: 360px;">
+<div style="position: relative;">
 <div>
-    <div style="display: inline-block; position: absolute; left: 20%; top: 11%;">
-        <div style="width:470px; height:300px;">
+    <div style="display: inline-block; position: absolute;">
+        <div style="width:470px; height:300px; position: relative; left: 7%;">
         <p style="color: gray;"><small>Welcome to SAPP<small></p>
         <h1>계획은 <kbd id="kbd">"꼼꼼하게"</kbd><br/>
         당신의 프로젝트 플래너,<br/>
@@ -16,12 +17,12 @@
     </div>
 </div>
 
-<div style="display: inline-block; position: absolute; left: 60%; top: 10%;">
+<div style="display: inline-block; position: relative; left: 65%;">
 <img src="/image/banner-right-spap.png" style="width:300px;">
 </div>
 </div>
-
-<div class="container" style="display: inline-block; position: relative; left: 15%; width: 70%;">
+</div>
+<div style="display: inline-block; position: relative; left: 18%; width: 70%;">
 
     <br/><br/><br/>
     <div>

@@ -4,6 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import kr.co.scheduler.user.repository.UserRepository;
 import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +28,19 @@ public class UserController {
     public String selectUserInfo(Principal principal, Model model) {
 
         model.addAttribute("info", userService.searchInfo(principal.getName()));
-        model.addAttribute("img", userRepository.findByEmail(principal.getName()));
+        model.addAttribute("img", userService.selectUser(principal.getName()));
+
+        return "user/info";
+    }
+
+    /**
+     * selectAlert: 사용자 알람 모델 데이터를 리턴
+     */
+    @GetMapping("/user/alert")
+    public String selectAlert(@PageableDefault(size = 5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                              Principal principal, Model model) {
+
+        model.addAttribute("alerts", userService.selectAlerts(pageable, principal.getName()));
 
         return "user/info";
     }
