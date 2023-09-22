@@ -1,7 +1,7 @@
 # 🎞 Scheduler-Project
 
 ### **Outline**
-프로젝트 플래너 관리를 위한 웹사이트
+Web Service For Project Planner
 
 ### ⏱ **Period**
 - 2023-06-24 ~
@@ -15,11 +15,10 @@
 - Template Engine: JSP
 
 ### 📄 **Key Features**
-- 프로젝트 플래너 관리
-- 프로젝트 플래너에 대한 스케줄링
-- 커뮤니티
-- 사용자의 게시물에 대한 이미지 파일 처리
-- 스케줄링을 통한 장기간 미접속 회원에 대한 배치 처리
+- Management and Scheduling for Project Planner
+- Service Basic Community
+- Handling Image Files for Posts
+- Batch Processing for Long-Inactive Members via Scheduling
 
 ### 🔧 **Key Skills**
 - Schedule
