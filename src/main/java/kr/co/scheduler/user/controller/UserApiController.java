@@ -1,9 +1,7 @@
 package kr.co.scheduler.user.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import kr.co.scheduler.global.config.mail.RegisterMail;
+import kr.co.scheduler.global.config.mail.CertificationMail;
 import kr.co.scheduler.global.dtos.ResponseDto;
 import kr.co.scheduler.global.dtos.TargetTokenReqDTO;
 import kr.co.scheduler.global.service.ImgService;
@@ -16,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,7 +29,7 @@ public class UserApiController {
 
     private final UserService userService;
     private final ImgService imgService;
-    private final RegisterMail registerMail;
+    private final CertificationMail certificationMail;
 
     /**
      * signUp: 회원가입
@@ -247,7 +244,7 @@ public class UserApiController {
     @ResponseBody
     String emailCode(@RequestParam("email") String email) throws Exception {
 
-        String code = registerMail.sendSimpleMessage(email);
+        String code = certificationMail.sendMessage(email);
         System.out.println("인증코드 : " + code);
 
         return code;

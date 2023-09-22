@@ -1,19 +1,30 @@
 package kr.co.scheduler.global.controller;
 
+import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.Principal;
+
 @Controller
+@RequiredArgsConstructor
 public class IndexController {
+
+    private final UserService userService;
 
     /**
      * index: 인덱스 페이지를 리턴
      */
     @GetMapping("/")
-    public String index() {
+    public String index(Principal principal) {
+
+        if (principal != null) {
+
+            userService.updateLastLoggedDay(principal.getName());
+        }
 
         return "index";
     }

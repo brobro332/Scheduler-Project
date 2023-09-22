@@ -4,8 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import kr.co.scheduler.global.dtos.TargetTokenReqDTO;
-import kr.co.scheduler.global.entity.Alert;
+import kr.co.scheduler.community.service.PostService;
+import kr.co.scheduler.global.config.mail.AlertFiredMail;
+import kr.co.scheduler.global.config.mail.AlertInactiveMail;
 import kr.co.scheduler.global.entity.AlertUser;
 import kr.co.scheduler.global.entity.kakao.KaKaoOAuthToken;
 import kr.co.scheduler.global.entity.kakao.KakaoProfile;
@@ -44,6 +45,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -534,6 +536,22 @@ public class UserService {
 
                 alertUserRepository.delete(alertUser);
             }
+        }
+    }
+
+    // ================================== 구분 ================================== //
+
+    /**
+     * updateLastLoggedDay: 사용자가 로그인할 경우 마지막으로 로그인한 날짜 정보 등록
+     */
+    @Transactional
+    public void updateLastLoggedDay(String email) {
+
+        User user = selectUser(email);
+
+        if (user != null) {
+
+            user.setLastLoggedDay(LocalDate.now());
         }
     }
 }

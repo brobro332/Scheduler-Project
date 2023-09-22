@@ -18,8 +18,6 @@ import java.security.Principal;
 public class UserController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
-
 
     /**
      * selectUserInfo: 사용자 정보 조회 페이지를 리턴

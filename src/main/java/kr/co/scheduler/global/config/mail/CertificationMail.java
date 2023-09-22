@@ -13,7 +13,7 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
-public class RegisterMail {
+public class CertificationMail {
 
     private final JavaMailSender javaMailSender;
 
@@ -81,9 +81,9 @@ public class RegisterMail {
     }
 
     /**
-     * sendSimpleMessage: createMessage 와 createKey 를 통해 메세지 전송
+     * sendMessage: createMessage 와 createKey 를 통해 메세지 전송
      */
-    public String sendSimpleMessage(String to) throws Exception {
+    public String sendMessage(String to) throws Exception {
 
         ePw = createKey(); // 랜덤 인증번호 생성
 
@@ -91,9 +91,11 @@ public class RegisterMail {
         MimeMessage message = createMessage(to); // 메일 발송
 
         try {// 예외처리
+
             javaMailSender.send(message);
-        } catch (MailException es) {
-            es.printStackTrace();
+        } catch (MailException e) {
+
+            e.printStackTrace();
             throw new IllegalArgumentException();
         }
 

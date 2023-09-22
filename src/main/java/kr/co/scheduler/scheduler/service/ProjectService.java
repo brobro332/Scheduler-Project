@@ -322,8 +322,9 @@ public class ProjectService {
 
     /**
      * sendFCMMessageToWriter: 스케줄러를 통해 매일 0시 정각에 마감일이 다가온 프로젝트 사용자에게 웹 푸시 전달
+     * 고려사항: 데이터가 비대해질 경우 스프링 배치 적용하는 것이 좋음
      */
-    @Scheduled(cron = "30 10 15 * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void sendFCMMessageAndAlertToWriter() {
 
         List<Project> projects2 = projectRepository.findByActiveYn(Character.toString('Y'));
