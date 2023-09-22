@@ -32,8 +32,9 @@ public class AlertFiredMail {
         msgg += "<br><br>";
         msgg += "<p>30일간 미접속 사용자에게 전송되는 메일입니다.<p>";
         msgg += "<p>회원님의 개인정보보호 및 시스템 유지 목적으로 회원님의 계정이 탈퇴된 점 양해부탁드립니다.<p>";
+        msgg += "<p>보안문제를 방지하기 위해 회원님이 업로드한 프로젝트, 게시물, 이미지 파일 등도 모두 제거됩니다.<p>";
         msgg += "<br><br>";
-        msgg += "<p>감사합니다.<p>";
+        msgg += "<p>저희 서비스를 이용해주셔서 감사합니다.<p>";
         msgg += "</div>";
         message.setText(msgg, "utf-8", "html");
         message.setFrom(new InternetAddress("spoof332@naver.com", "김진형"));// 보내는 사람

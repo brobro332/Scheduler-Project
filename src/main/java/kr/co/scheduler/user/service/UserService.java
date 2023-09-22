@@ -522,6 +522,9 @@ public class UserService {
         alertUserRepository.delete(alertUser);
     }
 
+    /**
+     * deleteAllAlert: 모든 알림 제거
+     */
     @Transactional
     public void deleteAllAlert(String email) {
 
