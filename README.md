@@ -1,7 +1,7 @@
 # 🎞 Scheduler-Project
 
 ### **Outline**
-Web Service For Project Planner
+Web Service For Project Planners
 
 ### ⏱ **Period**
 - 2023-06-24 ~
@@ -15,7 +15,7 @@ Web Service For Project Planner
 - Template Engine: JSP
 
 ### 📄 **Key Features**
-- Management and Scheduling for Project Planner
+- Management and Scheduling for Project Planners
 - Service Basic Community
 - Handling Image Files for Posts
 - Batch Processing for Long-Inactive Members via Scheduling
