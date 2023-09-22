@@ -5,7 +5,7 @@
 <div>
 <div class="container" style="display: inline-block; position: relative; left: 35%;">
   <h2 style="display: inline-block;">내프로필</h2><span class="badge bg-secondary" style="color: white;">Info</span>
-  <button type="button" onclick="location.href='/user/info/profileImgForm'" class="btn btn" style="position: absolute; left: 215px; top: 0; background-color: gray; color: white; width: 200px;">프로필이미지 변경</button>
+  <button type="button" onclick="location.href='/user/info/profileImg'" class="btn btn" style="position: absolute; left: 215px; top: 0; background-color: gray; color: white; width: 200px;">프로필이미지 변경</button>
   <div class="card" style="width:400px">
   <c:choose>
   <c:when test="${empty img.profileImgName}" >
@@ -14,7 +14,7 @@
   <c:otherwise>
   <br>
   <div id="image_wrapper" style="position: relative; width: 200px; height: 200px; left: 100px; border-radius: 70%; overflow: hidden;">
-    <img id="profileImg" src="/api/user/info/profileImg" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
+    <img id="profileImg" src="/api/profileImg" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
   </div>
   </c:otherwise>
   </c:choose>
@@ -33,32 +33,18 @@
 </div>
 
 <script>
-    let index = {
-            init: function() {
-                window.addEventListener("load", ()=>{
-                    this.searchInfo();
-                });
-                $("#btn-deleteProfileImg").on("click", ()=>{
-                    this.deleteProfileImg();
-                });
-            },
-
-            searchInfo: function() {
-
-            $.ajax({
-                 type: "GET",
-                 url: "/api/user/info",
-                 dataType: "json"
-            }).done(function(resp) {
-            if(resp.statusCode == 400 || resp.statusCode == 500){
-                alert("회원정보 조회에 실패하였습니다.");
-            }
-            }).fail(function(error) {
-                alert(JSON.stringify(error));
-            });
-        }
+$(window).on("load", function() {
+    $.ajax({
+         type: "GET",
+         url: "/api/user/info",
+         dataType: "json"
+    }).done(function(resp) {
+    if(resp.statusCode == 400 || resp.statusCode == 500){
+        alert("회원정보 조회에 실패하였습니다.");
     }
-
-    index.init();
+    }).fail(function(error) {
+        alert(JSON.stringify(error));
+    });
+});
 </script>
 <%@ include file="../layout/user/footer.jsp"%>

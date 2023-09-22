@@ -31,10 +31,10 @@
         <c:forEach items="${posts.content}" var="post">
           <tr>
             <td>${post.id}</td>
-            <td><a href="/community/view/post/${post.id}">${post.title}</a></td>
+            <td><a href="/community/selectPost/${post.id}">${post.title}</a></td>
             <td>
                 <div id="image_wrapper" style="position: relative; display:inline-block; width: 25px; height: 25px; border-radius: 70%; overflow: hidden;">
-                  <img id="profileImg" src="/api/community/post/profileImg/${post.user.email}" style="position: absolute; right: 0%; width: 100%; height: 100%; object-fit: cover;">
+                  <img id="profileImg" src="/api/profileImg/${post.user.email}" style="position: absolute; right: 0%; width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <a style="bottom:10%;">${post.user.name}</a>
             </td>
@@ -47,7 +47,7 @@
     </tbody>
   </table>
   </form>
-  <button class="btn btn" style="display:inline-block; float:right; background-color: #956be8; color: white;" type="button" onclick="location.href='/community/write'">글쓰기</button>
+  <button class="btn btn" style="display:inline-block; float:right; background-color: #956be8; color: white;" type="button" onclick="location.href='/community/createPost'">글쓰기</button>
 
   <ul class="pagination" style="position:relative; left:45%; width: 20%;">
   	<c:choose>
@@ -82,21 +82,6 @@
 
 </div>
 
-<script>
-$(document).ready(function() {
-	$('#content').summernote({
-		  height: 300,
-		  minHeight: null,
-		  maxHeight: null,
-		  focus: true,
-		  lang: "ko-KR",
-		  placeholder: '최대 2048자까지 쓸 수 있습니다.'
-	});
-
-	$("#btn-back").on("click", ()=>{
-        window.history.back();
-    });
-});
-</script>
 <script src="/js/community.js"></script>
+
 <%@ include file="../layout/user/footer.jsp"%>

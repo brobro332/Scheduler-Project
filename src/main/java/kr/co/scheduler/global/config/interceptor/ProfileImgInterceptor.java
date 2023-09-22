@@ -19,10 +19,16 @@ public class ProfileImgInterceptor implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
 
         Object img = modelAndView.getModel().get("img");
+        Object alerts = modelAndView.getModel().get("alerts");
 
         if (img != null) {
 
             request.getSession().setAttribute("img", img);
+        }
+
+        if (alerts != null) {
+
+            request.getSession().setAttribute("alerts", alerts);
         }
     }
 }

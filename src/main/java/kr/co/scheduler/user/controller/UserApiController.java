@@ -1,27 +1,24 @@
 package kr.co.scheduler.user.controller;
 
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import kr.co.scheduler.global.config.mail.RegisterMail;
+import kr.co.scheduler.global.config.mail.CertificationMail;
 import kr.co.scheduler.global.dtos.ResponseDto;
+import kr.co.scheduler.global.dtos.TargetTokenReqDTO;
+import kr.co.scheduler.global.service.ImgService;
 import kr.co.scheduler.user.dtos.UserReqDTO;
 import kr.co.scheduler.user.entity.User;
 import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.Map;
 
@@ -31,18 +28,20 @@ import java.util.Map;
 public class UserApiController {
 
     private final UserService userService;
-    private final RegisterMail registerMail;
+    private final ImgService imgService;
+    private final CertificationMail certificationMail;
 
     /**
      * signUp: 회원가입
-     * 1. 입력 데이터 검증
-     * 2. 비밀번호와 확인용 비밀번호 일치 검증
-     * 3. 이미 가입된 회원인지 검증
-     * 4. 데이터 저장
+     * 1. 입력 데이터에 문제 있을 경우 ValidateResult 리턴
+     * 2. 비밀번호와 확인용 비밀번호 일치 여부 확인
+     * 3. 이미 가입된 회원인지 확인
+     * 4. 회원 데이터 저장
      */
     @PostMapping("/signUp")
     public ResponseDto<Object> signUp(@Valid @RequestBody UserReqDTO.CREATE create, BindingResult bindingResult) {
 
+        // 입력 데이터에 문제 있을 경우 ValidateResult 리턴
         if (bindingResult.hasErrors()) {
 
             Map<String, String> validateResult = userService.validateHandling(bindingResult);
@@ -53,6 +52,7 @@ public class UserApiController {
                     validateResult);
         }
 
+        // 비밀번호와 확인용 비밀번호 일치 여부 확인
         boolean incorrectCheckedPassword =
                 userService.validateCheckedPassword(create.getPassword(), create.getCheckedPassword());
 
@@ -63,15 +63,17 @@ public class UserApiController {
                     "확인용 비밀번호가 일치하지 않습니다.");
         }
 
+        // 이미 가입된 회원인지 확인
         boolean duplication = userService.validateDuplication(create);
 
         if (duplication) {
 
             return ResponseDto.ofFailMessage(
-                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    HttpStatus.BAD_REQUEST.value(),
                     "이미 가입된 회원입니다.");
         }
 
+        // 회원 데이터 저장
         userService.signUp(create);
 
         return ResponseDto.ofSuccessData(
@@ -80,12 +82,12 @@ public class UserApiController {
     }
 
     /**
-     * searchInfo: 회원정보 조회
+     * selectInfo: 회원정보 조회
      * 1. Principal 객체에서 현재 세션의 이메일 값을 Service 로 전달
      * 2. 요청한 이메일 값을 통해 회원정보 조회
      */
     @GetMapping("/api/user/info")
-    public ResponseDto<Object> searchInfo(Principal principal) {
+    public ResponseDto<Object> selectInfo(Principal principal) {
 
         return ResponseDto.ofSuccessData(
                 "회원정보를 성공적으로 조회하였습니다.",
@@ -93,18 +95,16 @@ public class UserApiController {
     }
 
     /**
-     * updatePassword: 회원 비밀번호 수정
-     * 1. 입력 데이터 검증
-     * 2. 현재 비밀번호 검증
-     * 3. 비밀번호와 확인용 비밀번호 일치 검증
-     * 4. 입력된 정보 등록
+     * updateInfo: 회원정보 수정
+     * 1. 입력 데이터에 문제 있을 경우 ValidateResult 리턴
+     * 2. 입력된 정보로 회원 정보 수정
      */
-    @PutMapping("/api/user/update/password")
-    public ResponseDto<Object> updatePassword(@Valid @RequestBody UserReqDTO.UPDATE_PASSWORD update,
+    @PutMapping("/api/user/info")
+    public ResponseDto<Object> updateInfo(@Valid @RequestBody UserReqDTO.UPDATE_INFO update,
                                           BindingResult bindingResult,
                                           Principal principal) {
 
-        // 입력 데이터 검증
+        // 입력 데이터에 문제 있을 경우 ValidateResult 리턴
         if (bindingResult.hasErrors()) {
 
             Map<String, String> validateResult
@@ -116,7 +116,39 @@ public class UserApiController {
                     validateResult);
         }
 
-        // 현재 비밀번호 일치 검증
+        // 입력된 정보로 회원 정보 수정
+        userService.updateInfo(update, principal.getName());
+
+        return ResponseDto.ofSuccessData(
+                "회원정보를 성공적으로 수정하였습니다.",
+                null);
+    }
+
+    /**
+     * updatePW: 회원 비밀번호 수정
+     * 1. 입력 데이터에 문제 있을 경우 ValidateResult 리턴
+     * 2. 현재 비밀번호 확인
+     * 3. 비밀번호와 확인용 비밀번호 일치 여부 확인
+     * 4. 입력된 정보로 회원 비밀번호 수정
+     */
+    @PutMapping("/api/user/password")
+    public ResponseDto<Object> updatePW(@Valid @RequestBody UserReqDTO.UPDATE_PASSWORD update,
+                                          BindingResult bindingResult,
+                                          Principal principal) {
+
+        // 입력 데이터에 문제 있을 경우 ValidateResult 리턴
+        if (bindingResult.hasErrors()) {
+
+            Map<String, String> validateResult
+                    = userService.validateHandling(bindingResult);
+
+            return ResponseDto.ofFailData(
+                    HttpStatus.BAD_REQUEST.value(),
+                    "회원정보 수정에 실패했습니다.",
+                    validateResult);
+        }
+
+        // 현재 비밀번호 확인
         boolean incorrectPrevPassword
                 = userService.validatePrevPassword(principal.getName(), update.getPrevPassword());
 
@@ -127,7 +159,7 @@ public class UserApiController {
                     "현재 비밀번호가 일치하지 않습니다.");
         }
 
-        // 비밀번호와 확인용 비밀번호 일치 검증
+        // 비밀번호와 확인용 비밀번호 일치 여부 확인
         boolean incorrectCheckedPassword
                 = userService.validateCheckedPassword(update.getPassword(), update.getCheckedPassword());
 
@@ -138,7 +170,7 @@ public class UserApiController {
                     "확인용 비밀번호가 일치하지 않습니다.");
         }
 
-        // 회원정보 수정
+        // 입력된 정보로 회원 데이터 수정
         userService.updatePassword(update, principal.getName());
         
         return ResponseDto.ofSuccessData(
@@ -146,74 +178,22 @@ public class UserApiController {
                 null);
     }
 
-    /**
-     * updateInfo: 회원정보 수정
-     * 1. 입력 데이터 검증
-     * 2. 입력된 정보 등록
-     */
-    @PutMapping("/api/user/update/info")
-    public ResponseDto<Object> updateInfo(@Valid @RequestBody UserReqDTO.UPDATE_INFO update,
-                                              BindingResult bindingResult,
-                                              Principal principal) {
-
-        // 입력 데이터 검증
-        if (bindingResult.hasErrors()) {
-
-            Map<String, String> validateResult
-                    = userService.validateHandling(bindingResult);
-
-            return ResponseDto.ofFailData(
-                    HttpStatus.BAD_REQUEST.value(),
-                    "회원정보 수정에 실패했습니다.",
-                    validateResult);
-        }
-
-        // 회원정보 수정
-        userService.updateInfo(update, principal.getName());
-
-        return ResponseDto.ofSuccessData(
-                "회원정보를 성공적으로 수정하였습니다.",
-                null);
-    }
-
-    /**
-     * getProfileImg: 프로필이미지를 뷰로 전송
-     * 뷰에서 바이트 단위의 데이터를 받기 위해서는
-     * HttpStatus, HttpHeaders, HttpBody 를 모두 포함해야하기 때문에
-     * ResponseDTO 가 아닌 ResponseEntity 를 응답한다.
-     */
-    @GetMapping("/api/user/info/profileImg")
-    public ResponseEntity<?> getProfileImg(Principal principal) throws IOException {
-
-        User user = userService.findUser(principal.getName());
-
-        if(user == null) {
-
-            return new ResponseEntity<>("회원 프로필 이미지 조회에 실패했습니다.", HttpStatus.BAD_REQUEST);
-        }
-
-        InputStream inputStream = new FileInputStream(user.getProfileImgPath());
-        byte[] imageByteArray = IOUtils.toByteArray(inputStream);
-        inputStream.close();
-
-        return new ResponseEntity<>(imageByteArray, HttpStatus.OK);
-    }
+    // ================================== 구분 ================================== //
 
     /**
      * uploadProfileImg: 프로필이미지를 등록 및 수정
      * 1. 파일이 업로드 되었는지 확인
-     * 2. 파일이 업로드 되어있지 않다면 실패 메세지 출력
-     * 3. 이미 등록된 프로필이미지가 있다면 삭제
-     * 4. 업로드 된 프로필 이미지 등록
+     * 2. 이미 등록된 이미지가 있다면 기존 이미지를 삭제
+     * 3. 업로드 된 프로필 이미지 등록
      */
-    @PutMapping("/api/user/info/profileImg/update")
+    @PutMapping("/api/user/info/profileImg")
     public ResponseDto<?> uploadProfileImg(Principal principal,
                                            @RequestPart(value = "uploadImg", required = false) MultipartFile uploadImg) throws IOException {
 
-        // 프로필 이미지가 업로드 되었는지 검사
+        // 파일이 업로드 되었는지 확인
         if (uploadImg != null) {
 
-            User user = userService.findUser(principal.getName());
+            User user = userService.selectUser(principal.getName());
 
             if(user == null) {
 
@@ -222,31 +202,19 @@ public class UserApiController {
                         "회원 프로필이미지 조회에 실패하였습니다.");
             }
 
-            String filePath = user.getProfileImgPath();
+            String imgPath = user.getProfileImgPath();
 
             // 이미 등록된 이미지가 있다면 기존 이미지를 삭제
-            if (filePath != null) {
+            if (imgPath != null) {
 
-                File file = null;
-
-                try {
-
-                    file = new File(URLDecoder.decode(filePath, StandardCharsets.UTF_8));
-
-                    file.delete();
-
-                } catch (Exception e) {
-
-                    log.error("fail to delete profileImg", e);
-
-                    return ResponseDto.ofFailMessage(HttpStatus.NOT_IMPLEMENTED.value(), "기존 프로필이미지 삭제에 실패하였습니다.");
-                }
+                imgService.deleteImg(imgPath);
             }
         } else {
 
-            return ResponseDto.ofFailMessage(HttpStatus.NOT_IMPLEMENTED.value(), "기존 프로필이미지 삭제에 실패하였습니다.");
+            return ResponseDto.ofFailMessage(HttpStatus.BAD_REQUEST.value(), "업로드된 프로필이미지가 없습니다.");
         }
-        // 업로드된 이미지 등록
+
+        //업로드 된 프로필 이미지 등록
         userService.uploadProfileImg(principal.getName(), uploadImg);
         
         return ResponseDto.ofSuccessData(
@@ -256,49 +224,86 @@ public class UserApiController {
 
     /**
      * deleteProfileImg: 프로필이미지를 삭제
-     * 1. 업로드된 프로필이미지 파일을 삭제
-     * 2. DB 에서 프로필이미지에 대한 데이터에 null 값을 넣음
      */
-    @PostMapping("/api/user/info/profileImg/delete")
-    public ResponseDto<?> deleteProfileImg(Principal principal, HttpSession session) {
+    @DeleteMapping("/api/user/info/profileImg")
+    public ResponseDto<?> deleteProfileImg(Principal principal) {
 
-        User user = userService.findUser(principal.getName());
-
-        if(user == null) {
-
-            return ResponseDto.ofFailMessage(
-                    HttpStatus.BAD_REQUEST.value(),
-                    "회원 프로필이미지 조회에 실패하였습니다.");
-        }
-
-        File file = null;
-
-        try {
-
-            file = new File(URLDecoder.decode(user.getProfileImgPath(), StandardCharsets.UTF_8));
-
-            file.delete();
-
-            userService.deleteImgData(principal.getName(), session);
-        } catch(Exception e) {
-
-            log.error("fail to delete profileImg", e);
-
-            return ResponseDto.ofFailMessage(HttpStatus.NOT_IMPLEMENTED.value(), "프로필이미지 삭제에 실패하였습니다.");
-        }
+        userService.deleteImg(principal.getName());
 
         return ResponseDto.ofSuccessData(
                 "프로필이미지를 성공적으로 삭제하였습니다.",
                 null);
     }
 
-    @PostMapping("/api/user/mailCertify")
-    @ResponseBody
-    String mailConfirm(@RequestParam("email") String email) throws Exception {
+    // ================================== 구분 ================================== //
 
-        String code = registerMail.sendSimpleMessage(email);
+    /**
+     * emailCode: 회원가입시 이메일 인증 registerMail 로 이메일 코드 전송
+     */
+    @PostMapping("/api/user/emailCode")
+    @ResponseBody
+    String emailCode(@RequestParam("email") String email) throws Exception {
+
+        String code = certificationMail.sendMessage(email);
         System.out.println("인증코드 : " + code);
 
         return code;
+    }
+
+    // ================================== 구분 ================================== //
+
+    /**
+     * selectLoginStatus: 클라이언트로 HttpStatus 를 통해 로그인 여부 전송
+     */
+    @GetMapping("/api/user/loginStatus")
+    public ResponseDto<?> selectLoginStatus() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+            // 사용자가 로그인한 상태
+            return ResponseDto.ofSuccessMessage("로그인한 사용자 입니다.");
+        } else {
+            // 사용자가 로그인하지 않은 상태
+            return ResponseDto.ofFailMessage(HttpStatus.UNAUTHORIZED.value(), "로그인하지 않은 사용자입니다.");
+        }
+    }
+
+    /**
+     * updateTargetToken: 타겟토큰 등록
+     */
+    @PutMapping("/api/user/targetToken")
+    public ResponseDto<?> updateTargetToken(@RequestBody TargetTokenReqDTO targetTokenReqDTO, Principal principal) {
+
+        User user = userService.selectUser(principal.getName());
+
+        if (user != null) {
+
+            userService.updateTargetToken(targetTokenReqDTO.getTargetToken(), user);
+
+            return ResponseDto.ofSuccessMessage("TargetToken이 정상적으로 등록되었습니다.");
+        }
+
+        return ResponseDto.ofFailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(), "TargetToken 등록에 실패하였습니다.");
+    }
+
+    // ================================== 구분 ================================== //
+
+    /**
+     * deleteAlert: 알림 제거
+     */
+    @DeleteMapping("/api/user/alert/{alert_user_id}")
+    public void deleteAlert(@PathVariable(name = "alert_user_id") Long id) {
+
+        userService.deleteAlert(id);
+    }
+
+    /**
+     * deleteAllAlert: 알림 모두 제거
+     */
+    @DeleteMapping("/api/user/allAlert")
+    public void deleteAllAlert(Principal principal) {
+
+        userService.deleteAllAlert(principal.getName());
     }
 }

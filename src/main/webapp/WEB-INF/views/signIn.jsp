@@ -2,11 +2,11 @@
 
 <%@ include file="layout/user/header.jsp"%>
 
-<img src="/image/signin-spap.png" style="display: block; position: relative; width: 200px; left: 42%">
+<img src="/image/signin-spap.png" style="display: block; position: relative; width: 200px; left: 45%">
 
 <br/>
 
-<div class="container" style="display: inline-block; position: relative; left: 35%; width: 70%; min-height: 360px;">
+<div class="container" style="display: inline-block; position: relative; left: 40%; width: 70%; min-height: 360px;">
     <form action="/signIn" method="POST">
         <label>로그인</label>
         <div class="form-group">
@@ -22,8 +22,8 @@
     </form>
 
     <br/>
-    <span style="position: relative; left: 4%;">
-    <a href="#" style="color: gray;">이메일 찾기</a> | <a href="#" style="color: gray;">비밀번호 찾기</a> | <a href="/signUpForm" style="color: gray;">회원가입</a>
+    <span style="position: relative; left: 7%;">
+    <a href="#" id="test1" style="color: gray;">이메일 찾기</a> | <a href="#" id="test2" style="color: gray;">비밀번호 찾기</a> | <a href="/signUp" style="color: gray;">회원가입</a>
     </span>
     <br/><br/>
     <span style="position: relative; left: 9%;">
@@ -32,5 +32,16 @@
     </span>
     <br/><br/>
 </div>
+
+<script>
+$('#test1').on('click', function() {
+
+    alert("아직 개발되지 않은 기능입니다.");
+});
+$('#test2').on('click', function() {
+
+    alert("아직 개발되지 않은 기능입니다.");
+});
+</script>
 
 <%@ include file="layout/user/footer.jsp"%>

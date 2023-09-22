@@ -33,13 +33,6 @@
     </c:otherwise>
     </c:choose>
 
-
-
-
-
-
-
-
     <br/>
     </form>
     <button class="btn btn" id="btn-updatePassword" style="background-color: #956be8; color: white; width: 402px;">등록</button>

@@ -5,7 +5,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### STS ###
+### STS ###cd Scheduler
 .apt_generated
 .classpath
 .factorypath
@@ -23,6 +23,8 @@ bin/
 *.iml
 *.ipr
 *.yml
+*.json
+*.p12
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/

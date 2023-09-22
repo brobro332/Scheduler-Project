@@ -2,7 +2,7 @@
 
 <br/>
 <div id="footer" class="jumbotron text-center">
-    <p style="color: white;"><b>🍇 SPAP Seven-days Planning Assistant Project.</b></p>
+    <p style="color: white;"><b>🍇 SAPP Scheduler and Project-Planner.</b></p>
     <p style="color: white;"><b>© 2023. Jin bro. Co. All rights reserved.</b></p>
 </div>
 <script src="/js/summernote/summernote-lite.js"></script>

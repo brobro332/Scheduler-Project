@@ -3,7 +3,7 @@ package kr.co.scheduler.global.config.mail;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -12,13 +12,16 @@ import java.io.UnsupportedEncodingException;
 import java.util.Random;
 
 @Service
-public class RegisterMail {
+@RequiredArgsConstructor
+public class CertificationMail {
 
-    @Autowired
-    JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender;
 
     private String ePw;
 
+    /**
+     * createMessage: 메세지 생성
+     */
     public MimeMessage createMessage(String to) throws MessagingException, UnsupportedEncodingException {
 
         MimeMessage message = javaMailSender.createMimeMessage();
@@ -47,24 +50,28 @@ public class RegisterMail {
         return message;
     }
 
+    /**
+     * createKey: 인증코드 생성
+     */
     public String createKey() {
+
         StringBuffer key = new StringBuffer();
-        Random rnd = new Random();
+        Random random = new Random();
 
         for (int i = 0; i < 8; i++) { // 인증코드 8자리
-            int keyIndex = rnd.nextInt(3); // 0~2 까지 랜덤, rnd 값에 따라서 아래 switch 문이 실행됨
+            int keyIndex = random.nextInt(3); // 0~2 까지 랜덤, rnd 값에 따라서 아래 switch 문이 실행됨
 
             switch (keyIndex) {
                 case 0:
-                    key.append((char) ((int) (rnd.nextInt(26)) + 97));
-                    // a~z (ex. 1+97=98 => (char)98 = 'b')
+                    key.append((char) ((int) (random.nextInt(26)) + 97));
+                    // a~z
                     break;
                 case 1:
-                    key.append((char) ((int) (rnd.nextInt(26)) + 65));
+                    key.append((char) ((int) (random.nextInt(26)) + 65));
                     // A~Z
                     break;
                 case 2:
-                    key.append((rnd.nextInt(10)));
+                    key.append((random.nextInt(10)));
                     // 0~9
                     break;
             }
@@ -73,19 +80,24 @@ public class RegisterMail {
         return key.toString();
     }
 
-    public String sendSimpleMessage(String to) throws Exception {
+    /**
+     * sendMessage: createMessage 와 createKey 를 통해 메세지 전송
+     */
+    public String sendMessage(String to) throws Exception {
 
         ePw = createKey(); // 랜덤 인증번호 생성
 
         // TODO Auto-generated method stub
         MimeMessage message = createMessage(to); // 메일 발송
+
         try {// 예외처리
+
             javaMailSender.send(message);
-        } catch (MailException es) {
-            es.printStackTrace();
+        } catch (MailException e) {
+
+            e.printStackTrace();
             throw new IllegalArgumentException();
         }
-
 
         return ePw;
     }

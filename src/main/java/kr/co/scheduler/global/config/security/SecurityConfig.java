@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 @Configuration
 @RequiredArgsConstructor
@@ -19,23 +18,23 @@ public class SecurityConfig {
 
     private final PrincipalDetailsService principalDetailsService;
     private static final String[] AUTH_WHITELIST = {
-            "/", "/js/**", "/css/**", "/image/**", "/api/**", "/kakao/**", "/naver/**", "/community/**"
+            "/", "/js/**", "/css/**", "/image/**", "/api/**", "/kakao/**", "/naver/**", "/community/**", "/json/**", "/firebase-messaging-sw.js"
     };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors().disable()
                 .csrf().disable()
                 .authorizeHttpRequests(authorize -> authorize
                         .shouldFilterAllDispatcherTypes(false)
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .requestMatchers("/signIn", "/signUp").permitAll()
-                        .requestMatchers("/signInForm", "/signUpForm").permitAll()
                         .requestMatchers("/user/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                             .formLogin(login -> login
-                                .loginPage("/signInForm")
+                                .loginPage("/signIn")
                                 .loginProcessingUrl("/signIn")
                                 .usernameParameter("email")
                                 .passwordParameter("password")
