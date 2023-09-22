@@ -60,7 +60,6 @@ public class BatchJob{
     @Bean
     public Step processNotLoggedFor10DaysUsersStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         LocalDate daysAgo = LocalDate.now().minusDays(1);
-        System.out.println(daysAgo + "aa");
 
         return new StepBuilder("processNotLoggedFor10DaysUsersStep", jobRepository)
                 .<User, User>chunk(10, transactionManager)
