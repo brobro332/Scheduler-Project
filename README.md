@@ -45,7 +45,8 @@ Scheduler-Project
 ├── community
 │   ├── Post CRUD
 │   ├── comment CRUD
-│   └── !Simple view_cnt Logic and needs improvement! 
+│   ├── reply CRUD
+│   └── view_cnt Logic based on Cookie
 └── scheduler
     ├── Project Planner CRUD
     ├── Task CRUD
