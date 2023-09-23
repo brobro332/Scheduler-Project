@@ -1,21 +1,19 @@
 package kr.co.scheduler.community.dtos;
 
-import kr.co.scheduler.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-public class CommentReqDTO {
+public class ReplyReqDTO {
 
     @Getter
     @Builder
     @AllArgsConstructor
     public static class CREATE {
 
-    private String comment;
+    private String reply;
 
-    public CREATE(){
-    }
+    private Long parent_reply_id;
     }
 
     @Getter
@@ -23,7 +21,7 @@ public class CommentReqDTO {
     @AllArgsConstructor
     public static class UPDATE {
 
-        private String updateComment;
+        private String updateReply;
 
         // 기본 생성자 추가
         public UPDATE() {

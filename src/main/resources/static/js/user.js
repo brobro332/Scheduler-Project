@@ -256,7 +256,6 @@ let index = {
                  "email" : $("#email").val()
               },
               success : function(data){
-                 console.log("data : "+data);
                  chkEmailCertify(data, emailCertify);
               }
            });

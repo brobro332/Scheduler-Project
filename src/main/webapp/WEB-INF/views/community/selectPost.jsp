@@ -6,6 +6,7 @@
 <div class="card" style="padding: 20px;">
   <div class="card-body">
   <input type="text" class="form-control" value="${post.id}" id="post_id" hidden>
+  <input type="text" class="form-control" value="${info.name}" id="principal_name" hidden>
   <span><h1>${post.title}</h1></span>
   <div id="image_wrapper" style="position: relative; display:inline-block; width: 40px; height: 40px; border-radius: 70%; overflow: hidden;">
       <img id="profileImg" src="/api/profileImg/${post.user.email}" style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
@@ -23,7 +24,10 @@
     <c:when test="${empty comments.content}">
     </c:when>
     <c:otherwise>
+    <div class="replyButton">
       <c:forEach items="${comments.content}" var="comment">
+      <c:choose>
+      <c:when test="${comment.delete_yn == 'N'}">
       <div class="findComment_id">
       <input type="text" class="form-control comment_id" value="${comment.id}" hidden>
       <div class="update">
@@ -41,8 +45,8 @@
       <a style="font-size: 12px; color: purple; position:relative; display:inline-block; border: 3px solid; border-radius: 30px;"><b>작성자</b></a>
       </c:if>
         <c:if test="${info.email == comment.user.email}">
-            <div class="btn-group" style="display: inline-block; position:relative; left:360%;">
-                <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
+            <div class="btn-group" style="display: inline-block;">
+                <button style="position: relative; left: 1140%;" type="button" class="btn dropdown-toggle" data-toggle="dropdown">
                    ◾◾◾
                 </button>
                 <div class="dropdown-menu">
@@ -55,13 +59,77 @@
       </div>
       <div>
       <a style="display: block;"><pre>${comment.comment}</pre></a>
-      <a style="position: relative; left:91%;" href="#"><p style="color: gray;">답글쓰기</p></a>
+      <button type="button" style="position: relative; left:91%; color: gray;" class="btn btn-outline createReply">답글쓰기</button>
       </div>
       </div>
       </div>
       </div>
       <hr>
+      </c:when>
+      <c:otherwise>
+        댓글 작성자에 의해 삭제된 댓글입니다.
+        <hr>
+      </c:otherwise>
+      </c:choose>
+      <c:forEach items="${comment.replies}" var="reply">
+                      <c:choose>
+                      <c:when test="${reply.delete_yn == 'N'}">
+                      <div class="findReply_id">
+                      <input type="text" class="form-control reply_id" value="${reply.id}" hidden>
+                      <div class="update">
+                      <div class="reply" style="position: relative; left:1%;">
+                      <a style="display: inline-block; color:gray;">└>&nbsp;<div style="height:100%; position: relative; display:inline-block;">
+                          <div id="image_wrapper" style="position: relative; display:inline-block; width: 45px; height: 45px; border-radius: 70%; overflow: hidden;">
+                            <img id="profileImg" src="/api/profileImg/${reply.user.email}" style="position: absolute; right: 0%; width: 100%; height: 100%; object-fit: cover;">
+                          </div>
+                      </div>
+
+                      <div style="position:relative; display:inline-block; left: 1%;">
+                      <a><b>${reply.user.name}</b></a>
+                      <c:if test="${post.user.email == reply.user.email}">
+                      <a style="font-size: 12px; color: purple; position:relative; display:inline-block; border: 3px solid; border-radius: 30px;"><b>작성자</b></a>
+                      </c:if>
+                        <c:if test="${info.email == reply.user.email}">
+                            <div class="btn-group" style="display: inline-block;">
+                                <button style="position: relative; left: 1102%;" type="button" class="btn dropdown-toggle" data-toggle="dropdown">
+                                   ◾◾◾
+                                </button>
+                                <div class="dropdown-menu">
+                                  <button class="dropdown-item updateReply" id="btn-replyUpdate">수정</button>
+                                  <button class="dropdown-item deleteReply" id="btn-replyDelete">삭제</button>
+                                </div>
+                            </div>
+                      </c:if>
+                      <p style="display:block;">${reply.createdAt}</p>
+                      </div>
+                      <c:choose>
+                      <c:when test="${empty reply.parentReply}">
+                      <div>
+                      <a style="display: flex;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<pre style="display:inline-block;">${reply.reply}</pre></a>
+                      <button type="button" style="position: relative; left:91%; color: gray;" class="btn btn-outline createReplyToReply">답글쓰기</button>
+                      </div>
+                      </c:when>
+                      <c:otherwise>
+                      <div>
+                      <a style="display: flex;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b style="display:inline-block;">${reply.parentReply.user.name}</b>&nbsp;&nbsp;&nbsp;<pre style="display:inline-block;">${reply.reply}</pre></a>
+                      <button type="button" style="position: relative; left:91%; color: gray;" class="btn btn-outline createReplyToReply">답글쓰기</button>
+                      </div>
+                      </c:otherwise>
+                      </c:choose>
+                      </div>
+                      </div>
+                      </div>
+                      <hr>
+                      </c:when>
+                      <c:otherwise>
+                      대댓글 작성자에 의해 삭제된 대댓글입니다.
+                      <hr>
+                      </c:otherwise>
+                      </c:choose>
+
       </c:forEach>
+      </c:forEach>
+      </div>
         <ul class="pagination" style="position:relative; left:45%; width: 20%;">
             <c:choose>
                 <c:when test="${comments.first}">

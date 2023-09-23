@@ -41,6 +41,9 @@ public class Post extends BaseTimeEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Comment> comment;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<Reply> replies;
+
     @Builder
     public Post(String title, String content, User user) {
 
