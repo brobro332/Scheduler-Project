@@ -38,6 +38,9 @@
   <div style="position:absolute; display: inline-block; width: 65%;">
   <c:choose>
       <c:when test="${empty projects.content}">
+      <div style="text-align: center; max-width: 80%;">
+      <a>생성된 프로젝트 플래너가 없습니다.</a>
+      </div>
       </c:when>
       <c:otherwise>
           <c:forEach items="${projects.content}" var="project">
@@ -96,35 +99,35 @@
                 <p></p>
                 </div>
           </c:forEach>
+                <div style="text-align: center; width: 65%;">
+                <div style="display: inline-block;">
+                  <ul class="pagination" style="position:relative; width: 20%;">
+                    	<c:choose>
+                    		<c:when test="${projects.first}">
+                    			<li class="page-item disabled"><a class="page-link" href="?page=${projects.number-1}"><</a></li>
+                    		</c:when>
+                    		<c:otherwise>
+                    			<li class="page-item"><a class="page-link" href="?page=${projects.number-1}"><</a></li>
+                    		</c:otherwise>
+                    	</c:choose>
+
+                    	<c:forEach var="i" begin="1" end="${projects.totalPages}">
+                            <li class="page-item"><a class="page-link" href="?page=${i-1}">${i}</a></li>
+                      </c:forEach>
+
+                    	<c:choose>
+                    		<c:when test="${projects.last}">
+                    			<li class="page-item disabled"><a class="page-link" href="?page=${projects.number+1}">></a></li>
+                    		</c:when>
+                    		<c:otherwise>
+                    			<li class="page-item"><a class="page-link" href="?page=${projects.number+1}">></a></li>
+                    		</c:otherwise>
+                    	</c:choose>
+                    </ul>
+                </div>
+                </div>
       </c:otherwise>
       </c:choose>
-      <div style="text-align: center; width: 65%;">
-      <div style="display: inline-block;">
-        <ul class="pagination" style="position:relative; width: 20%;">
-          	<c:choose>
-          		<c:when test="${projects.first}">
-          			<li class="page-item disabled"><a class="page-link" href="?page=${projects.number-1}"><</a></li>
-          		</c:when>
-          		<c:otherwise>
-          			<li class="page-item"><a class="page-link" href="?page=${projects.number-1}"><</a></li>
-          		</c:otherwise>
-          	</c:choose>
-
-          	<c:forEach var="i" begin="1" end="${projects.totalPages}">
-                  <li class="page-item"><a class="page-link" href="?page=${i-1}">${i}</a></li>
-            </c:forEach>
-
-          	<c:choose>
-          		<c:when test="${projects.last}">
-          			<li class="page-item disabled"><a class="page-link" href="?page=${projects.number+1}">></a></li>
-          		</c:when>
-          		<c:otherwise>
-          			<li class="page-item"><a class="page-link" href="?page=${projects.number+1}">></a></li>
-          		</c:otherwise>
-          	</c:choose>
-          </ul>
-      </div>
-      </div>
   </div>
   </form>
 </div>

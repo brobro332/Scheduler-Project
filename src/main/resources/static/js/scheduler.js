@@ -281,17 +281,12 @@ if (!window.schedulerLoaded) {
     $(document).on("click", ".subTask-checkbox", function() {
 
         var upperTaskId = $(this).data("uppertask-id");
-        console.log(upperTaskId);
 
         // 해당 상위 업무 ID와 연결된 모든 하위 업무 체크박스를 가져옴
         var subTaskCheckboxes = $(".subTask-checkbox[data-uppertask-id='" + upperTaskId + "']");
 
         // 모든 하위 업무 체크박스의 선택 여부가 true라면 상위 업무 체크박스도 체크
         var allSubTasksChecked = subTaskCheckboxes.length === subTaskCheckboxes.filter(":checked").length;
-
-        console.log(subTaskCheckboxes.length);
-        console.log(subTaskCheckboxes.filter(":checked").length);
-        console.log(allSubTasksChecked);
 
         $(".task-checkbox[data-task-id='" + upperTaskId + "']").prop("checked", allSubTasksChecked);
     });
@@ -464,8 +459,6 @@ if (!window.schedulerLoaded) {
         var subTaskSelectBox = document.getElementById("subTask");
         var subTaskSelectedIndex = subTaskSelectBox.selectedIndex;
         var subTaskSelectedValue = subTaskSelectBox.options[subTaskSelectedIndex].value;
-
-        console.log(subTaskSelectedValue);
 
         if (subTaskSelectedValue === "하위업무 카테고리 선택") {
 

@@ -45,8 +45,7 @@ Scheduler-Project
 ├── community
 │   ├── Post CRUD
 │   ├── comment CRUD
-│   └── !Simple view_cnt Logic and needs improvement!
-│   
+│   └── !Simple view_cnt Logic and needs improvement! 
 └── scheduler
     ├── Project Planner CRUD
     ├── Task CRUD

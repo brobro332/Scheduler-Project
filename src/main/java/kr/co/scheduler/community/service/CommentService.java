@@ -64,6 +64,8 @@ public class CommentService {
 
     /**
      * deleteComment: 댓글 삭제
+     * 1. 답글이 없다면 데이터베이스에서 제거
+     * 2. 답글이 있다면 데이터베이스에서 삭제되지는 않고, delete_yn 값을 'Y'로 변경
      */
     @Transactional
     public void deleteComment(Long id) {
@@ -73,7 +75,13 @@ public class CommentService {
                     return new IllegalArgumentException("해당 댓글을 찾을 수 없습니다.");
                 });
 
-        commentRepository.delete(comment);
+        if (comment.getReplies().size() == 0) {
+
+            commentRepository.delete(comment);
+        } else {
+
+            comment.setDelete_yn(Character.toString('Y'));
+        }
     }
 
     // ================================== 구분 ================================== //
