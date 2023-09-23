@@ -177,6 +177,49 @@
 </div>
 </div>
 
+<script>
+function setCookie(cookieName, cookieValue, expirationDays) {
+    const date = new Date();
+    date.setTime(date.getTime() + (expirationDays * 24 * 60 * 60 * 1000));
+    const expires = "expires=" + date.toUTCString();
+    document.cookie = cookieName + "=" + cookieValue + ";" + expires + ";path=/";
+}
+
+function getCookie(cookieName) {
+    const name = cookieName + "=";
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const cookieArray = decodedCookie.split(';');
+    for (let i = 0; i < cookieArray.length; i++) {
+        let cookie = cookieArray[i];
+        while (cookie.charAt(0) === ' ') {
+            cookie = cookie.substring(1);
+        }
+        if (cookie.indexOf(name) === 0) {
+            return cookie.substring(name.length, cookie.length);
+        }
+    }
+    return "";
+}
+
+var post_id = $('#post_id').val();
+var cookieName = "viewed_" + post_id;
+var cookieValue = getCookie(cookieName);
+
+if (cookieValue !== "1") {
+
+    $.ajax({
+        type: 'POST',
+        url: '/api/community/post/' + post_id + '/viewCnt',
+        success: function(resp) {
+            setCookie(cookieName, "1", 1);
+        },
+        error: function(error) {
+            alert(error.message);
+        }
+    });
+}
+
+</script>
 <script src="/js/community.js"></script>
 
 <%@ include file="../layout/user/footer.jsp"%>

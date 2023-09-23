@@ -168,11 +168,6 @@ if (!window.communityLoaded) {
 
         replyInput.show();
         replyButton.show();
-
-        replyButton.click(function() {
-            // 답글을 서버로 전송하고 처리하는 코드를 작성하세요.
-            // ...
-        });
     });
 
     $(document).on("click", ".createReplyToReply", function() {
@@ -180,10 +175,8 @@ if (!window.communityLoaded) {
             var replyContainer  = $(this).closest('.findReply_id');
             var replyInputForm = $(this).closest('.replyButton');
 
-            // 이미 열려있는 답글 입력 폼을 닫습니다.
             replyInputForm.find('.reply-form').remove();
 
-            // 답글 입력 폼을 생성합니다.
             var replyInput = $('<p>&nbsp;' + principal_name + '</p><textarea type="text" style="border: 0px; color: gray; resize: none;" class="form-control comment-text" placeholder="답글을 입력해보세요"></textarea><p></p>');
             var cancelReplyButton = $('<button class="btn btn btn-cancelReply" style="background-color: white; color: gray; width: 100px; float:right;">취소</button>');
             var replyButton = $('<button class="btn btn btn-replyToReply" style="background-color: white; color: gray; width: 100px; float:right;">등록</button></br></br>');
@@ -196,11 +189,6 @@ if (!window.communityLoaded) {
 
             replyInput.show();
             replyButton.show();
-
-            replyButton.click(function() {
-                // 답글을 서버로 전송하고 처리하는 코드를 작성하세요.
-                // ...
-            });
         });
 
     $(document).on("click", ".btn-cancelReply", function() {

@@ -58,7 +58,6 @@ public class CommunityController {
     @GetMapping("/community/selectPost/{post_id}")
     public String selectPost(@AuthenticationPrincipal PrincipalDetails principalDetails, Model model, @PathVariable(name = "post_id") Long id, @PageableDefault(size = 5, sort="post", direction = Sort.Direction.ASC) Pageable pageable) {
 
-        postService.increaseView_cnt(id);
         Post post = postService.selectPost(id);
         User user = userService.selectUser(principalDetails.getUsername());
 

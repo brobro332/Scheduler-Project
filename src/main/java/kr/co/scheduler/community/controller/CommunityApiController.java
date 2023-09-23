@@ -1,5 +1,8 @@
 package kr.co.scheduler.community.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import kr.co.scheduler.community.dtos.CommentReqDTO;
 import kr.co.scheduler.community.dtos.PostReqDTO;
 import kr.co.scheduler.community.dtos.ReplyReqDTO;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -69,6 +73,52 @@ public class CommunityApiController {
             return ResponseDto.ofSuccessData(
                     "게시글이 정상적으로 삭제되었습니다.",
                     null);
+    }
+
+    // ================================== 구분 ================================== //
+
+    /**
+     * updateViewCnt: 게시글 조회시 쿠키 기반의 조회수 증가
+     */
+    @PostMapping("/api/community/post/{post_id}/viewCnt")
+    public ResponseDto<?> updateViewCnt(@PathVariable Long post_id, HttpServletRequest request, HttpServletResponse response) {
+
+        Post post = postService.selectPost(post_id);
+
+        if (post != null) {
+
+            // 이미 조회된 게시물인지 쿠키를 통해 확인
+            String cookieName = "viewed_" + post_id;
+            Cookie[] cookies = request.getCookies();
+            boolean alreadyViewed = false;
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals(cookieName)) {
+                        alreadyViewed = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!alreadyViewed) {
+
+                postService.updateViewCnt(post_id);
+
+                // 쿠키 설정 (24시간 동안 유지)
+                Cookie viewCookie = new Cookie(cookieName, "1");
+                viewCookie.setMaxAge(24 * 60 * 60); // 1일
+                viewCookie.setPath("/");
+                response.addCookie(viewCookie);
+
+                return ResponseDto.ofSuccessMessage("조회수가 증가했습니다.");
+            } else {
+
+                return ResponseDto.ofFailMessage(HttpStatus.BAD_REQUEST.value(), "이미 조회했습니다.");
+            }
+        } else {
+
+            return ResponseDto.ofFail(HttpStatus.NOT_FOUND.value());
+        }
     }
 
     // ================================== 구분 ================================== //

@@ -220,12 +220,11 @@ public class PostService {
     // ================================== 구분 ================================== //
 
     /**
-     * increaseView_cnt: 게시글 조회시 조회수 증가
-     * 수정사항: 쿠키 기반의 조회수 증가 로직으로 구현해야함
+     * updateViewCnt: 게시글 조회시 쿠키 기반의 조회수 증가
      */
     @Transactional
-    public int increaseView_cnt(Long id) {
+    public int updateViewCnt(Long id) {
 
-        return postRepository.updateView_cnt(id);
+        return postRepository.updateViewCnt(id);
     }
 }
