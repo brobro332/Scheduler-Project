@@ -5,6 +5,7 @@ import kr.co.scheduler.community.entity.Comment;
 import kr.co.scheduler.community.entity.Post;
 import kr.co.scheduler.community.entity.Reply;
 import kr.co.scheduler.community.repository.ReplyRepository;
+import kr.co.scheduler.global.service.AlertService;
 import kr.co.scheduler.user.entity.User;
 import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class ReplyService {
     private final PostService postService;
     private final CommentService commentService;
     private final UserService userService;
+    private final AlertService alertService;
     private final ReplyRepository replyRepository;
 
     /**
@@ -38,11 +40,11 @@ public class ReplyService {
      * createReplyToReply: 본 댓글에 대한 대댓글 등록
      */
     @Transactional
-    public void createReplyToComment(Long post_id, Long community_id, ReplyReqDTO.CREATE create, String email) {
+    public void createReplyToComment(Long post_id, Long comment_id, ReplyReqDTO.CREATE create, String email) {
 
         User user = userService.selectUser(email);
         Post post = postService.selectPost(post_id);
-        Comment comment = commentService.selectComment(community_id);
+        Comment comment = commentService.selectComment(comment_id);
         Reply reply = null;
 
         if (user == null) {
@@ -61,6 +63,8 @@ public class ReplyService {
                         .build();
             }
         }
+
+        alertService.createAlert("게시글 " + post.getTitle()+ "에 단 댓글 " + comment.getComment() + "에 대댓글이 달렸습니다.", comment.getUser());
 
         replyRepository.save(reply);
     }

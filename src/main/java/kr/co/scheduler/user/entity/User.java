@@ -1,7 +1,9 @@
 package kr.co.scheduler.user.entity;
 
 import jakarta.persistence.*;
+import kr.co.scheduler.community.entity.Comment;
 import kr.co.scheduler.community.entity.Post;
+import kr.co.scheduler.community.entity.Reply;
 import kr.co.scheduler.global.entity.AlertUser;
 import kr.co.scheduler.user.enums.Role;
 import kr.co.scheduler.global.entity.BaseTimeEntity;
@@ -50,11 +52,17 @@ public class User extends BaseTimeEntity {
 
     private LocalDate lastLoggedDay;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Post> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<AlertUser> alertUsers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Reply> replies = new ArrayList<>();
 
     @Builder
     public User(String email, String password, String name, String phone, Role role, String oauth) {

@@ -193,7 +193,7 @@ public class CommunityApiController {
         replyService.createReplyToComment(post_id, comment_id, create, principal.getName());
 
         return ResponseDto.ofSuccessData(
-                "답글이 정상적으로 등록되었습니다.",
+                "대댓글이 정상적으로 등록되었습니다.",
                 null);
     }
 
@@ -206,7 +206,7 @@ public class CommunityApiController {
         replyService.createReplyToReply(post_id, comment_id, create, principal.getName());
 
         return ResponseDto.ofSuccessData(
-                "답글이 정상적으로 등록되었습니다.",
+                "대댓글이 정상적으로 등록되었습니다.",
                 null);
     }
 

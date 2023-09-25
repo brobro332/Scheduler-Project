@@ -4,6 +4,7 @@ import kr.co.scheduler.community.dtos.CommentReqDTO;
 import kr.co.scheduler.community.entity.Comment;
 import kr.co.scheduler.community.entity.Post;
 import kr.co.scheduler.community.repository.CommentRepository;
+import kr.co.scheduler.global.service.AlertService;
 import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ public class CommentService {
 
     private final UserService userService;
     private final PostService postService;
+    private final AlertService alertService;
     private final CommentRepository commentRepository;
 
     /**
@@ -39,13 +41,20 @@ public class CommentService {
     @Transactional
     public void createComment(Long id, CommentReqDTO.CREATE create, String email) {
 
-        Comment comment = Comment.builder()
-                .user(userService.selectUser(email))
-                .comment(create.getComment())
-                .post(postService.selectPost(id))
-                .build();
+        Post post = postService.selectPost(id);
 
-        commentRepository.save(comment);
+        if (post != null) {
+
+            Comment comment = Comment.builder()
+                    .user(userService.selectUser(email))
+                    .comment(create.getComment())
+                    .post(post)
+                    .build();
+
+            alertService.createAlert("게시글 "+ post.getTitle() + "에 댓글이 달렸습니다.", post.getUser());
+
+            commentRepository.save(comment);
+        }
     }
 
     /**
