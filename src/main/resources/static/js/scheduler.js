@@ -409,7 +409,7 @@ if (!window.schedulerLoaded) {
                     subTaskSelect.append(new Option(subTask.name, subTask.name));
                 });
 
-                if (data.length === 0) {
+                if (data.length === 0 && subTaskSelect.find('option').length < 2) {
                     subTaskSelect.append(new Option("-", ""));
                 }
             }
