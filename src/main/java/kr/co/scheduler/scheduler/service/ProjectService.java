@@ -1,8 +1,7 @@
 package kr.co.scheduler.scheduler.service;
 
-import kr.co.scheduler.global.entity.Alert;
-import kr.co.scheduler.global.entity.AlertUser;
 import kr.co.scheduler.global.repository.AlertUserRepository;
+import kr.co.scheduler.global.service.AlertService;
 import kr.co.scheduler.global.service.FCMService;
 import kr.co.scheduler.scheduler.dtos.ProjectReqDTO;
 import kr.co.scheduler.scheduler.dtos.TaskReqDTO;
@@ -34,10 +33,10 @@ public class ProjectService {
     private final UserService userService;
     private final TaskService taskService;
     private final FCMService fcmService;
+    private final AlertService alertService;
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
     private final SubTaskRepository subTaskRepository;
-    private final AlertUserRepository alertUserRepository;
 
     /**
      * selectPRJPlanner: 프로젝트 플래너 조회 및 리턴
@@ -349,20 +348,9 @@ public class ProjectService {
                         fcmService.sendFCMMessage(targetToken, "SPAP 스케줄러", body);
                     }
 
-                Alert alert = Alert
-                        .builder()
-                        .content(body)
-                        .build();
-
                 User user = project.getUser();
 
-                AlertUser alertUser = AlertUser
-                        .builder()
-                        .alert(alert)
-                        .user(user)
-                        .build();
-
-                alertUserRepository.save(alertUser);
+                alertService.createAlert(body, user);
                 }
             }
         }

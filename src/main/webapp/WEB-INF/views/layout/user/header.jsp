@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ page import="java.time.LocalDateTime" %>
@@ -91,7 +92,7 @@
             <!-- Modal content-->
             <div style="width:1000px;" class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title">알림 - N개</h5>
+                <h5 class="modal-title">알림 - ${fn:length(alerts.content)}개</h5>
               </div>
               <div id="alertList" class="modal-body">
                 <form style="text-align:center;">
