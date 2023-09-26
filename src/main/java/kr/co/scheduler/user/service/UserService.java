@@ -59,9 +59,9 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    @Value("${oauth.key}")
+    @Value("${OAUTH_KEY}")
     private String key;
-    @Value("${oauth.naver.key}")
+    @Value("${OAUTH_NAVER_KEY}")
     private String client_secret;
 
     /**

@@ -49,95 +49,112 @@
 <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-messaging-compat.js"></script>
 <script type="module">
 
-  var firebaseConfig = {
-    apiKey: "AIzaSyDv-8VaMQnhg8WkybcvgtzxBqTzatGh1t0",
-    authDomain: "scheduler-project-fad66.firebaseapp.com",
-    projectId: "scheduler-project-fad66",
-    storageBucket: "scheduler-project-fad66.appspot.com",
-    messagingSenderId: "973664071169",
-    appId: "1:973664071169:web:5e515d753f9f3ec8565a00"
-  };
-
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const messaging = firebase.messaging();
-
-  if ('serviceWorker' in navigator) {
-    // 서비스 워커를 등록합니다.
-    navigator.serviceWorker.register('/firebase-messaging-sw.js')
-      .then(function(registration) {
-        console.log('서비스 워커 등록 성공:', registration);
-      })
-      .catch(function(error) {
-        console.error('서비스 워커 등록 실패:', error);
-      });
-  }
-
-  document.addEventListener("DOMContentLoaded", function () {
-    function requestNotificationPermission() {
-      var notificationStatus = Notification.permission;
-
-      if (notificationStatus === 'default') {
-        Notification.requestPermission().then(function (permission) {
-
-        });
-      }
-    }
-
-    requestNotificationPermission();
-
     $.ajax({
-      method: 'GET',
-      url: '/api/user/loginStatus',
-      dataType: 'json',
-      success: function (data) {
-        if (data.statusCode === 200) {
-          var notificationStatus = Notification.permission;
-          if (notificationStatus === 'granted') {
-            messaging.getToken()
-              .then(function (currentToken) {
-                if (currentToken) {
+        url: '/api/var',
+        method: 'GET',
+        success: function (data) {
+            var firebaseApiKey = data.apiKey;
+            var firebaseAuthDomain = data.authDomain;
+            var firebaseProjectId = data.projectId;
+            var firebaseStorageBucket = data.storageBucket;
+            var firebaseMessagingSenderId = data.messagingSenderId;
+            var firebaseAppId = data.appId;
 
-                  $.ajax({
-                    url: '/api/user/targetToken',
-                    type: 'PUT',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ targetToken: currentToken }),
-                    success: function () {
-                      console.log('FCM 토큰이 서버로 전송되었습니다.' + currentToken);
-                    },
-                    error: function (error) {
-                      console.error('FCM 토큰 전송 실패:', error);
-                    }
+            var firebaseConfig = {
+              apiKey: firebaseApiKey,
+              authDomain: firebaseAuthDomain,
+              projectId: firebaseProjectId,
+              storageBucket: firebaseStorageBucket,
+              messagingSenderId: firebaseMessagingSenderId,
+              appId: firebaseAppId
+            };
+
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+
+            const messaging = firebase.messaging();
+
+              if ('serviceWorker' in navigator) {
+                // 서비스 워커를 등록합니다.
+                navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                  .then(function(registration) {
+                    console.log('서비스 워커 등록 성공:', registration);
+                  })
+                  .catch(function(error) {
+                    console.error('서비스 워커 등록 실패:', error);
                   });
-                } else {
-                  console.log("푸시 알림 토큰이 없습니다.");
+              }
+
+              document.addEventListener("DOMContentLoaded", function () {
+                function requestNotificationPermission() {
+                  var notificationStatus = Notification.permission;
+
+                  if (notificationStatus === 'default') {
+                    Notification.requestPermission().then(function (permission) {
+
+                    });
+                  }
                 }
-              })
-              .catch(function (err) {
-                console.log("푸시 알림 토큰을 가져오는 동안 오류 발생:", err);
-              });
-          } else {
+
+                requestNotificationPermission();
+
                 $.ajax({
-                    url: '/api/user/targetToken',
-                    type: 'PUT',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ targetToken: null }),
-                    success: function () {
-                      console.log('FCM 토큰을 NULL 값으로 수정합니다.');
-                    },
-                    error: function (error) {
-                      console.error('FCM 토큰 전송 실패:', error);
+                  method: 'GET',
+                  url: '/api/user/loginStatus',
+                  dataType: 'json',
+                  success: function (data) {
+                    if (data.statusCode === 200) {
+                      var notificationStatus = Notification.permission;
+                      if (notificationStatus === 'granted') {
+                        messaging.getToken()
+                          .then(function (currentToken) {
+                            if (currentToken) {
+
+                              $.ajax({
+                                url: '/api/user/targetToken',
+                                type: 'PUT',
+                                contentType: 'application/json',
+                                data: JSON.stringify({ targetToken: currentToken }),
+                                success: function () {
+                                  console.log('FCM 토큰이 서버로 전송되었습니다.' + currentToken);
+                                },
+                                error: function (error) {
+                                  console.error('FCM 토큰 전송 실패:', error);
+                                }
+                              });
+                            } else {
+                              console.log("푸시 알림 토큰이 없습니다.");
+                            }
+                          })
+                          .catch(function (err) {
+                            console.log("푸시 알림 토큰을 가져오는 동안 오류 발생:", err);
+                          });
+                      } else {
+                            $.ajax({
+                                url: '/api/user/targetToken',
+                                type: 'PUT',
+                                contentType: 'application/json',
+                                data: JSON.stringify({ targetToken: null }),
+                                success: function () {
+                                  console.log('FCM 토큰을 NULL 값으로 수정합니다.');
+                                },
+                                error: function (error) {
+                                  console.error('FCM 토큰 전송 실패:', error);
+                                }
+                              });
+                      }
                     }
-                  });
-          }
+                  },
+                  error: function (error) {
+                    alert(error);
+                  }
+                });
+              });
+        },
+        error: function (error) {
+            console.error('환경 변수를 가져오는 중 오류 발생: ', error);
         }
-      },
-      error: function (error) {
-        alert(error);
-      }
     });
-  });
 </script>
 
 <%@ include file="layout/user/footer.jsp"%>

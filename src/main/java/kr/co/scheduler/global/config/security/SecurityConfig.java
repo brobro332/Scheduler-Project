@@ -31,6 +31,8 @@ public class SecurityConfig {
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .requestMatchers("/signIn", "/signUp").permitAll()
                         .requestMatchers("/user/**").authenticated()
+                        .requestMatchers("/scheduler/**").authenticated()
+                        .requestMatchers("/community/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                             .formLogin(login -> login

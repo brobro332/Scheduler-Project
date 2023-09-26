@@ -40,12 +40,12 @@
       &nbsp;
       <c:choose>
           <c:when test="${d_day > 0}">
-            프로젝트 마감일까지 D-${d_day} 남았습니다.
+            프로젝트 마감일까지 ${d_day}일 남았습니다.
           </c:when>
           <c:otherwise>
             <c:choose>
               <c:when test="${d_day < 0}">
-                프로젝트 마감일부터 D+${d_day} 지났습니다.
+                프로젝트 마감일부터 ${-d_day}일 지났습니다.
               </c:when>
               <c:otherwise>
                 D-DAY 입니다.

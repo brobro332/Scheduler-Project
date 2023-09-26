@@ -396,6 +396,8 @@ if (!window.schedulerLoaded) {
         var taskId = $(this).val();
         var subTaskSelect = $("#subTask");
 
+        subTaskSelect.empty();
+
         // 업무 선택에 따라 세부 업무 옵션을 동적으로 업데이트
         $.ajax({
             type: "GET",

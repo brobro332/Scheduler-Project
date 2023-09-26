@@ -1,5 +1,7 @@
 package kr.co.scheduler.global.config.mail;
 
+import kr.co.scheduler.global.config.oauth.OAuthProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,10 +13,13 @@ import java.util.Properties;
 @Configuration
 public class MailConfig {
 
+    @Autowired
+    private OAuthProperties OAuthProperties;
+
     @Value("${mail.username}")
     private String MailUsername;
 
-    @Value("${mail.password}")
+    @Value("${MAIL_PW}")
     private String MailPassword;
 
     @Bean
