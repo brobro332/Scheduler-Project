@@ -36,11 +36,10 @@ public class ImgService {
 
         return img;
     }
-    
+
     /**
      * uploadImg: 이미지를 파일시스템에 저장하고, 난수로 구성된 파일명을 리턴
      */
-    @Transactional
     public String uploadImg(String uploadFolder, MultipartFile uploadImg){
 
         File uploadPath = new File(uploadFolder);
@@ -57,89 +56,15 @@ public class ImgService {
         File saveFile = new File(uploadPath, uploadFileName);
 
         try {
+
             uploadImg.transferTo(saveFile);
         } catch (Exception e) {
+
             e.printStackTrace();
         }
 
         return uploadFileName;
     }
-
-    @Transactional
-    public void renameImg(String beforeFilePath, String replaceFolder, String fileName) throws IOException {
-
-        File replacePath = new File(replaceFolder);
-
-        if(replacePath.exists() == false) {
-            replacePath.mkdirs();
-        }
-
-        try {
-            File file = new File(beforeFilePath);
-
-            file.renameTo(new File(replaceFolder + "\\" + fileName));
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 이미지 경로를 기반으로 이미지 제거
-     */
-    @Transactional
-    public void deleteImg(String imgPath) throws IOException {
-
-        File file = null;
-
-        try {
-
-            file = new File(URLDecoder.decode(imgPath, StandardCharsets.UTF_8));
-            file.delete();
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
-    }
-
-    @Transactional
-    public void clearTempDir(String deletePath) {
-
-        try {
-
-            File folder = new File(deletePath);
-
-            if(folder.exists()) {
-
-                File[] file_list = folder.listFiles();
-                for(File file : file_list) {
-
-                    file.delete();
-                }
-            }
-
-        } catch(Exception e) {
-
-            e.printStackTrace();
-        }
-    }
-
-    // ================================== 구분 ================================== //
-
-    /**
-     * selectProfileImg: 프로필이미지를 뷰로 전송
-     */
-    public byte[] selectProfileImg(String profileImgPath) throws IOException {
-
-        byte[] imageByteArray = null;
-
-        InputStream inputStream = new FileInputStream(profileImgPath);
-        imageByteArray = IOUtils.toByteArray(inputStream);
-        inputStream.close();
-
-        return imageByteArray;
-    }
-
-    // ================================== 구분 ================================== //
 
     /**
      * uploadImgInSummernote: 사용자가 썸머노트에 이미지를 업로드시 파일시스템에 저장
@@ -163,10 +88,30 @@ public class ImgService {
     }
 
     /**
-     * renameImgInSummernote: 게시글 수정시 썸머노트에 있던 기존 이미지 파일들을 임시폴더로 이동
+     * renameImg: 파일 이동
+     */
+    public void renameImg(String beforeFilePath, String replaceFolder, String fileName) throws IOException {
+
+        File replacePath = new File(replaceFolder);
+
+        if(replacePath.exists() == false) {
+            replacePath.mkdirs();
+        }
+
+        try {
+            File file = new File(beforeFilePath);
+
+            file.renameTo(new File(replaceFolder + "\\" + fileName));
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * renameImgInSummernote: 게시글 업로드 또는 수정 시 replaceFolder 폴더로 파일 이동
      */
     @Transactional
-    public void renameImgInSummernote(String content, String email) throws IOException {
+    public void renameImgInSummernote(String content, String replaceFolder) throws IOException {
 
         Document doc = Jsoup.parse(content);
         Elements imgElements = doc.select("img");
@@ -185,13 +130,101 @@ public class ImgService {
                 Img img = selectImg(fileName);
 
                 String beforeFilePath = img.getImgPath();
-                String replaceFolder = "C:\\upload\\temp\\" + email;
 
                 img.setImgPath(replaceFolder + "\\" + fileName);
 
                 // 폴더 이동
                 renameImg(beforeFilePath, replaceFolder, fileName);
             }
+        }
+    }
+
+    /**
+     * deleteImg: 이미지 경로를 기반으로 이미지 제거
+     */
+    public void deleteImg(String imgPath) {
+
+        File file = null;
+
+        try {
+
+            file = new File(URLDecoder.decode(imgPath, StandardCharsets.UTF_8));
+
+            file.delete();
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * deleteImgInSummernote: 게시글이나 프로젝트 삭제 시 업로드된 이미지 데이터 및 파일 제거
+     */
+    @Transactional
+    public void deleteImgInSummernote(String content) {
+
+        Document doc = Jsoup.parse(content);
+        Elements imgElements = doc.select("img");
+
+        String fileName = null;
+        for (Element imgElement : imgElements) {
+
+            // src 추출
+            String srcValue = imgElement.attr("src");
+
+            // 파일명 추출
+            String[] parts = srcValue.split("=");
+            if (parts.length == 2) {
+                fileName = parts[1];
+
+                Img img = selectImg(fileName);
+                imgRepository.delete(img);
+
+                deleteImg(img.getImgPath());
+            }
+        }
+    }
+
+    // ================================== 구분 ================================== //
+
+    /**
+     * selectProfileImg: 프로필이미지를 뷰로 전송
+     */
+    public byte[] selectProfileImg(String profileImgPath) throws IOException {
+
+        byte[] imageByteArray = null;
+
+        InputStream inputStream = new FileInputStream(profileImgPath);
+        imageByteArray = IOUtils.toByteArray(inputStream);
+        inputStream.close();
+
+        return imageByteArray;
+    }
+
+    // ================================== 구분 ================================== //
+
+    @Transactional
+    public void clearTempDir(String deletePath) {
+
+        try {
+
+            File folder = new File(deletePath);
+
+            if(folder.exists()) {
+
+                File[] file_list = folder.listFiles();
+                for(File file : file_list) {
+
+                    file.delete();
+
+                    Img img = imgRepository.findByImgName(file.getName());
+                    imgRepository.delete(img);
+                }
+            }
+
+        } catch(Exception e) {
+
+            e.printStackTrace();
         }
     }
 }

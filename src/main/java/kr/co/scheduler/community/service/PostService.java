@@ -3,31 +3,17 @@ package kr.co.scheduler.community.service;
 import kr.co.scheduler.community.dtos.PostReqDTO;
 import kr.co.scheduler.community.entity.Post;
 import kr.co.scheduler.community.repository.PostRepository;
-import kr.co.scheduler.global.entity.Img;
-import kr.co.scheduler.global.repository.ImgRepository;
 import kr.co.scheduler.global.service.ImgService;
 import kr.co.scheduler.user.entity.User;
 import kr.co.scheduler.user.repository.UserRepository;
 import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.UUID;
-
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +23,6 @@ public class PostService {
     private final UserService userService;
     private final ImgService imgService;
     private final PostRepository postRepository;
-    private final ImgRepository imgRepository;
     private final UserRepository userRepository;
 
     /**
@@ -61,42 +46,15 @@ public class PostService {
      */
     public void createPost(PostReqDTO.CREATE create, String email) throws IOException {
 
-        String content = create.getContent();
-        Document doc = Jsoup.parse(content);
-        Elements imgElements = doc.select("img");
-
-        String fileName = null;
-        for(Element imgElement : imgElements) {
-
-            // src 추출
-            String srcValue = imgElement.attr("src");
-
-            // 파일명 추출
-            String[] parts = srcValue.split("=");
-            if(parts.length == 2) {
-                fileName = parts[1];
-
-                // 썸머노트에 업로드할 때 저장된 이미지의 경로와 파일명 추출
-                Img img = imgRepository.findByImgName(fileName);
-
-                String beforeFilePath = img.getImgPath();
-                String replaceFolder = "C:\\upload\\post\\" + email;
-
-                img.setImgPath(replaceFolder + "\\" + fileName);
-
-                // 폴더 이동
-                imgService.renameImg(beforeFilePath, replaceFolder, fileName);
-            }
-        }
+        imgService.renameImgInSummernote(create.getContent(), "C:\\upload\\post\\" + email);
 
         // temp 폴더 비우기
         String deletePath = "C:\\upload\\temp\\" + email;
-
         imgService.clearTempDir(deletePath);
 
         Post post = Post.builder()
                 .title(create.getTitle())
-                .content(content)
+                .content(create.getContent())
                 .user(userService.selectUser(email))
                 .build();
 
@@ -114,45 +72,22 @@ public class PostService {
     @Transactional
     public void updatePost(PostReqDTO.UPDATE update, String email, Long id) throws IOException {
 
-        String content = update.getContent();
-        Document doc = Jsoup.parse(content);
-        Elements imgElements = doc.select("img");
+        Post post = postRepository.findById(id)
+                .orElseThrow(()->{
+                    return new IllegalArgumentException("해당 게시글을 찾을 수 없습니다.");
+                });
 
-        String fileName = null;
-        for(Element imgElement : imgElements) {
+        // 기존 이미지들을 temp 폴더로 이동
+        imgService.renameImgInSummernote(post.getContent(), "C:\\upload\\temp\\" + email);
 
-            // src 추출
-            String srcValue = imgElement.attr("src");
-
-            // 파일명 추출
-            String[] parts = srcValue.split("=");
-            if(parts.length == 2) {
-                fileName = parts[1];
-
-                // 썸머노트에 업로드할 때 저장된 이미지의 경로와 파일명 추출
-                Img img = imgRepository.findByImgName(fileName);
-
-                String beforeFilePath = img.getImgPath();
-                String replaceFolder = "C:\\upload\\post\\" + email;
-
-                img.setImgPath(replaceFolder + "\\" + fileName);
-
-                // 폴더 이동
-                imgService.renameImg(beforeFilePath, replaceFolder, fileName);
-            }
-        }
+        // 최종적으로 게시글에 업로드된 이미지들을 post 폴더로 이동
+        imgService.renameImgInSummernote(update.getContent(), "C:\\upload\\post\\" + email);
 
         // temp 폴더 비우기
         String deletePath = "C:\\upload\\temp\\" + email;
-
         imgService.clearTempDir(deletePath);
 
-        Post post = postRepository.findById(id)
-                        .orElseThrow(()->{
-                            return new IllegalArgumentException("해당 게시글을 찾을 수 없습니다.");
-                        });
-
-        post.updatePost(update.getTitle(), content);
+        post.updatePost(update.getTitle(), update.getContent());
     }
 
     /**
@@ -162,29 +97,9 @@ public class PostService {
      * 3. 게시글 삭제
      */
     @Transactional
-    public void deletePost(Post post, String email) throws IOException {
+    public void deletePost(Post post, String email) {
 
-        String content = post.getContent();
-        Document doc = Jsoup.parse(content);
-        Elements imgElements = doc.select("img");
-
-        String fileName = null;
-        for (Element imgElement : imgElements) {
-
-            // src 추출
-            String srcValue = imgElement.attr("src");
-
-            // 파일명 추출
-            String[] parts = srcValue.split("=");
-            if (parts.length == 2) {
-                fileName = parts[1];
-
-                Img img = imgService.selectImg(fileName);
-                imgRepository.delete(img);
-
-                imgService.deleteImg(img.getImgPath());
-            }
-        }
+        imgService.deleteImgInSummernote(post.getContent());
 
         User user = userRepository.findOptionalByEmail(email)
             .orElseThrow(()->{

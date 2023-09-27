@@ -1,8 +1,8 @@
 package kr.co.scheduler.scheduler.service;
 
-import kr.co.scheduler.global.repository.AlertUserRepository;
 import kr.co.scheduler.global.service.AlertService;
 import kr.co.scheduler.global.service.FCMService;
+import kr.co.scheduler.global.service.ImgService;
 import kr.co.scheduler.scheduler.dtos.ProjectReqDTO;
 import kr.co.scheduler.scheduler.dtos.TaskReqDTO;
 import kr.co.scheduler.scheduler.entity.Project;
@@ -20,6 +20,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -34,6 +35,7 @@ public class ProjectService {
     private final TaskService taskService;
     private final FCMService fcmService;
     private final AlertService alertService;
+    private final ImgService imgService;
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
     private final SubTaskRepository subTaskRepository;
@@ -54,11 +56,13 @@ public class ProjectService {
      * createPRJPlanner: 프로젝트 플래너 등록
      */
     @Transactional
-    public void createPRJPlanner(ProjectReqDTO.CREATE create, List<Task> tasks, List<SubTask> subTasks, String email) {
+    public void createPRJPlanner(ProjectReqDTO.CREATE create, List<Task> tasks, List<SubTask> subTasks, String email) throws IOException {
 
         User user = userService.selectUser(email);
 
         if (user != null) {
+
+            imgService.renameImgInSummernote(create.getDescription(), "C:\\upload\\project\\" + email);
 
             Project project = Project.builder()
                     .title(create.getTitle())
@@ -89,10 +93,18 @@ public class ProjectService {
      * updatePRJPlanner: 프로젝트 플래너 수정
      */
     @Transactional
-    public void updatePRJPlanner(Long id, ProjectReqDTO.UPDATE update) {
+    public void updatePRJPlanner(Long id, ProjectReqDTO.UPDATE update, String email) throws IOException{
         Project project = projectRepository.findById(id).orElse(null);
 
         if (project != null) {
+
+            imgService.renameImgInSummernote(project.getDescription(), "C:\\upload\\temp\\" + email);
+            imgService.renameImgInSummernote(update.getDescription(), "C:\\upload\\project\\" + email);
+
+            // temp 폴더 비우기
+            String deletePath = "C:\\upload\\temp\\" + email;
+            imgService.clearTempDir(deletePath);
+
             project.updateProject(update.getTitle(), update.getDescription(), update.getGoal(), update.getStartPRJ(), update.getEndPRJ());
 
             for (TaskReqDTO.UPDATE updatedTask : update.getUpdatedTasks()) {
@@ -112,13 +124,19 @@ public class ProjectService {
      * deleteProject: 프로젝트 플래너 삭제
      */
     @Transactional
-    public void deleteProject(Long id) {
+    public void deleteProject(Long id, String email) {
 
-        Project project = projectRepository.findById(id).orElse(null);
+        User user = userService.selectUser(email);
 
-        if(project != null) {
+        if (user != null) {
 
-            projectRepository.delete(project);
+            Project project = projectRepository.findById(id).orElse(null);
+            if (project != null) {
+
+                imgService.deleteImgInSummernote(project.getDescription());
+
+                projectRepository.delete(project);
+            }
         }
     }
 
