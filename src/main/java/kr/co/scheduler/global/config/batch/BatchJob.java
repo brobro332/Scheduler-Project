@@ -4,6 +4,8 @@ import kr.co.scheduler.community.entity.Post;
 import kr.co.scheduler.community.service.PostService;
 import kr.co.scheduler.global.config.mail.AlertFiredMail;
 import kr.co.scheduler.global.config.mail.AlertInactiveMail;
+import kr.co.scheduler.scheduler.entity.Project;
+import kr.co.scheduler.scheduler.service.ProjectService;
 import kr.co.scheduler.user.entity.User;
 import kr.co.scheduler.user.repository.UserRepository;
 import org.springframework.batch.core.Job;
@@ -33,6 +35,9 @@ public class BatchJob{
     private PostService postService;
 
     @Autowired
+    private ProjectService projectService;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -59,7 +64,7 @@ public class BatchJob{
 
     @Bean
     public Step processNotLoggedFor10DaysUsersStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-        LocalDate daysAgo = LocalDate.now().minusDays(1);
+        LocalDate daysAgo = LocalDate.now().minusDays(15);
 
         return new StepBuilder("processNotLoggedFor10DaysUsersStep", jobRepository)
                 .<User, User>chunk(10, transactionManager)
@@ -108,7 +113,7 @@ public class BatchJob{
 
     @Bean
     public Step processNotLoggedFor30DaysUsersStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-        LocalDate daysAgo = LocalDate.now().minusDays(2);
+        LocalDate daysAgo = LocalDate.now().minusDays(30);
 
         return new StepBuilder("processNotLoggedFor30DaysUsersStep", jobRepository)
                 .<User, User>chunk(10, transactionManager)
@@ -157,10 +162,16 @@ public class BatchJob{
 
                 List<Post> posts = user.getPosts();
                 String email = user.getEmail();
+                List<Project> projects = user.getProjects();
 
                 for (Post post : posts) {
 
                     postService.deletePost(post, email);
+                }
+
+                for (Project project : projects) {
+
+                    projectService.deleteProject(project.getId(), email);
                 }
 
                 userRepository.delete(user);

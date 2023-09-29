@@ -8,8 +8,10 @@ import kr.co.scheduler.scheduler.dtos.TaskReqDTO;
 import kr.co.scheduler.scheduler.entity.Project;
 import kr.co.scheduler.scheduler.entity.SubTask;
 import kr.co.scheduler.scheduler.entity.Task;
+import kr.co.scheduler.scheduler.entity.TaskLog;
 import kr.co.scheduler.scheduler.repository.ProjectRepository;
 import kr.co.scheduler.scheduler.repository.SubTaskRepository;
+import kr.co.scheduler.scheduler.repository.TaskLogRepository;
 import kr.co.scheduler.scheduler.repository.TaskRepository;
 import kr.co.scheduler.user.entity.User;
 import kr.co.scheduler.user.service.UserService;
@@ -36,9 +38,11 @@ public class ProjectService {
     private final FCMService fcmService;
     private final AlertService alertService;
     private final ImgService imgService;
+    private final TaskLogService taskLogService;
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
     private final SubTaskRepository subTaskRepository;
+    private final TaskLogRepository taskLogRepository;
 
     /**
      * selectPRJPlanner: 프로젝트 플래너 조회 및 리턴
@@ -134,6 +138,13 @@ public class ProjectService {
             if (project != null) {
 
                 imgService.deleteImgInSummernote(project.getDescription());
+
+                List<TaskLog> taskLogs = project.getTaskLogs();
+                for (TaskLog taskLog : taskLogs) {
+
+                    taskLogService.deleteTaskLog(taskLog.getId(), project.getId(), email);
+                    System.out.println("hey1");
+                }
 
                 projectRepository.delete(project);
             }

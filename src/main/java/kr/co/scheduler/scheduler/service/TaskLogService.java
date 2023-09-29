@@ -124,13 +124,20 @@ public class TaskLogService {
 
         Project project = projectRepository.findById(project_id).orElse(null);
         TaskLog taskLog = taskLogRepository.findById(task_log_id).orElse(null);
+        User user = userService.selectUser(email);
 
-        if (taskLog != null) {
+        if (user != null) {
 
-            imgService.deleteImgInSummernote(taskLog.getContent());
-            project.getTaskLogs().remove(taskLog);
+            if (project != null) {
 
-            taskLogRepository.delete(taskLog);
+                if (taskLog != null) {
+
+                    imgService.deleteImgInSummernote(taskLog.getContent());
+
+                    taskLogRepository.delete(taskLog);
+                    System.out.println("hey2");
+                }
+            }
         }
     }
 
