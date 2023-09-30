@@ -4,7 +4,7 @@
 Web Service For Project Planners
 
 ### ⏱ **Period**
-- 2023-06-24 ~
+- 2023-06-24 ~ 2023-10-01
 
 ### 🛠 **Environment**
 - Language: Java 17
