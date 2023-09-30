@@ -85,7 +85,7 @@
                   });
               }
 
-              document.addEventListener("DOMContentLoaded", function () {
+              $(document).ready(function () {
                 function requestNotificationPermission() {
                   var notificationStatus = Notification.permission;
 
@@ -105,6 +105,7 @@
                   success: function (data) {
                     if (data.statusCode === 200) {
                       var notificationStatus = Notification.permission;
+
                       if (notificationStatus === 'granted') {
                         messaging.getToken()
                           .then(function (currentToken) {

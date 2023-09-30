@@ -1,16 +1,20 @@
 package kr.co.scheduler.scheduler.service;
 
+import kr.co.scheduler.global.service.ImgService;
 import kr.co.scheduler.scheduler.dtos.TaskLogReqDTO;
 import kr.co.scheduler.scheduler.entity.Project;
 import kr.co.scheduler.scheduler.entity.TaskLog;
 import kr.co.scheduler.scheduler.repository.ProjectRepository;
 import kr.co.scheduler.scheduler.repository.TaskLogRepository;
+import kr.co.scheduler.user.entity.User;
+import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,6 +22,8 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class TaskLogService {
 
+    private final UserService userService;
+    private final ImgService imgService;
     private final ProjectRepository projectRepository;
     private final TaskLogRepository taskLogRepository;
 
@@ -55,7 +61,7 @@ public class TaskLogService {
      * createTaskLog: 업무일지 등록
      */
     @Transactional
-    public void createTaskLog(TaskLogReqDTO taskLogReqDTO, Long id) {
+    public void createTaskLog(TaskLogReqDTO taskLogReqDTO, Long id, String email) throws IOException {
 
         Project project = projectRepository.findById(id).orElse(null);
 
@@ -65,6 +71,8 @@ public class TaskLogService {
 
                 throw new IllegalArgumentException("이미 완료된 프로젝트입니다.");
             }
+
+            imgService.renameImgInSummernote(taskLogReqDTO.getContent(), "C:\\upload\\taskLog\\" + email);
 
             TaskLog taskLog = TaskLog
                     .builder()
@@ -87,14 +95,24 @@ public class TaskLogService {
      * updateTaskLog: 업무일지 수정
      */
     @Transactional
-    public void updateTaskLog(TaskLogReqDTO taskLogReqDTO, Long id) {
+    public void updateTaskLog(TaskLogReqDTO taskLogReqDTO, Long id, String email) throws IOException {
 
+        User user = userService.selectUser(email);
         TaskLog taskLog = taskLogRepository.findById(id).orElse(null);
 
+        if (user != null) {
 
-        if (taskLog != null) {
+            if (taskLog != null) {
 
-            taskLog.updateTaskLog(taskLogReqDTO.getTitle(), taskLogReqDTO.getContent(), taskLogReqDTO.getTaskCategory(), taskLogReqDTO.getSubTaskCategory());
+                imgService.renameImgInSummernote(taskLog.getContent(), "C:\\upload\\temp\\" + email);
+                imgService.renameImgInSummernote(taskLogReqDTO.getContent(), "C:\\upload\\taskLog\\" + email);
+
+                // temp 폴더 비우기
+                String deletePath = "C:\\upload\\temp\\" + email;
+                imgService.clearTempDir(deletePath);
+
+                taskLog.updateTaskLog(taskLogReqDTO.getTitle(), taskLogReqDTO.getContent(), taskLogReqDTO.getTaskCategory(), taskLogReqDTO.getSubTaskCategory());
+            }
         }
     }
 
@@ -102,16 +120,23 @@ public class TaskLogService {
      * deleteTaskLog: 업무일지 삭제
      */
     @Transactional
-    public void deleteTaskLog(Long task_log_id, Long project_id) {
+    public void deleteTaskLog(Long task_log_id, Long project_id, String email) {
 
         Project project = projectRepository.findById(project_id).orElse(null);
         TaskLog taskLog = taskLogRepository.findById(task_log_id).orElse(null);
+        User user = userService.selectUser(email);
 
-        if (taskLog != null) {
+        if (user != null) {
 
-            project.getTaskLogs().remove(taskLog);
+            if (project != null) {
 
-            taskLogRepository.delete(taskLog);
+                if (taskLog != null) {
+
+                    imgService.deleteImgInSummernote(taskLog.getContent());
+
+                    taskLogRepository.delete(taskLog);
+                }
+            }
         }
     }
 

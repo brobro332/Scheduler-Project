@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,11 +74,11 @@ public class ProjectApiController {
      * updatePRJPlanner: 프로젝트 플래너 수정
      */
     @PutMapping("/{project_id}")
-    public ResponseDto<?> updatePRJPlanner(@PathVariable(name = "project_id") Long id, @RequestBody ProjectReqDTO.UPDATE update) {
+    public ResponseDto<?> updatePRJPlanner(@PathVariable(name = "project_id") Long id, @RequestBody ProjectReqDTO.UPDATE update, Principal principal) {
         
         try {
 
-            projectService.updatePRJPlanner(id, update);
+            projectService.updatePRJPlanner(id, update, principal.getName());
 
             return ResponseDto.ofSuccessData("프로젝트 업데이트에 성공하였습니다.", null);
         } catch (Exception e) {
@@ -90,9 +91,9 @@ public class ProjectApiController {
      * deletePRJPlanner: 프로젝트 플래너 삭제
      */
     @DeleteMapping("/{project_id}")
-    public ResponseDto<?> deletePRJPlanner(@PathVariable(name = "project_id") Long id) {
+    public ResponseDto<?> deletePRJPlanner(@PathVariable(name = "project_id") Long id, Principal principal) {
 
-        projectService.deleteProject(id);
+        projectService.deleteProject(id, principal.getName());
 
         return ResponseDto.ofSuccessData("프로젝트 삭제에 성공하였습니다.", null);
     }
@@ -126,9 +127,9 @@ public class ProjectApiController {
      * createTaskLog: 업무일지 등록
      */
     @PostMapping("/{project_id}/taskLog")
-    public ResponseDto<?> createTaskLog(@PathVariable(name = "project_id") Long id, @RequestBody TaskLogReqDTO taskLogReqDTO) {
+    public ResponseDto<?> createTaskLog(@PathVariable(name = "project_id") Long id, @RequestBody TaskLogReqDTO taskLogReqDTO, Principal principal) throws IOException {
 
-        taskLogService.createTaskLog(taskLogReqDTO, id);
+        taskLogService.createTaskLog(taskLogReqDTO, id, principal.getName());
 
         return ResponseDto.ofSuccessData("업무 일지를 성공적으로 등록했습니다.", null);
     }
@@ -137,9 +138,9 @@ public class ProjectApiController {
      * updateTaskLog: 업무일지 수정
      */
     @PutMapping("/taskLog/{task_log_id}")
-    public ResponseDto<?> updateTaskLog(@PathVariable(name = "task_log_id") Long id, @RequestBody TaskLogReqDTO taskLogReqDTO) {
+    public ResponseDto<?> updateTaskLog(@PathVariable(name = "task_log_id") Long id, @RequestBody TaskLogReqDTO taskLogReqDTO, Principal principal) throws IOException {
 
-        taskLogService.updateTaskLog(taskLogReqDTO, id);
+        taskLogService.updateTaskLog(taskLogReqDTO, id, principal.getName());
 
         return ResponseDto.ofSuccessData("업무 일지를 성공적으로 수정했습니다.", null);
     }
@@ -148,9 +149,9 @@ public class ProjectApiController {
      * deleteTaskLog: 업무일지 삭제
      */
     @DeleteMapping("/taskLog/{task_log_id}")
-    public ResponseDto<?> deleteTaskLog(@PathVariable(name = "task_log_id") Long task_log_id, @RequestParam("project_id") Long project_id) {
+    public ResponseDto<?> deleteTaskLog(@PathVariable(name = "task_log_id") Long task_log_id, @RequestParam("project_id") Long project_id, Principal principal) {
 
-        taskLogService.deleteTaskLog(task_log_id, project_id);
+        taskLogService.deleteTaskLog(task_log_id, project_id, principal.getName());
 
         return ResponseDto.ofSuccessData("업무 일지를 성공적으로 삭제했습니다.", null);
     }

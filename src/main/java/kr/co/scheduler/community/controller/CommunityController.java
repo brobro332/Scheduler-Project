@@ -4,7 +4,6 @@ import kr.co.scheduler.community.entity.Post;
 import kr.co.scheduler.community.service.CommentService;
 import kr.co.scheduler.community.service.PostService;
 import kr.co.scheduler.global.config.security.PrincipalDetails;
-import kr.co.scheduler.global.service.ImgService;
 import kr.co.scheduler.user.entity.User;
 import kr.co.scheduler.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,6 @@ public class CommunityController {
 
     private final UserService userService;
     private final PostService postService;
-    private final ImgService imgService;
     private final CommentService commentService;
 
     /**
@@ -82,9 +80,6 @@ public class CommunityController {
         Post post = postService.selectPost(id);
 
         if (user == post.getUser()) {
-
-            // 수정하려는 게시물에 이미지가 있다면 temp 폴더로 파일 이동
-            imgService.renameImgInSummernote(post.getContent(), principal.getName());
 
             model.addAttribute("post", post);
 

@@ -5,6 +5,7 @@ import kr.co.scheduler.community.entity.Comment;
 import kr.co.scheduler.community.entity.Post;
 import kr.co.scheduler.community.entity.Reply;
 import kr.co.scheduler.global.entity.AlertUser;
+import kr.co.scheduler.scheduler.entity.Project;
 import kr.co.scheduler.user.enums.Role;
 import kr.co.scheduler.global.entity.BaseTimeEntity;
 import lombok.*;
@@ -57,6 +58,9 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Project> projects = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<AlertUser> alertUsers = new ArrayList<>();
