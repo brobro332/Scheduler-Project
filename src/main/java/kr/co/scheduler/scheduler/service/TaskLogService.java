@@ -135,7 +135,6 @@ public class TaskLogService {
                     imgService.deleteImgInSummernote(taskLog.getContent());
 
                     taskLogRepository.delete(taskLog);
-                    System.out.println("hey2");
                 }
             }
         }

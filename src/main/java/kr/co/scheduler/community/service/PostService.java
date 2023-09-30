@@ -46,10 +46,10 @@ public class PostService {
      */
     public void createPost(PostReqDTO.CREATE create, String email) throws IOException {
 
-        imgService.renameImgInSummernote(create.getContent(), "C:\\upload\\post\\" + email);
+        imgService.renameImgInSummernote(create.getContent(), "/upload/post/" + email);
 
         // temp 폴더 비우기
-        String deletePath = "C:\\upload\\temp\\" + email;
+        String deletePath = "/upload/temp/" + email;
         imgService.clearTempDir(deletePath);
 
         Post post = Post.builder()
@@ -78,13 +78,13 @@ public class PostService {
                 });
 
         // 기존 이미지들을 temp 폴더로 이동
-        imgService.renameImgInSummernote(post.getContent(), "C:\\upload\\temp\\" + email);
+        imgService.renameImgInSummernote(post.getContent(), "/upload/temp/" + email);
 
         // 최종적으로 게시글에 업로드된 이미지들을 post 폴더로 이동
-        imgService.renameImgInSummernote(update.getContent(), "C:\\upload\\post\\" + email);
+        imgService.renameImgInSummernote(update.getContent(), "/upload/post/" + email);
 
         // temp 폴더 비우기
-        String deletePath = "C:\\upload\\temp\\" + email;
+        String deletePath = "/upload/temp/" + email;
         imgService.clearTempDir(deletePath);
 
         post.updatePost(update.getTitle(), update.getContent());
