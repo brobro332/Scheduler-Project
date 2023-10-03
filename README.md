@@ -21,7 +21,7 @@ Web Service For Project Planners
 - Batch Processing for Long-Inactive Members via Scheduling
 
 ### 🔧 **Key Skills**
-- Schedule
+- Scheduler
 - Spring Batch 5.0
 - Spring Security
 - Dynamical Generation of HTML Element & JQuery Event Handling
