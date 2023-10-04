@@ -1,4 +1,4 @@
-package kr.co.scheduler.global.entity.naver;
+package kr.co.scheduler.global.dtos.naver;
 
 import lombok.Getter;
 import lombok.Setter;

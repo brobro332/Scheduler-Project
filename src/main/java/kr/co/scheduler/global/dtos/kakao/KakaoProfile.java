@@ -1,4 +1,4 @@
-package kr.co.scheduler.global.entity.kakao;
+package kr.co.scheduler.global.dtos.kakao;
 
 import lombok.Getter;
 import lombok.Setter;
