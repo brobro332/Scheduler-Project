@@ -2,10 +2,6 @@
 importScripts('https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.4.0/firebase-messaging-compat.js');
 
-// firebase-messaging-sw.js
-importScripts('https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.4.0/firebase-messaging-compat.js');
-
 fetch('/api/var')
     .then(function(response) {
         if (!response.ok) {
